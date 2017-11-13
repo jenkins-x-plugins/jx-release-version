@@ -1,16 +1,16 @@
-package: github.com/rawlingsj/semver-release
+package: github.com/rawlingsj/semver-release-number
 import:
 - package: github.com/coreos/go-semver
+  version: v0.2.0
   subpackages:
   - semver
+- package: github.com/google/go-github
+  subpackages:
+  - github
+- package: github.com/hashicorp/go-version
+- package: golang.org/x/oauth2
+testImport:
 - package: github.com/stretchr/testify
   version: v1.1.4
   subpackages:
   - assert
-- package: github.com/google/go-github
-  subpackages:
-  - github
-- package: golang.org/x/oauth2
-- package: github.com/hashicorp/go-version
-- package: github.com/tcnksm/go-gitconfig
-  version: v0.1.2

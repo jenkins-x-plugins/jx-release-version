@@ -6,7 +6,6 @@ import (
 	"github.com/coreos/go-semver/semver"
 	"github.com/google/go-github/github"
 	version "github.com/hashicorp/go-version"
-	gitconfig "github.com/tcnksm/go-gitconfig"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -16,6 +15,7 @@ import (
 	"encoding/xml"
 	"flag"
 	"golang.org/x/oauth2"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"sort"
@@ -26,27 +26,27 @@ type Project struct {
 }
 
 type config struct {
-	dryrun bool
-	debug  bool
-	dir    string
-	owner  string
-	repo   string
+	dryrun       bool
+	debug        bool
+	dir          string
+	ghOwner      string
+	ghRepository string
 }
 
 func main() {
 
 	debug := flag.Bool("debug", false, "prints debug into to console")
 	dir := flag.String("folder", ".", "the folder to look for files that contain a pom.xml or Makfile with the project version to bump")
-	owner := flag.String("org", "", "the git repository owner if not running from within a git project  e.g. fabric8io")
-	repo := flag.String("repo", "", "the git repository if not running from within a git project  e.g. fabric8")
+	owner := flag.String("gh-owner", "", "a github repository owner if not running from within a git project  e.g. fabric8io")
+	repo := flag.String("gh-repository", "", "a git repository if not running from within a git project  e.g. fabric8")
 
 	flag.Parse()
 
 	c := config{
-		debug: *debug,
-		dir:   *dir,
-		owner: *owner,
-		repo:  *repo,
+		debug:        *debug,
+		dir:          *dir,
+		ghOwner:      *owner,
+		ghRepository: *repo,
 	}
 
 	v, err := getNewVersionFromTag(c)
@@ -97,66 +97,76 @@ func getVersion(c config) (string, error) {
 	return "", errors.New("no recognised file to obtain current version from")
 }
 
-func getLatestGithubTag(c config) (string, error) {
-
+func getLatestTag(c config) (string, error) {
 	// if repo isn't provided by flags fall back to using current repo if run from a git project
-	var owner string
-	var repo string
-	if c.owner != "" {
-		owner = c.owner
-	} else {
-		url, err := gitconfig.OriginURL()
+	var versionsRaw []string
+	if c.ghOwner != "" && c.ghRepository != "" {
+		token := os.Getenv("GITHUB_AUTH_TOKEN")
+		ctx := context.Background()
+		var client *github.Client
+		if token != "" {
+
+			ts := oauth2.StaticTokenSource(
+				&oauth2.Token{AccessToken: token},
+			)
+			tc := oauth2.NewClient(ctx, ts)
+
+			client = github.NewClient(tc)
+		} else {
+			if c.debug {
+				fmt.Println("No GITHUB_AUTH_TOKEN env var found so using unauthenticated request")
+			}
+			client = github.NewClient(nil)
+		}
+
+		tags, _, err := client.Repositories.ListTags(ctx, c.ghOwner, c.ghRepository, nil)
+
 		if err != nil {
-			return "", fmt.Errorf("no git repo flag provided and not executed in a git repo with an origin URL: %v", err)
+			return "", err
 		}
-		rs := getCurrentGitOwnerRepo(url)
-		owner = rs[0]
-	}
-	if c.repo != "" {
-		repo = c.repo
+		if len(tags) == 0 {
+			// if no current flags exist then lets start at 0.0.0
+			return "0.0.0", errors.New("No existing tags found")
+		}
+
+		// build an array of all the tags
+		versionsRaw = make([]string, len(tags))
+		for i, tag := range tags {
+			if c.debug {
+				fmt.Println(fmt.Sprintf("found tag %s", tag.GetName()))
+			}
+			versionsRaw[i] = tag.GetName()
+		}
 	} else {
-		r, err := gitconfig.Repository()
+		_, err := exec.LookPath("git")
 		if err != nil {
-			return "", fmt.Errorf("no git repo flag provided and not executed in a git repo with an origin URL: %v", err)
+			return "", errors.New(fmt.Sprint("error running git: %v", err))
 		}
-		repo = r
-	}
-
-	token := os.Getenv("GITHUB_AUTH_TOKEN")
-	ctx := context.Background()
-	var client *github.Client
-	if token != "" {
-
-		ts := oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: token},
-		)
-		tc := oauth2.NewClient(ctx, ts)
-
-		client = github.NewClient(tc)
-	} else {
-		if c.debug {
-			fmt.Println("No GITHUB_AUTH_TOKEN env var found so using unauthenticated request")
+		exec.Command("git", "fetch", "--tags")
+		out, err := exec.Command("git", "tag").Output()
+		if err != nil {
+			return "", err
 		}
-		client = github.NewClient(nil)
-	}
+		str := strings.TrimSuffix(string(out), "\n")
+		tags := strings.Split(str, "\n")
 
-	tags, _, err := client.Repositories.ListTags(ctx, owner, repo, nil)
-
-	if err != nil {
-		return "", err
-	}
-	if len(tags) == 0 {
-		// if no current flags exist then lets start at 0.0.0
-		return "0.0.0", errors.New("No existing tags found")
-	}
-
-	// build an array of all the tags
-	versionsRaw := make([]string, len(tags))
-	for i, tag := range tags {
-		if c.debug {
-			fmt.Println(fmt.Sprintf("found tag %s", tag.GetName()))
+		if len(tags) == 0 {
+			// if no current flags exist then lets start at 0.0.0
+			return "0.0.0", errors.New("No existing tags found")
 		}
-		versionsRaw[i] = tag.GetName()
+
+		// build an array of all the tags
+		versionsRaw = make([]string, len(tags))
+		for i, tag := range tags {
+			if c.debug {
+				fmt.Println(fmt.Sprintf("found tag %s", tag))
+			}
+			tag = strings.TrimPrefix(tag, "v")
+			if tag != "" {
+				versionsRaw[i] = tag
+			}
+		}
+
 	}
 
 	// turn the array into a new collection of versions that we can sort
@@ -166,7 +176,7 @@ func getLatestGithubTag(c config) (string, error) {
 		versions[i] = v
 	}
 
-	// return the highest existing tag
+	// return the latest tag
 	sort.Sort(version.Collection(versions))
 	latest := len(versions)
 	return versions[latest-1].String(), nil
@@ -175,7 +185,7 @@ func getLatestGithubTag(c config) (string, error) {
 func getNewVersionFromTag(c config) (string, error) {
 
 	// get the latest github tag
-	tag, err := getLatestGithubTag(c)
+	tag, err := getLatestTag(c)
 	if err != nil && tag == "" {
 		return "", err
 	}

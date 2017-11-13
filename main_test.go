@@ -33,24 +33,44 @@ func TestPomXML(t *testing.T) {
 func TestGetGithubTag(t *testing.T) {
 
 	c := config{
-		owner: "rawlingsj",
-		repo:  "test432317675",
+		ghOwner:      "rawlingsj",
+		ghRepository: "test432317675",
 	}
-	v, err := getLatestGithubTag(c)
+	v, err := getLatestTag(c)
 
 	assert.NoError(t, err)
 
-	assert.Equal(t, "2.0.0", v, "error with getVersion for a Makefile")
+	assert.Equal(t, "2.0.0", v, "error with getLatestGithubTag for a Makefile")
+}
+
+func TestGetGitTag(t *testing.T) {
+
+	// first get the expeted version from github as test above passed
+	c := config{
+		ghOwner:      "rawlingsj",
+		ghRepository: "semver-release-number",
+	}
+	expectedVersion, err := getLatestTag(c)
+	assert.NoError(t, err)
+
+	c = config{
+		debug: true,
+	}
+	v, err := getLatestTag(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, expectedVersion, v, "error with getLatestGithubTag for a Makefile")
 }
 
 func TestGetNewVersionFromTag(t *testing.T) {
 
 	c := config{
-		dryrun: false,
-		debug:  true,
-		dir:    "test-resources/make",
-		owner:  "rawlingsj",
-		repo:   "test432317675",
+		dryrun:       false,
+		debug:        true,
+		dir:          "test-resources/make",
+		ghOwner:      "rawlingsj",
+		ghRepository: "test432317675",
 	}
 
 	v, err := getNewVersionFromTag(c)

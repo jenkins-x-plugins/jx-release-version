@@ -1,8 +1,8 @@
-hash: 019e0f790e02c849c01f48f40a079d3aecf03f7918d28897f67c66840ff792c5
-updated: 2017-11-13T11:40:21.910007398Z
+hash: c6907ce1d7f65790ac956e96a87b3933fc8c4ce474c822b7ab69ef3dfca0be5a
+updated: 2017-11-13T21:48:08.300404035Z
 imports:
 - name: github.com/coreos/go-semver
-  version: 1817cd4bea52af76542157eeabd74b057d1a199e
+  version: 8ab6407b697782a06568d4b7f1db25550ec2e4c6
   subpackages:
   - semver
 - name: github.com/golang/protobuf
@@ -19,12 +19,6 @@ imports:
   - query
 - name: github.com/hashicorp/go-version
   version: fc61389e27c71d120f87031ca8c88a3428f372dd
-- name: github.com/stretchr/testify
-  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
-  subpackages:
-  - assert
-- name: github.com/tcnksm/go-gitconfig
-  version: d154598bacbf4501c095a309753c5d4af66caa81
 - name: golang.org/x/net
   version: 1c05540f6879653db88113bc4a2b70aec4bd491f
   subpackages:
@@ -52,3 +46,7 @@ testImports:
   version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
   subpackages:
   - difflib
+- name: github.com/stretchr/testify
+  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
+  subpackages:
+  - assert
