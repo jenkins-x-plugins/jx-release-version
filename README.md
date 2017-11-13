@@ -11,7 +11,11 @@ This helps in continuous delivery if you want an automatic release when a change
 
 Using a git tag to work out the next release version is better than traditional approaches of storing it in a a VERSION file or updating a pom.xml.  If a major or minor version increase is required then still update the file and `semver-release-number` will use you new version. 
 
-### Examples
+## Prerequisits
+
+- `git` to be available on your `$PATH`
+
+## Examples
 
 - If your project is new or has no existing git tags then running `semver-release-number` will return a default version of `0.0.1`
 
