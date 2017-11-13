@@ -100,6 +100,11 @@ func TestGetGitOwner(t *testing.T) {
 	assert.Equal(t, "rawlingsj", rs[0])
 	assert.Equal(t, "semver-release-number", rs[1])
 
+	//rs = getCurrentGitOwnerRepo("https://github.com/rawlingsj/semver-release-number.git")
+
+	//assert.Equal(t, "rawlingsj", rs[0])
+	//assert.Equal(t, "semver-release-number", rs[1])
+
 	//assertParseGitRepositoryInfo("git://host.xz/org/repo", "host.xz", "org", "repo");
 	//assertParseGitRepositoryInfo("git://host.xz/org/repo.git", "host.xz", "org", "repo");
 	//assertParseGitRepositoryInfo("git://host.xz/org/repo.git/", "host.xz", "org", "repo");

@@ -51,16 +51,13 @@ func main() {
 
 	v, err := getNewVersionFromTag(c)
 	if err != nil {
-		fmt.Errorf("failed to get new version", err)
+		fmt.Println("failed to get new version", err)
 		os.Exit(-1)
 	}
 	fmt.Print(fmt.Sprintf("%s", v))
 }
 
 func getVersion(c config) (string, error) {
-	if c.debug {
-		fmt.Println(fmt.Sprintf("reading file %s%s%s", c.dir, string(filepath.Separator), "Makefile"))
-	}
 	m, err := ioutil.ReadFile(c.dir + string(filepath.Separator) + "Makefile")
 	if err == nil {
 		if c.debug {
@@ -85,12 +82,14 @@ func getVersion(c config) (string, error) {
 	p, err := ioutil.ReadFile(c.dir + string(filepath.Separator) + "pom.xml")
 	if err == nil {
 		if c.debug {
-			fmt.Println("Found pom.xml")
+			fmt.Println("found pom.xml")
 		}
 		var project Project
 		xml.Unmarshal(p, &project)
 		if project.Version != "" {
-			fmt.Println(fmt.Sprintf("Existing version %v", project.Version))
+			if c.debug {
+				fmt.Println(fmt.Sprintf("existing version %v", project.Version))
+			}
 			return project.Version, nil
 		}
 	}
@@ -114,7 +113,7 @@ func getLatestTag(c config) (string, error) {
 			client = github.NewClient(tc)
 		} else {
 			if c.debug {
-				fmt.Println("No GITHUB_AUTH_TOKEN env var found so using unauthenticated request")
+				fmt.Println("no GITHUB_AUTH_TOKEN env var found so using unauthenticated request")
 			}
 			client = github.NewClient(nil)
 		}
@@ -176,9 +175,17 @@ func getLatestTag(c config) (string, error) {
 		versions[i] = v
 	}
 
+	if len(versions) == 0 {
+		// if no current flags exist then lets start at 0.0.0
+		return "0.0.0", errors.New("No existing tags found")
+	}
+
 	// return the latest tag
 	sort.Sort(version.Collection(versions))
 	latest := len(versions)
+	if versions[latest-1] == nil {
+		return "0.0.0", errors.New("No existing tags found")
+	}
 	return versions[latest-1].String(), nil
 }
 
@@ -206,8 +213,9 @@ func getNewVersionFromTag(c config) (string, error) {
 		return fmt.Sprintf("%d.%d.%d", majorVersion, minorVersion, patchVersion), nil
 	}
 
-	// turn into semver
-	bsv, err := semver.NewVersion(baseVersion)
+	// first use go-version to turn into a proper version, this handles 1.0-SNAPSHOT which semver doesn't
+	tmpVersion, err := version.NewVersion(baseVersion)
+	bsv, err := semver.NewVersion(tmpVersion.String())
 	if err != nil {
 		return "", err
 	}
