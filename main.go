@@ -146,8 +146,8 @@ func getLatestGithubTag(c config) (string, error) {
 		return "", err
 	}
 	if len(tags) == 0 {
-		// if no current flags exist then lets start at 1.0.0
-		return "1.0.0", errors.New("No existing tags found")
+		// if no current flags exist then lets start at 0.0.0
+		return "0.0.0", errors.New("No existing tags found")
 	}
 
 	// build an array of all the tags
@@ -175,23 +175,17 @@ func getLatestGithubTag(c config) (string, error) {
 func getNewVersionFromTag(c config) (string, error) {
 
 	// get the latest github tag
-	useDefaultVersion := false
 	tag, err := getLatestGithubTag(c)
 	if err != nil && tag == "" {
 		return "", err
-	} else if err != nil && tag != "" {
-		// use a default if no existing version found
-		useDefaultVersion = true
 	}
 	sv, err := semver.NewVersion(tag)
 	if err != nil {
 		return "", err
 	}
 
-	// if we get a tag along with an error then just return the value as it is because there were no existing tags, we default to 1.0.0
-	if !useDefaultVersion {
-		sv.BumpPatch()
-	}
+	sv.BumpPatch()
+
 	majorVersion := sv.Major
 	minorVersion := sv.Minor
 	patchVersion := sv.Patch
