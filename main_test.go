@@ -72,3 +72,21 @@ func TestGetNewVersionFromTagCurrentRepo(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "1.2.0", v, "error bumping a patch version")
 }
+
+func TestGetGitOwner(t *testing.T) {
+
+	rs := getCurrentGitOwnerRepo("git@github.com:rawlingsj/semver-release-number.git")
+
+	assert.Equal(t, "rawlingsj", rs[0])
+	assert.Equal(t, "semver-release-number", rs[1])
+
+	//assertParseGitRepositoryInfo("git://host.xz/org/repo", "host.xz", "org", "repo");
+	//assertParseGitRepositoryInfo("git://host.xz/org/repo.git", "host.xz", "org", "repo");
+	//assertParseGitRepositoryInfo("git://host.xz/org/repo.git/", "host.xz", "org", "repo");
+	//assertParseGitRepositoryInfo("git://github.com/jstrachan/npm-pipeline-test-project.git", "github.com", "jstrachan", "npm-pipeline-test-project");
+	//assertParseGitRepositoryInfo("https://github.com/fabric8io/foo.git", "github.com", "fabric8io", "foo");
+	//assertParseGitRepositoryInfo("https://github.com/fabric8io/foo", "github.com", "fabric8io", "foo");
+	//assertParseGitRepositoryInfo("git@github.com:jstrachan/npm-pipeline-test-project.git", "github.com", "jstrachan", "npm-pipeline-test-project");
+	//assertParseGitRepositoryInfo("git@github.com:bar/foo.git", "github.com", "bar", "foo");
+	//assertParseGitRepositoryInfo("git@github.com:bar/foo", "github.com", "bar", "foo");
+}
