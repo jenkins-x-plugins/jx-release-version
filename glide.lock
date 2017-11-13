@@ -1,0 +1,54 @@
+hash: 019e0f790e02c849c01f48f40a079d3aecf03f7918d28897f67c66840ff792c5
+updated: 2017-11-13T11:40:21.910007398Z
+imports:
+- name: github.com/coreos/go-semver
+  version: 1817cd4bea52af76542157eeabd74b057d1a199e
+  subpackages:
+  - semver
+- name: github.com/golang/protobuf
+  version: 4bd1920723d7b7c925de087aa32e2187708897f7
+  subpackages:
+  - proto
+- name: github.com/google/go-github
+  version: 8c08f4fba5e05e0fd2821a5f80cf0cf643bd5314
+  subpackages:
+  - github
+- name: github.com/google/go-querystring
+  version: 53e6ce116135b80d037921a7fdd5138cf32d7a8a
+  subpackages:
+  - query
+- name: github.com/hashicorp/go-version
+  version: fc61389e27c71d120f87031ca8c88a3428f372dd
+- name: github.com/stretchr/testify
+  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
+  subpackages:
+  - assert
+- name: github.com/tcnksm/go-gitconfig
+  version: d154598bacbf4501c095a309753c5d4af66caa81
+- name: golang.org/x/net
+  version: 1c05540f6879653db88113bc4a2b70aec4bd491f
+  subpackages:
+  - context
+- name: golang.org/x/oauth2
+  version: a6bd8cefa1811bd24b86f8902872e4e8225f74c4
+  subpackages:
+  - internal
+- name: google.golang.org/appengine
+  version: 9d8544a6b2c7df9cff240fcf92d7b2f59bc13416
+  subpackages:
+  - internal
+  - internal/base
+  - internal/datastore
+  - internal/log
+  - internal/remote_api
+  - internal/urlfetch
+  - urlfetch
+testImports:
+- name: github.com/davecgh/go-spew
+  version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
+  subpackages:
+  - spew
+- name: github.com/pmezard/go-difflib
+  version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
+  subpackages:
+  - difflib
