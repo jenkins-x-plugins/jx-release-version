@@ -34,20 +34,18 @@ type config struct {
 
 func main() {
 
-	dryrun := flag.Bool("dryrun", false, "avoids pushing Git tag for new release")
 	debug := flag.Bool("debug", false, "prints debug into to console")
-	dir := flag.String("folder", ".", "the folder to look for files that contain the project version to bump")
-	owner := flag.String("org", "", "the git repository owner e.g. fabric8io")
-	repo := flag.String("repo", "", "the git repository e.g. fabric8")
+	dir := flag.String("folder", ".", "the folder to look for files that contain a pom.xml or Makfile with the project version to bump")
+	owner := flag.String("org", "", "the git repository owner if not running from within a git project  e.g. fabric8io")
+	repo := flag.String("repo", "", "the git repository if not running from within a git project  e.g. fabric8")
 
 	flag.Parse()
 
 	c := config{
-		dryrun: *dryrun,
-		debug:  *debug,
-		dir:    *dir,
-		owner:  *owner,
-		repo:   *repo,
+		debug: *debug,
+		dir:   *dir,
+		owner: *owner,
+		repo:  *repo,
 	}
 
 	v, err := getNewVersionFromTag(c)

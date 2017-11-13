@@ -7,7 +7,7 @@ This is a simple binary that can be used in CD pipelines to read pom.xml or Make
 If you need to bump the major or minor version simply increment the version in your Makefile / pom.xml
 
 
-This helps in continuous delivery if you want an automatic release when a change is merged to master.  Traditional approaches mean the version is stored in a file that is checked and updated after each release.  If you want autotic releases this means you will get another release as a result of the version number update resulting in a cyclic release sitiation.  
+This helps in continuous delivery if you want an automatic release when a change is merged to master.  Traditional approaches mean the version is stored in a file that is checked and updated after each release.  If you want automatic releases this means you will get another release triggered from the version update resulting in a cyclic release sitiation.  
 
 Using a git tag to work out the next release version is better than traditional approaches of storing it in a a VERSION file or updating a pom.xml.  If a major or minor version increase is required then still update the file and `semver-release-number` will use you new version. 
 
@@ -36,6 +36,20 @@ VERSION := 2.0.0-SNAPSHOT
     <version>1.0-0-SNAPSHOT</version>
     <packaging>pom</packaging>
 </project>
+```
+
+### CLI arguments
+
+```sh
+Usage of semver-release-number:
+  -debug
+    	prints debug into to console
+  -folder string
+    	the folder to look for files that contain a pom.xml or Makfile with the project version to bump (default ".")
+  -org string
+    	the git repository owner if not running from within a git project  e.g. fabric8io
+  -repo string
+    	the git repository if not running from within a git project  e.g. fabric8
 ```
 
 ### FAQ
