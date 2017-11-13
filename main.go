@@ -11,6 +11,7 @@ import (
 	"os"
 	"strings"
 
+	"bufio"
 	"context"
 	"encoding/xml"
 	"flag"
@@ -35,8 +36,8 @@ func main() {
 
 	var c config
 	c.dryrun = *flag.Bool("dryrun", false, "avoids pushing Git tag for new release")
-	c.debug = *flag.Bool("debug", false, "prints debug into to console")
-	c.dir = *flag.String("folder", "", "the folder to look for files that contain the project version to bump")
+	c.debug = *flag.Bool("debug", true, "prints debug into to console")
+	c.dir = *flag.String("folder", ".", "the folder to look for files that contain the project version to bump")
 	c.owner = *flag.String("org", "", "the git repository owner e.g. fabric8io")
 	c.repo = *flag.String("repo", "", "the git repository e.g. fabric8")
 
@@ -49,22 +50,26 @@ func main() {
 }
 
 func getVersion(c config) (string, error) {
-
+	if c.debug {
+		fmt.Println(fmt.Sprintf("reading file %s%s%s", c.dir, string(filepath.Separator), "Makefile"))
+	}
 	m, err := ioutil.ReadFile(c.dir + string(filepath.Separator) + "Makefile")
 	if err == nil {
-		str := string(m)
 		if c.debug {
 			fmt.Println("Found Makefile")
 		}
-		if strings.Contains(str, "VERSION") {
-			parts := strings.Split(str, "=")
+		scanner := bufio.NewScanner(strings.NewReader(string(m)))
+		for scanner.Scan() {
+			if strings.Contains(scanner.Text(), "VERSION") {
+				parts := strings.Split(scanner.Text(), "=")
 
-			v := strings.TrimSpace(parts[1])
-			if v != "" {
-				if c.debug {
-					fmt.Println(fmt.Sprintf("existing Makefile version %v"), v)
+				v := strings.TrimSpace(parts[1])
+				if v != "" {
+					if c.debug {
+						fmt.Println(fmt.Sprintf("existing Makefile version %v", v))
+					}
+					return v, nil
 				}
-				return v, nil
 			}
 		}
 	}
@@ -92,9 +97,9 @@ func getLatestGithubTag(c config) (string, error) {
 	if c.owner != "" {
 		owner = c.owner
 	} else {
-		o, err := gitconfig.Repository()
+		o, err := gitconfig.Username()
 		if err != nil {
-			return "", fmt.Errorf("no git repo flag provided and not executed in a git repo with an origin URL: %v", err)
+			return "", fmt.Errorf("no git owner flag provided and not executed in a git repo with an origin URL: %v", err)
 		}
 		owner = o
 	}
@@ -132,7 +137,8 @@ func getLatestGithubTag(c config) (string, error) {
 		return "", err
 	}
 	if len(tags) == 0 {
-		return "", errors.New(fmt.Sprintf("No tags found for %s/%s", owner, repo))
+		// if no current flags exist then lets start at 1.0.0
+		return "1.0.0", errors.New("No existing tags found")
 	}
 
 	// build an array of all the tags
@@ -160,19 +166,23 @@ func getLatestGithubTag(c config) (string, error) {
 func getNewVersionFromTag(c config) (string, error) {
 
 	// get the latest github tag
+	useDefaultVersion := false
 	tag, err := getLatestGithubTag(c)
-	if err != nil {
-		// use a default if no existing version found
+	if err != nil && tag == "" {
 		return "", err
+	} else if err != nil && tag != "" {
+		// use a default if no existing version found
+		useDefaultVersion = true
 	}
 	sv, err := semver.NewVersion(tag)
 	if err != nil {
-		// use a default if no existing version found
-		return "1.0.0", nil
+		return "", err
 	}
 
-	sv.BumpPatch()
-
+	// if we get a tag along with an error then just return the value as it is because there were no existing tags, we default to 1.0.0
+	if !useDefaultVersion {
+		sv.BumpPatch()
+	}
 	majorVersion := sv.Major
 	minorVersion := sv.Minor
 	patchVersion := sv.Patch

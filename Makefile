@@ -1,7 +1,7 @@
 NAME := semver-release-number
 ORG := rawlingsj
 ROOT_PACKAGE := main.go
-VERSION := DEV
+VERSION := 1.0.2-SNAPSHOT
 
 GO := GO15VENDOREXPERIMENT=1 go
 REVISION        := $(shell git rev-parse --short HEAD 2> /dev/null  || echo 'unknown')

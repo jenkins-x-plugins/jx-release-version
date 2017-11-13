@@ -47,6 +47,7 @@ func TestGetNewVersionFromTag(t *testing.T) {
 
 	c := config{
 		dryrun: false,
+		debug:  true,
 		dir:    "test-resources/make",
 		owner:  "rawlingsj",
 		repo:   "test432317675",
@@ -62,11 +63,12 @@ func TestGetNewVersionFromTagCurrentRepo(t *testing.T) {
 
 	c := config{
 		dryrun: false,
+		debug:  true,
 		dir:    "test-resources/make",
 	}
 
 	v, err := getNewVersionFromTag(c)
 
 	assert.NoError(t, err)
-	assert.Equal(t, "1.0.0", v, "error bumping a patch version")
+	assert.Equal(t, "1.2.0", v, "error bumping a patch version")
 }
