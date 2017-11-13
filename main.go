@@ -34,12 +34,21 @@ type config struct {
 
 func main() {
 
-	var c config
-	c.dryrun = *flag.Bool("dryrun", false, "avoids pushing Git tag for new release")
-	c.debug = *flag.Bool("debug", true, "prints debug into to console")
-	c.dir = *flag.String("folder", ".", "the folder to look for files that contain the project version to bump")
-	c.owner = *flag.String("org", "", "the git repository owner e.g. fabric8io")
-	c.repo = *flag.String("repo", "", "the git repository e.g. fabric8")
+	dryrun := flag.Bool("dryrun", false, "avoids pushing Git tag for new release")
+	debug := flag.Bool("debug", false, "prints debug into to console")
+	dir := flag.String("folder", ".", "the folder to look for files that contain the project version to bump")
+	owner := flag.String("org", "", "the git repository owner e.g. fabric8io")
+	repo := flag.String("repo", "", "the git repository e.g. fabric8")
+
+	flag.Parse()
+
+	c := config{
+		dryrun: *dryrun,
+		debug:  *debug,
+		dir:    *dir,
+		owner:  *owner,
+		repo:   *repo,
+	}
 
 	v, err := getNewVersionFromTag(c)
 	if err != nil {
