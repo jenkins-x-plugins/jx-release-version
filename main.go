@@ -17,6 +17,7 @@ import (
 	"flag"
 	"golang.org/x/oauth2"
 	"path/filepath"
+	"regexp"
 	"sort"
 )
 
@@ -104,11 +105,12 @@ func getLatestGithubTag(c config) (string, error) {
 	if c.owner != "" {
 		owner = c.owner
 	} else {
-		o, err := gitconfig.Username()
+		url, err := gitconfig.OriginURL()
 		if err != nil {
-			return "", fmt.Errorf("no git owner flag provided and not executed in a git repo with an origin URL: %v", err)
+			return "", fmt.Errorf("no git repo flag provided and not executed in a git repo with an origin URL: %v", err)
 		}
-		owner = o
+		rs := getCurrentGitOwnerRepo(url)
+		owner = rs[0]
 	}
 	if c.repo != "" {
 		repo = c.repo
@@ -211,4 +213,14 @@ func getNewVersionFromTag(c config) (string, error) {
 		patchVersion = basePatchVersion
 	}
 	return fmt.Sprintf("%d.%d.%d", majorVersion, minorVersion, patchVersion), nil
+}
+
+// returns a string array containing the git owner and repo name for a given URL
+func getCurrentGitOwnerRepo(url string) []string {
+	var OwnerNameRegexp = regexp.MustCompile(`([^:]+)(/[^\/].+)?$`)
+
+	matched2 := OwnerNameRegexp.FindStringSubmatch(url)
+	s := strings.TrimSuffix(matched2[0], ".git")
+
+	return strings.Split(s, "/")
 }
