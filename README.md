@@ -1,4 +1,4 @@
-# semver release number
+# semver release version
 
 Returns a new release version based on previous git tags that can be used in a new release.
 
@@ -9,7 +9,7 @@ If you need to bump the major or minor version simply increment the version in y
 
 This helps in continuous delivery if you want an automatic release when a change is merged to master.  Traditional approaches mean the version is stored in a file that is checked and updated after each release.  If you want automatic releases this means you will get another release triggered from the version update resulting in a cyclic release sitiation.  
 
-Using a git tag to work out the next release version is better than traditional approaches of storing it in a a VERSION file or updating a pom.xml.  If a major or minor version increase is required then still update the file and `semver-release-number` will use you new version. 
+Using a git tag to work out the next release version is better than traditional approaches of storing it in a a VERSION file or updating a pom.xml.  If a major or minor version increase is required then still update the file and `semver-release-version` will use you new version. 
 
 ## Prerequisits
 
@@ -17,11 +17,11 @@ Using a git tag to work out the next release version is better than traditional 
 
 ## Examples
 
-- If your project is new or has no existing git tags then running `semver-release-number` will return a default version of `0.0.1`
+- If your project is new or has no existing git tags then running `semver-release-version` will return a default version of `0.0.1`
 
-- If your latest git tag is `1.2.3` and you Makefile or pom.xml is `1.2.0-SNAPSHOT` then `semver-release-number` will return `1.2.4`
+- If your latest git tag is `1.2.3` and you Makefile or pom.xml is `1.2.0-SNAPSHOT` then `semver-release-version` will return `1.2.4`
 
-- If your latest git tag is `1.2.3` and your Makefile or pom.xml is `2.0.0` then `semver-release-number` will return `2.0.0`
+- If your latest git tag is `1.2.3` and your Makefile or pom.xml is `2.0.0` then `semver-release-version` will return `2.0.0`
 
 ## Example Makefile
 
@@ -42,17 +42,28 @@ VERSION := 2.0.0-SNAPSHOT
 </project>
 ```
 
+Then in your release pipeline do something like this:
+
+```sh
+    ➜ RELEASE_VERSION=$(semver-release-version)
+    ➜ echo "New release version ${RELEASE_VERSION}
+    ➜ mvn versions:set -DnewVersion=${RELEASE_VERSION}
+    ➜ git commit -a -m 'release ${RELEASE_VERSION}'
+    ➜ git tag -fa v${RELEASE_VERSION} -m 'Release version ${RELEASE_VERSION}'
+    ➜ git push origin v${RELEASE_VERSION}
+```
+
 ### CLI arguments
 
 ```sh
-Usage of semver-release-number:
+Usage of semver-release-version:
   -debug
     	prints debug into to console
   -folder string
     	the folder to look for files that contain a pom.xml or Makfile with the project version to bump (default ".")
-  -org string
+  -gh-owner string
     	the git repository owner if not running from within a git project  e.g. fabric8io
-  -repo string
+  -gh-repository string
     	the git repository if not running from within a git project  e.g. fabric8
 ```
 

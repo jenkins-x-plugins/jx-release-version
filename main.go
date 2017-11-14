@@ -58,6 +58,27 @@ func main() {
 }
 
 func getVersion(c config) (string, error) {
+	chart, err := ioutil.ReadFile(c.dir + string(filepath.Separator) + "Chart.yaml")
+	if err == nil {
+		if c.debug {
+			fmt.Println("Found Chart.yaml")
+		}
+		scanner := bufio.NewScanner(strings.NewReader(string(chart)))
+		for scanner.Scan() {
+			if strings.Contains(scanner.Text(), "version") {
+				parts := strings.Split(scanner.Text(), ":")
+
+				v := strings.TrimSpace(parts[1])
+				if v != "" {
+					if c.debug {
+						fmt.Println(fmt.Sprintf("existing Chart version %v", v))
+					}
+					return v, nil
+				}
+			}
+		}
+	}
+
 	m, err := ioutil.ReadFile(c.dir + string(filepath.Separator) + "Makefile")
 	if err == nil {
 		if c.debug {
@@ -93,6 +114,7 @@ func getVersion(c config) (string, error) {
 			return project.Version, nil
 		}
 	}
+
 	return "", errors.New("no recognised file to obtain current version from")
 }
 

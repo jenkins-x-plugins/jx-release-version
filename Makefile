@@ -1,7 +1,7 @@
-NAME := semver-release-number
+NAME := semver-release-version
 ORG := rawlingsj
 ROOT_PACKAGE := main.go
-VERSION := 1.0.2
+VERSION := 1.0.3
 
 GO := GO15VENDOREXPERIMENT=1 go
 REVISION        := $(shell git rev-parse --short HEAD 2> /dev/null  || echo 'unknown')
@@ -37,13 +37,13 @@ fmt:
 	@([[ ! -z "$(FORMATTED)" ]] && printf "Fixed unformatted files:\n$(FORMATTED)") || true
 
 darwin-build:
-	CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME)-darwin-amd64 $(ROOT_PACKAGE)
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME)-darwin $(ROOT_PACKAGE)
 
 linux-build:
-	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME)-linux-amd64 $(ROOT_PACKAGE)
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME)-linux $(ROOT_PACKAGE)
 
 windows-build:
-	CGO_ENABLED=0 GOARCH=amd64 GOOS=windows go build $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME)-windows-amd64.exe $(ROOT_PACKAGE)
+	CGO_ENABLED=0 GOARCH=amd64 GOOS=windows go build $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME)-windows.exe $(ROOT_PACKAGE)
 
 .PHONY: test
 test:
@@ -52,7 +52,7 @@ test:
 .PHONY: release
 release: clean test cross
 	mkdir -p release
-	cp $(BUILD_DIR)/$(NAME)-*-amd64* release
+	cp $(BUILD_DIR)/$(NAME)-* release
 	gh-release checksums sha256
 	gh-release create $(ORG)/$(NAME) $(VERSION) master v$(VERSION)
 
@@ -65,5 +65,5 @@ clean:
 	rm -rf release
 
 .PHONY: docker
-docker: $(BUILD_DIR)/$(NAME)-linux-amd64
+docker: $(BUILD_DIR)/$(NAME)-linux
 	docker build -t "${ORG}/$(NAME):dev" .
