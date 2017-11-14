@@ -30,6 +30,18 @@ func TestPomXML(t *testing.T) {
 	assert.Equal(t, "1.0-SNAPSHOT", v, "error with getVersion for a pom.xml")
 }
 
+func TestChart(t *testing.T) {
+
+	c := config{
+		dir: "test-resources/helm",
+	}
+	v, err := getVersion(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "0.0.1-SNAPSHOT", v, "error with getVersion for a pom.xml")
+}
+
 func TestGetGithubTag(t *testing.T) {
 
 	c := config{
@@ -48,7 +60,7 @@ func TestGetGitTag(t *testing.T) {
 	// first get the expeted version from github as test above passed
 	c := config{
 		ghOwner:      "rawlingsj",
-		ghRepository: "semver-release-number",
+		ghRepository: "semver-release-version",
 	}
 	expectedVersion, err := getLatestTag(c)
 	assert.NoError(t, err)
@@ -95,10 +107,10 @@ func TestGetNewVersionFromTagCurrentRepo(t *testing.T) {
 
 func TestGetGitOwner(t *testing.T) {
 
-	rs := getCurrentGitOwnerRepo("git@github.com:rawlingsj/semver-release-number.git")
+	rs := getCurrentGitOwnerRepo("git@github.com:rawlingsj/semver-release-version.git")
 
 	assert.Equal(t, "rawlingsj", rs[0])
-	assert.Equal(t, "semver-release-number", rs[1])
+	assert.Equal(t, "semver-release-version", rs[1])
 
 	//rs = getCurrentGitOwnerRepo("https://github.com/rawlingsj/semver-release-number.git")
 

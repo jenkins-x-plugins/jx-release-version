@@ -1,5 +1,5 @@
 FROM scratch
 
-ENTRYPOINT ["/semver-release-number"]
+ENTRYPOINT ["/semver-release-version"]
 
-COPY ./bin/semver-release-number-linux-amd64 /semver-release-number
+COPY ./bin/semver-release-version-linux /semver-release-version
