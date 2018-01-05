@@ -1,4 +1,4 @@
-package: github.com/rawlingsj/semver-release-version
+package: github.com/jenkins-x/jx-release-version
 import:
 - package: github.com/coreos/go-semver
   version: v0.2.0

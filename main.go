@@ -154,7 +154,7 @@ func getLatestTag(c config) (string, error) {
 		versionsRaw = make([]string, len(tags))
 		for i, tag := range tags {
 			if c.debug {
-				fmt.Println(fmt.Sprintf("found tag %s", tag.GetName()))
+				fmt.Println(fmt.Sprintf("found remote tag %s", tag.GetName()))
 			}
 			versionsRaw[i] = tag.GetName()
 		}
@@ -163,7 +163,11 @@ func getLatestTag(c config) (string, error) {
 		if err != nil {
 			return "", errors.New(fmt.Sprint("error running git: %v", err))
 		}
-		exec.Command("git", "fetch", "--tags")
+		cmd := exec.Command("git", "fetch", "--tags", "-v")
+		err = cmd.Run()
+		if err != nil {
+			return "", errors.New(fmt.Sprint("error fetching tags: %v", err))
+		}
 		out, err := exec.Command("git", "tag").Output()
 		if err != nil {
 			return "", err

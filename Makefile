@@ -1,5 +1,5 @@
-NAME := semver-release-version
-ORG := rawlingsj
+NAME := jx-release-version
+ORG := jenkins-x
 ROOT_PACKAGE := main.go
 VERSION := 1.0.3
 
