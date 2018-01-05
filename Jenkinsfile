@@ -5,14 +5,14 @@ goNode{
   dockerNode{
     ws{
       if (env.BRANCH_NAME.startsWith('PR-')) {
-        def buildPath = "/home/jenkins/go/src/github.com/rawlingsj/semver-release-version"
+        def buildPath = "/home/jenkins/go/src/github.com/jenkins-x/jx-release-version"
         sh "mkdir -p ${buildPath}"
 
         dir(buildPath) {
             container(name: 'go') {
                 stage ('build binary'){
                     // it looks like using checkout scm looses the tags
-                    sh "git clone https://github.com/rawlingsj/semver-release-version ."
+                    sh "git clone https://github.com/jenkins-x/jx-release-version ."
                     sh "git fetch origin pull/${env.CHANGE_ID}/head:test"
                     sh "git checkout test"
                     sh "make"
@@ -23,7 +23,7 @@ goNode{
         def v = goRelease{
           githubOrganisation = 'rawlingsj'
           dockerOrganisation = 'fabric8'
-          project = 'semver-release-version'
+          project = 'jx-release-version'
         }
       }
     }

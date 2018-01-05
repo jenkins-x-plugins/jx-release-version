@@ -1,7 +1,7 @@
-NAME := semver-release-version
-ORG := rawlingsj
+NAME := jx-release-version
+ORG := jenkins-x
 ROOT_PACKAGE := main.go
-VERSION := 1.0.3
+VERSION := 1.0.4
 
 GO := GO15VENDOREXPERIMENT=1 go
 REVISION        := $(shell git rev-parse --short HEAD 2> /dev/null  || echo 'unknown')
