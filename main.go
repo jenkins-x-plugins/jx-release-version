@@ -86,7 +86,7 @@ func getVersion(c config) (string, error) {
 		}
 		scanner := bufio.NewScanner(strings.NewReader(string(m)))
 		for scanner.Scan() {
-			if strings.Contains(scanner.Text(), "VERSION") {
+			if strings.HasPrefix(scanner.Text(), "VERSION") || strings.HasPrefix(scanner.Text(), "VERSION ") || strings.HasPrefix(scanner.Text(), "VERSION:") || strings.HasPrefix(scanner.Text(), "VERSION=") {
 				parts := strings.Split(scanner.Text(), "=")
 
 				v := strings.TrimSpace(parts[1])
@@ -241,6 +241,9 @@ func getNewVersionFromTag(c config) (string, error) {
 
 	// first use go-version to turn into a proper version, this handles 1.0-SNAPSHOT which semver doesn't
 	tmpVersion, err := version.NewVersion(baseVersion)
+	if err != nil {
+		return fmt.Sprintf("%d.%d.%d", majorVersion, minorVersion, patchVersion), nil
+	}
 	bsv, err := semver.NewVersion(tmpVersion.String())
 	if err != nil {
 		return "", err

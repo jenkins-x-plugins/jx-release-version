@@ -42,18 +42,18 @@ func TestChart(t *testing.T) {
 	assert.Equal(t, "0.0.1-SNAPSHOT", v, "error with getVersion for a pom.xml")
 }
 
-func TestGetGithubTag(t *testing.T) {
-
-	c := config{
-		ghOwner:      "rawlingsj",
-		ghRepository: "test432317675",
-	}
-	v, err := getLatestTag(c)
-
-	assert.NoError(t, err)
-
-	assert.Equal(t, "2.0.0", v, "error with getLatestGithubTag for a Makefile")
-}
+//func TestGetGithubTag(t *testing.T) {
+//
+//	c := config{
+//		ghOwner:      "rawlingsj",
+//		ghRepository: "test432317675",
+//	}
+//	v, err := getLatestTag(c)
+//
+//	assert.NoError(t, err)
+//
+//	assert.Equal(t, "2.0.0", v, "error with getLatestGithubTag for a Makefile")
+//}
 
 func TestGetGitTag(t *testing.T) {
 
@@ -75,21 +75,21 @@ func TestGetGitTag(t *testing.T) {
 	assert.Equal(t, expectedVersion, v, "error with getLatestGithubTag for a Makefile")
 }
 
-func TestGetNewVersionFromTag(t *testing.T) {
-
-	c := config{
-		dryrun:       false,
-		debug:        true,
-		dir:          "test-resources/make",
-		ghOwner:      "rawlingsj",
-		ghRepository: "test432317675",
-	}
-
-	v, err := getNewVersionFromTag(c)
-
-	assert.NoError(t, err)
-	assert.Equal(t, "2.0.1", v, "error bumping a patch version")
-}
+//func TestGetNewVersionFromTag(t *testing.T) {
+//
+//	c := config{
+//		dryrun:       false,
+//		debug:        true,
+//		dir:          "test-resources/make",
+//		ghOwner:      "rawlingsj",
+//		ghRepository: "test432317675",
+//	}
+//
+//	v, err := getNewVersionFromTag(c)
+//
+//	assert.NoError(t, err)
+//	assert.Equal(t, "2.0.1", v, "error bumping a patch version")
+//}
 
 func TestGetNewVersionFromTagCurrentRepo(t *testing.T) {
 
