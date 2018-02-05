@@ -195,10 +195,12 @@ func getLatestTag(c config) (string, error) {
 	}
 
 	// turn the array into a new collection of versions that we can sort
-	versions := make([]*version.Version, len(versionsRaw))
-	for i, raw := range versionsRaw {
+	var versions []*version.Version
+	for _, raw := range versionsRaw {
 		v, _ := version.NewVersion(raw)
-		versions[i] = v
+		if v != nil {
+			versions = append(versions, v)
+		}
 	}
 
 	if len(versions) == 0 {
@@ -207,7 +209,12 @@ func getLatestTag(c config) (string, error) {
 	}
 
 	// return the latest tag
-	sort.Sort(version.Collection(versions))
+	col := version.Collection(versions)
+	if c.debug {
+		fmt.Printf("version collection %v \n", col)
+	}
+
+	sort.Sort(col)
 	latest := len(versions)
 	if versions[latest-1] == nil {
 		return "0.0.0", errors.New("No existing tags found")
