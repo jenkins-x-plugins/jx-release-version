@@ -3,22 +3,24 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/coreos/go-semver/semver"
-	"github.com/google/go-github/github"
-	version "github.com/hashicorp/go-version"
 	"io/ioutil"
 	"os"
 	"strings"
+
+	"github.com/coreos/go-semver/semver"
+	"github.com/google/go-github/github"
+	version "github.com/hashicorp/go-version"
 
 	"bufio"
 	"context"
 	"encoding/xml"
 	"flag"
-	"golang.org/x/oauth2"
 	"os/exec"
 	"path/filepath"
 	"regexp"
 	"sort"
+
+	"golang.org/x/oauth2"
 )
 
 type Project struct {
@@ -164,6 +166,7 @@ func getLatestTag(c config) (string, error) {
 			return "", errors.New(fmt.Sprint("error running git: %v", err))
 		}
 		cmd := exec.Command("git", "fetch", "--tags", "-v")
+		cmd.Env = append(cmd.Env, "GIT_ASKPASS="+os.Getenv("GIT_ASKPASS"))
 		err = cmd.Run()
 		if err != nil {
 			return "", errors.New(fmt.Sprint("error fetching tags: %v", err))
