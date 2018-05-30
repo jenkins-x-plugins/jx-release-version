@@ -51,6 +51,13 @@ func main() {
 		ghRepository: *repo,
 	}
 
+	if c.debug {
+		fmt.Println("available environment:")
+		for _, e := range os.Environ() {
+			fmt.Println(e)
+		}
+	}
+
 	v, err := getNewVersionFromTag(c)
 	if err != nil {
 		fmt.Println("failed to get new version", err)
