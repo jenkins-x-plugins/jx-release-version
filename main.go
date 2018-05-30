@@ -173,7 +173,9 @@ func getLatestTag(c config) (string, error) {
 			return "", errors.New(fmt.Sprint("error running git: %v", err))
 		}
 		cmd := exec.Command("git", "fetch", "--tags", "-v")
-		cmd.Env = append(cmd.Env, "GIT_ASKPASS="+os.Getenv("GIT_ASKPASS"))
+		for _, e := range os.Environ() {
+			cmd.Env = append(cmd.Env, e)
+		}
 		err = cmd.Run()
 		if err != nil {
 			return "", errors.New(fmt.Sprint("error fetching tags: %v", err))
