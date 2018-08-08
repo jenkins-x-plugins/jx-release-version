@@ -1,9 +1,9 @@
 NAME := jx-release-version
 ORG := jenkins-x
-ROOT_PACKAGE := main.go
+ROOT_PACKAGE := ./...
 VERSION := $(shell jx-release-version)
 
-GO := GO15VENDOREXPERIMENT=1 go
+GO := GO111MODULE=on go
 REVISION        := $(shell git rev-parse --short HEAD 2> /dev/null  || echo 'unknown')
 BRANCH     := $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null  || echo 'unknown')
 BUILD_DATE := $(shell date +%Y%m%d-%H:%M:%S)
@@ -30,20 +30,20 @@ check: fmt test
 
 .PHONY: build
 build:
-	CGO_ENABLED=0 GOARCH=amd64 go build $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME) $(ROOT_PACKAGE)
+	GOARCH=amd64 $(GO) build $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME) $(ROOT_PACKAGE)
 
 fmt:
 	@FORMATTED=`$(GO) fmt $(PACKAGE_DIRS)`
 	@([[ ! -z "$(FORMATTED)" ]] && printf "Fixed unformatted files:\n$(FORMATTED)") || true
 
 darwin-build:
-	CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME)-darwin $(ROOT_PACKAGE)
+	GOARCH=amd64 GOOS=darwin $(GO) build $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME)-darwin $(ROOT_PACKAGE)
 
 linux-build:
-	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME)-linux $(ROOT_PACKAGE)
+	GOARCH=amd64 GOOS=linux $(GO) build $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME)-linux $(ROOT_PACKAGE)
 
 windows-build:
-	CGO_ENABLED=0 GOARCH=amd64 GOOS=windows go build $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME)-windows.exe $(ROOT_PACKAGE)
+	GOARCH=amd64 GOOS=windows $(GO) build $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME)-windows.exe $(ROOT_PACKAGE)
 
 .PHONY: test
 test:
