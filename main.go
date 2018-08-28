@@ -170,7 +170,7 @@ func getLatestTag(c config) (string, error) {
 	} else {
 		_, err := exec.LookPath("git")
 		if err != nil {
-			return "", errors.New(fmt.Sprint("error running git: %v", err))
+			return "", fmt.Errorf("error running git: %v", err)
 		}
 		cmd := exec.Command("git", "fetch", "--tags", "-v")
 		for _, e := range os.Environ() {
@@ -178,7 +178,7 @@ func getLatestTag(c config) (string, error) {
 		}
 		err = cmd.Run()
 		if err != nil {
-			return "", errors.New(fmt.Sprint("error fetching tags: %v", err))
+			return "", fmt.Errorf("error fetching tags: %v", err)
 		}
 		out, err := exec.Command("git", "tag").Output()
 		if err != nil {
