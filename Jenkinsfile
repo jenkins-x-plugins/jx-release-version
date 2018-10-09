@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        label "jenkins-go"
-    }
+    agent any
     stages {
         stage('CI Build and Test') {
             when {
@@ -10,10 +8,8 @@ pipeline {
             steps {
                 dir ('/home/jenkins/go/src/github.com/jenkins-x/jx-release-version') {
                     checkout scm
-                    container('go') {
-                        sh "make"
-                        sh "./bin/jx-release-version-linux"
-                    }
+                    sh "make"
+                    sh "./bin/jx-release-version-linux"
                 }
             }
         }
@@ -27,10 +23,9 @@ pipeline {
             }
             steps {
                 dir ('/home/jenkins/go/src/github.com/jenkins-x/jx-release-version') {
-                    checkout scm
-                    container('go') {
-                        sh "GITHUB_ACCESS_TOKEN=$GH_CREDS_PSW make release"
-                    }
+                    git "https://github.com/jenkins-x/jx-release-version"
+                    
+                    sh "GITHUB_ACCESS_TOKEN=$GH_CREDS_PSW make release"
                 }
             }
         }
