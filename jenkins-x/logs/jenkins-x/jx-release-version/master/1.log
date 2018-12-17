@@ -1,0 +1,204 @@
+Step: build-step-credential-initializer:
+
+Step: build-step-git-source:
+
+Step: build-step-jenkins:
+
+Picked up _JAVA_OPTIONS: -Xmx2048m
+Started
+Running in Durability level: PERFORMANCE_OPTIMIZED
+  39.458 [id=29]	WARNING	i.f.k.c.i.VersionUsageUtils#alert: The client is using resource type 'customresourcedefinitions' with unstable version 'v1beta1'
+[Pipeline] node
+Running on Jenkins in /tmp/jenkinsTests.tmp/jenkins2804774590884238860test/workspace/job
+[Pipeline] {
+  60.243 [id=68]	WARNING	o.j.plugins.workflow.cps.DSL#invokeStep: Error storing the arguments for step: checkout
+org.kohsuke.stapler.NoStaplerConstructorException: There's no @DataBoundConstructor on any constructor of class io.jenkins.jenkinsfile.runner.FileSystemSCM
+	at org.kohsuke.stapler.ClassDescriptor.loadConstructorParamNames(ClassDescriptor.java:265)
+	at org.jenkinsci.plugins.structs.describable.DescribableModel.<init>(DescribableModel.java:144)
+	at org.jenkinsci.plugins.structs.describable.DescribableModel.of(DescribableModel.java:114)
+	at org.jenkinsci.plugins.workflow.cps.actions.ArgumentsActionImpl.sanitizeObjectAndRecordMutation(ArgumentsActionImpl.java:294)
+	at org.jenkinsci.plugins.workflow.cps.actions.ArgumentsActionImpl.sanitizeMapAndRecordMutation(ArgumentsActionImpl.java:386)
+	at org.jenkinsci.plugins.workflow.cps.actions.ArgumentsActionImpl.<init>(ArgumentsActionImpl.java:74)
+	at org.jenkinsci.plugins.workflow.cps.DSL.invokeStep(DSL.java:245)
+	at org.jenkinsci.plugins.workflow.cps.DSL.invokeMethod(DSL.java:178)
+	at org.jenkinsci.plugins.workflow.cps.CpsScript.invokeMethod(CpsScript.java:122)
+	at org.codehaus.groovy.runtime.callsite.PogoMetaClassSite.call(PogoMetaClassSite.java:48)
+	at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCall(CallSiteArray.java:48)
+	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:113)
+	at com.cloudbees.groovy.cps.sandbox.DefaultInvoker.methodCall(DefaultInvoker.java:20)
+	at com.cloudbees.groovy.cps.impl.ContinuationGroup.methodCall(ContinuationGroup.java:57)
+	at com.cloudbees.groovy.cps.impl.FunctionCallBlock$ContinuationImpl.dispatchOrArg(FunctionCallBlock.java:109)
+	at com.cloudbees.groovy.cps.impl.FunctionCallBlock$ContinuationImpl.fixArg(FunctionCallBlock.java:82)
+	at sun.reflect.GeneratedMethodAccessor134.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.cloudbees.groovy.cps.impl.ContinuationPtr$ContinuationImpl.receive(ContinuationPtr.java:72)
+	at com.cloudbees.groovy.cps.impl.PropertyishBlock$ContinuationImpl.get(PropertyishBlock.java:76)
+	at com.cloudbees.groovy.cps.LValueBlock$GetAdapter.receive(LValueBlock.java:30)
+	at com.cloudbees.groovy.cps.impl.PropertyishBlock$ContinuationImpl.fixName(PropertyishBlock.java:66)
+	at sun.reflect.GeneratedMethodAccessor138.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.cloudbees.groovy.cps.impl.ContinuationPtr$ContinuationImpl.receive(ContinuationPtr.java:72)
+	at com.cloudbees.groovy.cps.impl.ConstantBlock.eval(ConstantBlock.java:21)
+	at com.cloudbees.groovy.cps.Next.step(Next.java:83)
+	at com.cloudbees.groovy.cps.Continuable$1.call(Continuable.java:174)
+	at com.cloudbees.groovy.cps.Continuable$1.call(Continuable.java:163)
+	at org.codehaus.groovy.runtime.GroovyCategorySupport$ThreadCategoryInfo.use(GroovyCategorySupport.java:129)
+	at org.codehaus.groovy.runtime.GroovyCategorySupport.use(GroovyCategorySupport.java:268)
+	at com.cloudbees.groovy.cps.Continuable.run0(Continuable.java:163)
+	at org.jenkinsci.plugins.workflow.cps.SandboxContinuable.access$101(SandboxContinuable.java:34)
+	at org.jenkinsci.plugins.workflow.cps.SandboxContinuable.lambda$run0$0(SandboxContinuable.java:59)
+	at org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.GroovySandbox.runInSandbox(GroovySandbox.java:108)
+	at org.jenkinsci.plugins.workflow.cps.SandboxContinuable.run0(SandboxContinuable.java:58)
+	at org.jenkinsci.plugins.workflow.cps.CpsThread.runNextChunk(CpsThread.java:182)
+	at org.jenkinsci.plugins.workflow.cps.CpsThreadGroup.run(CpsThreadGroup.java:332)
+	at org.jenkinsci.plugins.workflow.cps.CpsThreadGroup.access$200(CpsThreadGroup.java:83)
+	at org.jenkinsci.plugins.workflow.cps.CpsThreadGroup$2.call(CpsThreadGroup.java:244)
+	at org.jenkinsci.plugins.workflow.cps.CpsThreadGroup$2.call(CpsThreadGroup.java:232)
+	at org.jenkinsci.plugins.workflow.cps.CpsVmExecutorService$2.call(CpsVmExecutorService.java:64)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at hudson.remoting.SingleLaneExecutorService$1.run(SingleLaneExecutorService.java:131)
+	at jenkins.util.ContextResettingExecutorService$1.run(ContextResettingExecutorService.java:28)
+	at jenkins.security.ImpersonatingExecutorService$1.run(ImpersonatingExecutorService.java:59)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (CI Build and Test)
+Stage "CI Build and Test" skipped due to when conditional
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build and Release)
+[Pipeline] withCredentials
+[Pipeline] {
+[Pipeline] dir
+Running in /home/jenkins/go/src/github.com/jenkins-x/jx-release-version
+[Pipeline] {
+[Pipeline] git
+Cloning the remote Git repository
+Cloning repository https://github.com/jenkins-x/jx-release-version
+ > git init /home/jenkins/go/src/github.com/jenkins-x/jx-release-version # timeout=10
+Fetching upstream changes from https://github.com/jenkins-x/jx-release-version
+ > git --version # timeout=10
+ > git fetch --tags --progress https://github.com/jenkins-x/jx-release-version +refs/heads/*:refs/remotes/origin/*
+ > git config remote.origin.url https://github.com/jenkins-x/jx-release-version # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/jenkins-x/jx-release-version # timeout=10
+Fetching upstream changes from https://github.com/jenkins-x/jx-release-version
+ > git fetch --tags --progress https://github.com/jenkins-x/jx-release-version +refs/heads/*:refs/remotes/origin/*
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git rev-parse refs/remotes/origin/origin/master^{commit} # timeout=10
+Checking out Revision 85831a082595a84b41a97ce73b35fc13b6f2aa5b (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 85831a082595a84b41a97ce73b35fc13b6f2aa5b
+ > git branch -a -v --no-abbrev # timeout=10
+ > git checkout -b master 85831a082595a84b41a97ce73b35fc13b6f2aa5b
+Commit message: "Merge pull request #19 from ccojocar/cleanup-jenkinsfile"
+First time build. Skipping changelog.
+[Pipeline] sh
++ GITHUB_ACCESS_TOKEN=**** make release
+rm -rf ./bin
+rm -rf release
+go test -v 
+=== RUN   TestMakefile
+--- PASS: TestMakefile (0.00s)
+=== RUN   TestPomXML
+--- PASS: TestPomXML (0.00s)
+=== RUN   TestChart
+--- PASS: TestChart (0.00s)
+=== RUN   TestGetGitTag
+found tag v1.0.0
+found tag v1.0.1
+found tag v1.0.10
+found tag v1.0.11
+found tag v1.0.12
+found tag v1.0.13
+found tag v1.0.14
+found tag v1.0.15
+found tag v1.0.2
+found tag v1.0.3
+found tag v1.0.4
+found tag v1.0.5
+found tag v1.0.6
+found tag v1.0.7
+found tag v1.0.8
+found tag v1.0.9
+version collection [1.0.0 1.0.1 1.0.10 1.0.11 1.0.12 1.0.13 1.0.14 1.0.15 1.0.2 1.0.3 1.0.4 1.0.5 1.0.6 1.0.7 1.0.8 1.0.9] 
+--- PASS: TestGetGitTag (1.71s)
+=== RUN   TestGetNewVersionFromTagCurrentRepo
+found tag v1.0.0
+found tag v1.0.1
+found tag v1.0.10
+found tag v1.0.11
+found tag v1.0.12
+found tag v1.0.13
+found tag v1.0.14
+found tag v1.0.15
+found tag v1.0.2
+found tag v1.0.3
+found tag v1.0.4
+found tag v1.0.5
+found tag v1.0.6
+found tag v1.0.7
+found tag v1.0.8
+found tag v1.0.9
+version collection [1.0.0 1.0.1 1.0.10 1.0.11 1.0.12 1.0.13 1.0.14 1.0.15 1.0.2 1.0.3 1.0.4 1.0.5 1.0.6 1.0.7 1.0.8 1.0.9] 
+Found Makefile
+existing Makefile version 1.2.0-SNAPSHOT
+--- PASS: TestGetNewVersionFromTagCurrentRepo (0.77s)
+=== RUN   TestGetGitOwner
+--- PASS: TestGetGitOwner (0.00s)
+PASS
+ok  	github.com/jenkins-x/jx-release-version	2.636s
+CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build -ldflags " -X main.go/version.Version='1.0.16' -X main.go/version.Revision='85831a0' -X main.go/version.Branch='master' -X main.go/version.BuildDate='20181217-13:11:51' -X main.go/version.GoVersion='1.11' -s -w -extldflags '-static'" -o ./bin/jx-release-version-darwin main.go
+CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -ldflags " -X main.go/version.Version='1.0.16' -X main.go/version.Revision='85831a0' -X main.go/version.Branch='master' -X main.go/version.BuildDate='20181217-13:11:51' -X main.go/version.GoVersion='1.11' -s -w -extldflags '-static'" -o ./bin/jx-release-version-linux main.go
+CGO_ENABLED=0 GOARCH=amd64 GOOS=windows go build -ldflags " -X main.go/version.Version='1.0.16' -X main.go/version.Revision='85831a0' -X main.go/version.Branch='master' -X main.go/version.BuildDate='20181217-13:11:51' -X main.go/version.GoVersion='1.11' -s -w -extldflags '-static'" -o ./bin/jx-release-version-windows.exe main.go
+mkdir -p release
+cp ./bin/jx-release-version-* release
+gh-release checksums sha256
+Writing sha256 checksum files...
+gh-release create jenkins-x/jx-release-version 1.0.16 master v1.0.16
+Creating release v1.0.16 from branch master ...
+Uploading jx-release-version-darwin ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 68 5671k    0     0   68 3888k      0  3028k  0:00:01  0:00:01 --:--:-- 3028k100 5672k    0  1469  100 5671k    680  2627k  0:00:02  0:00:02 --:--:-- 2629k
+Uploading jx-release-version-darwin.sha256 ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  1543    0  1478  100    65   1971     86 --:--:-- --:--:-- --:--:--  1970
+Uploading jx-release-version-linux ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 5244k    0     0  100 5244k      0  4014k  0:00:01  0:00:01 --:--:-- 4012k100 5246k    0  1467  100 5244k    680  2431k  0:00:02  0:00:02 --:--:-- 2432k
+Uploading jx-release-version-linux.sha256 ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  1541    0  1476  100    65   2437    107 --:--:-- --:--:-- --:--:--  2439
+Uploading jx-release-version-windows.exe ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0 5158k    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 5159k    0   668  100 5158k    465  3594k  0:00:01  0:00:01 --:--:-- 3594k100 5159k    0  1482  100 5158k   1032  3593k  0:00:01  0:00:01 --:--:-- 3592k
+Uploading jx-release-version-windows.exe.sha256 ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  1553    0  1488  100    65   2559    111 --:--:-- --:--:-- --:--:--  2561
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
