@@ -1,0 +1,253 @@
+Step: build-step-credential-initializer:
+
+Step: build-step-git-source:
+
+Step: build-step-jenkins:
+
+Picked up _JAVA_OPTIONS: -Xmx2048m
+Started
+Running in Durability level: PERFORMANCE_OPTIMIZED
+  30.100 [id=29]	WARNING	i.f.k.c.i.VersionUsageUtils#alert: The client is using resource type 'customresourcedefinitions' with unstable version 'v1beta1'
+[Pipeline] node
+Running on Jenkins in /tmp/jenkinsTests.tmp/jenkins5053976740798683208test/workspace/job
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+  42.014 [id=70]	WARNING	o.j.plugins.workflow.cps.DSL#invokeStep: Error storing the arguments for step: checkout
+org.kohsuke.stapler.NoStaplerConstructorException: There's no @DataBoundConstructor on any constructor of class io.jenkins.jenkinsfile.runner.FileSystemSCM
+	at org.kohsuke.stapler.ClassDescriptor.loadConstructorParamNames(ClassDescriptor.java:265)
+	at org.jenkinsci.plugins.structs.describable.DescribableModel.<init>(DescribableModel.java:144)
+	at org.jenkinsci.plugins.structs.describable.DescribableModel.of(DescribableModel.java:114)
+	at org.jenkinsci.plugins.workflow.cps.actions.ArgumentsActionImpl.sanitizeObjectAndRecordMutation(ArgumentsActionImpl.java:294)
+	at org.jenkinsci.plugins.workflow.cps.actions.ArgumentsActionImpl.sanitizeMapAndRecordMutation(ArgumentsActionImpl.java:386)
+	at org.jenkinsci.plugins.workflow.cps.actions.ArgumentsActionImpl.<init>(ArgumentsActionImpl.java:74)
+	at org.jenkinsci.plugins.workflow.cps.DSL.invokeStep(DSL.java:245)
+	at org.jenkinsci.plugins.workflow.cps.DSL.invokeMethod(DSL.java:178)
+	at org.jenkinsci.plugins.workflow.cps.CpsScript.invokeMethod(CpsScript.java:122)
+	at org.codehaus.groovy.runtime.callsite.PogoMetaClassSite.call(PogoMetaClassSite.java:48)
+	at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCall(CallSiteArray.java:48)
+	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:113)
+	at com.cloudbees.groovy.cps.sandbox.DefaultInvoker.methodCall(DefaultInvoker.java:20)
+	at com.cloudbees.groovy.cps.impl.ContinuationGroup.methodCall(ContinuationGroup.java:57)
+	at com.cloudbees.groovy.cps.impl.FunctionCallBlock$ContinuationImpl.dispatchOrArg(FunctionCallBlock.java:109)
+	at com.cloudbees.groovy.cps.impl.FunctionCallBlock$ContinuationImpl.fixArg(FunctionCallBlock.java:82)
+	at sun.reflect.GeneratedMethodAccessor127.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.cloudbees.groovy.cps.impl.ContinuationPtr$ContinuationImpl.receive(ContinuationPtr.java:72)
+	at com.cloudbees.groovy.cps.impl.PropertyishBlock$ContinuationImpl.get(PropertyishBlock.java:76)
+	at com.cloudbees.groovy.cps.LValueBlock$GetAdapter.receive(LValueBlock.java:30)
+	at com.cloudbees.groovy.cps.impl.PropertyishBlock$ContinuationImpl.fixName(PropertyishBlock.java:66)
+	at sun.reflect.GeneratedMethodAccessor131.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.cloudbees.groovy.cps.impl.ContinuationPtr$ContinuationImpl.receive(ContinuationPtr.java:72)
+	at com.cloudbees.groovy.cps.impl.ConstantBlock.eval(ConstantBlock.java:21)
+	at com.cloudbees.groovy.cps.Next.step(Next.java:83)
+	at com.cloudbees.groovy.cps.Continuable$1.call(Continuable.java:174)
+	at com.cloudbees.groovy.cps.Continuable$1.call(Continuable.java:163)
+	at org.codehaus.groovy.runtime.GroovyCategorySupport$ThreadCategoryInfo.use(GroovyCategorySupport.java:129)
+	at org.codehaus.groovy.runtime.GroovyCategorySupport.use(GroovyCategorySupport.java:268)
+	at com.cloudbees.groovy.cps.Continuable.run0(Continuable.java:163)
+	at org.jenkinsci.plugins.workflow.cps.SandboxContinuable.access$101(SandboxContinuable.java:34)
+	at org.jenkinsci.plugins.workflow.cps.SandboxContinuable.lambda$run0$0(SandboxContinuable.java:59)
+	at org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.GroovySandbox.runInSandbox(GroovySandbox.java:108)
+	at org.jenkinsci.plugins.workflow.cps.SandboxContinuable.run0(SandboxContinuable.java:58)
+	at org.jenkinsci.plugins.workflow.cps.CpsThread.runNextChunk(CpsThread.java:182)
+	at org.jenkinsci.plugins.workflow.cps.CpsThreadGroup.run(CpsThreadGroup.java:332)
+	at org.jenkinsci.plugins.workflow.cps.CpsThreadGroup.access$200(CpsThreadGroup.java:83)
+	at org.jenkinsci.plugins.workflow.cps.CpsThreadGroup$2.call(CpsThreadGroup.java:244)
+	at org.jenkinsci.plugins.workflow.cps.CpsThreadGroup$2.call(CpsThreadGroup.java:232)
+	at org.jenkinsci.plugins.workflow.cps.CpsVmExecutorService$2.call(CpsVmExecutorService.java:64)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at hudson.remoting.SingleLaneExecutorService$1.run(SingleLaneExecutorService.java:131)
+	at jenkins.util.ContextResettingExecutorService$1.run(ContextResettingExecutorService.java:28)
+	at jenkins.security.ImpersonatingExecutorService$1.run(ImpersonatingExecutorService.java:59)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+[Pipeline] checkout
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (CI Build and Test)
+Stage "CI Build and Test" skipped due to when conditional
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build and Release)
+[Pipeline] withCredentials
+[Pipeline] {
+[Pipeline] dir
+Running in /home/jenkins/go/src/github.com/jenkins-x/exposecontroller
+[Pipeline] {
+[Pipeline] git
+Cloning the remote Git repository
+Cloning repository https://github.com/jenkins-x/exposecontroller
+ > git init /home/jenkins/go/src/github.com/jenkins-x/exposecontroller # timeout=10
+Fetching upstream changes from https://github.com/jenkins-x/exposecontroller
+ > git --version # timeout=10
+ > git fetch --tags --progress https://github.com/jenkins-x/exposecontroller +refs/heads/*:refs/remotes/origin/*
+ > git config remote.origin.url https://github.com/jenkins-x/exposecontroller # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/jenkins-x/exposecontroller # timeout=10
+Fetching upstream changes from https://github.com/jenkins-x/exposecontroller
+ > git fetch --tags --progress https://github.com/jenkins-x/exposecontroller +refs/heads/*:refs/remotes/origin/*
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git rev-parse refs/remotes/origin/origin/master^{commit} # timeout=10
+Checking out Revision c6f677555cf2032eddf0c38bc48e491d61b49b1e (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f c6f677555cf2032eddf0c38bc48e491d61b49b1e
+ > git branch -a -v --no-abbrev # timeout=10
+ > git checkout -b master c6f677555cf2032eddf0c38bc48e491d61b49b1e
+Commit message: "Merge pull request #159 from ccojocar/cleanup-jenkinsfile"
+First time build. Skipping changelog.
+[Pipeline] sh
++ jx-release-version
++ echo 2.3.84
+[Pipeline] sh
++ git add version/VERSION
+[Pipeline] sh
++ git commit -m release $(cat version/VERSION)
+[master 6def39e0] release $(cat version/VERSION)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+[Pipeline] sh
++ GITHUB_ACCESS_TOKEN=**** make release
+rm -rf ./out
+rm -rf release
+mkdir -p /home/jenkins/go/src/github.com/jenkins-x/exposecontroller/_gopath/src/github.com/jenkins-x
+ln -s -f /home/jenkins/go/src/github.com/jenkins-x/exposecontroller /home/jenkins/go/src/github.com/jenkins-x/exposecontroller/_gopath/src/github.com/jenkins-x
+CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -ldflags " -X github.com/jenkins-x/exposecontroller/version.Version='2.3.84' -X github.com/jenkins-x/exposecontroller/version.Revision='6def39e0' -X github.com/jenkins-x/exposecontroller/version.Branch='master' -X github.com/jenkins-x/exposecontroller/version.BuildUser='@881c37d3-01fd-11e9-890f-0a580a301203-c2sfb' -X github.com/jenkins-x/exposecontroller/version.BuildDate='20181217-13:15:23' -X github.com/jenkins-x/exposecontroller/version.GoVersion='1.11' -s -w -extldflags '-static'" -o ./out/exposecontroller-linux-amd64 github.com/jenkins-x/exposecontroller
+/bin/sh: 1: [[: not found
+go test -v github.com/jenkins-x/exposecontroller github.com/jenkins-x/exposecontroller/controller github.com/jenkins-x/exposecontroller/exposestrategy github.com/jenkins-x/exposecontroller/version
+?   	github.com/jenkins-x/exposecontroller	[no test files]
+=== RUN   TestMapToConfig
+Config is &controller.Config{Domain:"35.233.48.48.nip.io", Exposer:"Ingress", PathMode:"", ApiServer:"", NodeIP:"", RouteHost:"", RouteUsePath:false, ConsoleURL:"", AuthorizePath:"", ApiServerProtocol:"", WatchNamespaces:"", WatchCurrentNamespace:false, HTTP:false, TLSAcme:false, UrlTemplate:"", Services:[]string(nil), original:""}
+--- PASS: TestMapToConfig (0.00s)
+PASS
+ok  	github.com/jenkins-x/exposecontroller/controller	0.207s
+?   	github.com/jenkins-x/exposecontroller/exposestrategy	[no test files]
+?   	github.com/jenkins-x/exposecontroller/version	[no test files]
+CGO_ENABLED=0 GOARCH=amd64 GOOS=darwin go build -ldflags " -X github.com/jenkins-x/exposecontroller/version.Version='2.3.84' -X github.com/jenkins-x/exposecontroller/version.Revision='6def39e0' -X github.com/jenkins-x/exposecontroller/version.Branch='master' -X github.com/jenkins-x/exposecontroller/version.BuildUser='@881c37d3-01fd-11e9-890f-0a580a301203-c2sfb' -X github.com/jenkins-x/exposecontroller/version.BuildDate='20181217-13:15:23' -X github.com/jenkins-x/exposecontroller/version.GoVersion='1.11' -s -w -extldflags '-static'" -o ./out/exposecontroller-darwin-amd64 github.com/jenkins-x/exposecontroller
+CGO_ENABLED=0 GOARCH=amd64 GOOS=windows go build -ldflags " -X github.com/jenkins-x/exposecontroller/version.Version='2.3.84' -X github.com/jenkins-x/exposecontroller/version.Revision='6def39e0' -X github.com/jenkins-x/exposecontroller/version.Branch='master' -X github.com/jenkins-x/exposecontroller/version.BuildUser='@881c37d3-01fd-11e9-890f-0a580a301203-c2sfb' -X github.com/jenkins-x/exposecontroller/version.BuildDate='20181217-13:15:23' -X github.com/jenkins-x/exposecontroller/version.GoVersion='1.11' -s -w -extldflags '-static'" -o ./out/exposecontroller-windows-amd64.exe github.com/jenkins-x/exposecontroller
+CGO_ENABLED=0 GOARCH=arm GOOS=linux go build -ldflags " -X github.com/jenkins-x/exposecontroller/version.Version='2.3.84' -X github.com/jenkins-x/exposecontroller/version.Revision='6def39e0' -X github.com/jenkins-x/exposecontroller/version.Branch='master' -X github.com/jenkins-x/exposecontroller/version.BuildUser='@881c37d3-01fd-11e9-890f-0a580a301203-c2sfb' -X github.com/jenkins-x/exposecontroller/version.BuildDate='20181217-13:15:23' -X github.com/jenkins-x/exposecontroller/version.GoVersion='1.11' -s -w -extldflags '-static'" -o ./out/exposecontroller-linux-arm github.com/jenkins-x/exposecontroller
+docker build -t docker.io/jenkinsxio/exposecontroller:2.3.84 .
+Sending build context to Docker daemon  208.5MB
+Step 1/3 : FROM scratch
+ ---> 
+Step 2/3 : ENTRYPOINT /exposecontroller --daemon
+ ---> Running in ec336567bfe4
+ ---> d152548be60d
+Removing intermediate container ec336567bfe4
+Step 3/3 : COPY ./out/exposecontroller-linux-amd64 /exposecontroller
+ ---> a87e7553a73c
+Removing intermediate container 69054ed275c7
+Successfully built a87e7553a73c
+docker tag docker.io/jenkinsxio/exposecontroller:2.3.84 docker.io/jenkinsxio/exposecontroller:latest
+docker push docker.io/jenkinsxio/exposecontroller:2.3.84
+The push refers to a repository [docker.io/jenkinsxio/exposecontroller]
+c9527cb11773: Preparing
+c9527cb11773: Pushed
+2.3.84: digest: sha256:40dc753163c8e7f0ad23f9732094827ce496b8110e58d3450c421ef023ca3710 size: 528
+docker push docker.io/jenkinsxio/exposecontroller:latest
+The push refers to a repository [docker.io/jenkinsxio/exposecontroller]
+c9527cb11773: Preparing
+c9527cb11773: Layer already exists
+latest: digest: sha256:40dc753163c8e7f0ad23f9732094827ce496b8110e58d3450c421ef023ca3710 size: 528
+sed -i -e "s/version:.*/version: 2.3.84/" charts/exposecontroller/Chart.yaml
+sed -i -e "s/ImageTag:.*/ImageTag: 2.3.84/" charts/exposecontroller/values.yaml
+git add charts/exposecontroller/Chart.yaml
+git add charts/exposecontroller/values.yaml
+git commit -m "release 2.3.84" --allow-empty
+[master d377ffea] release 2.3.84
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+mkdir -p release
+cp out/exposecontroller-*-amd64* release
+cp out/exposecontroller-*-arm* release
+gh-release checksums sha256
+Writing sha256 checksum files...
+gh-release create jenkins-x/exposecontroller 2.3.84 master v2.3.84
+Creating release v2.3.84 from branch master ...
+Uploading exposecontroller-darwin-amd64 ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0 30.2M    0     0    0  192k      0   225k  0:02:17 --:--:--  0:02:17  225k 63 30.2M    0     0   63 19.2M      0  10.1M  0:00:02  0:00:01  0:00:01 10.1M100 30.2M    0   668  100 30.2M    217   9.8M  0:00:03  0:00:03 --:--:--  9.8M100 30.2M    0  1474  100 30.2M    480   9.8M  0:00:03  0:00:03 --:--:--  9.8M
+Uploading exposecontroller-darwin-amd64.sha256 ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    65    0     0  100    65      0     51  0:00:01  0:00:01 --:--:--    51100   733    0   668  100    65    381     37  0:00:01  0:00:01 --:--:--   381100  1547    0  1482  100    65    845     37  0:00:01  0:00:01 --:--:--   845
+Uploading exposecontroller-linux-amd64 ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0 26.2M    0     0    0  192k      0   213k  0:02:06 --:--:--  0:02:06  213k 83 26.2M    0     0   83 21.9M      0  11.7M  0:00:02  0:00:01  0:00:01 11.7M100 26.2M    0   668  100 26.2M    226  9098k  0:00:02  0:00:02 --:--:-- 9097k100 26.2M    0  1472  100 26.2M    498  9097k  0:00:02  0:00:02 --:--:-- 9097k
+Uploading exposecontroller-linux-amd64.sha256 ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  1545    0  1480  100    65   2475    108 --:--:-- --:--:-- --:--:--  2479
+Uploading exposecontroller-linux-arm ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 20 22.4M    0     0   20 4704k      0  4118k  0:00:05  0:00:01  0:00:04 4119k100 22.4M    0   668  100 22.4M    270  9330k  0:00:02  0:00:02 --:--:-- 9330k100 22.4M    0  1468  100 22.4M    595  9329k  0:00:02  0:00:02 --:--:-- 9327k
+Uploading exposecontroller-linux-arm.sha256 ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  1541    0  1476  100    65   2557    112 --:--:-- --:--:-- --:--:--  2562
+Uploading exposecontroller-windows-amd64.exe ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  4 26.2M    0     0    4 1168k      0  1249k  0:00:21 --:--:--  0:00:21 1249k100 26.2M    0     0  100 26.2M      0  9785k  0:00:02  0:00:02 --:--:-- 9786k100 26.2M    0  1487  100 26.2M    530  9606k  0:00:02  0:00:02 --:--:-- 9608k
+Uploading exposecontroller-windows-amd64.exe.sha256 ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  1557    0  1492  100    65   2301    100 --:--:-- --:--:-- --:--:--  2302
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] dir
+Running in /home/jenkins/go/src/github.com/jenkins-x/exposecontroller/charts/exposecontroller
+[Pipeline] {
+[Pipeline] sh
++ helm init --client-only
+Creating /builder/home/.helm 
+Creating /builder/home/.helm/repository 
+Creating /builder/home/.helm/repository/cache 
+Creating /builder/home/.helm/repository/local 
+Creating /builder/home/.helm/plugins 
+Creating /builder/home/.helm/starters 
+Creating /builder/home/.helm/cache/archive 
+Creating /builder/home/.helm/repository/repositories.yaml 
+Adding stable repo with URL: https://kubernetes-charts.storage.googleapis.com 
+Adding local repo with URL: http://127.0.0.1:8879/charts 
+$HELM_HOME has been configured at /builder/home/.helm.
+Not installing Tiller due to 'client-only' flag having been set
+Happy Helming!
+[Pipeline] sh
++ make release
+rm -rf charts
+rm -rf exposecontroller*.tgz
+rm -rf requirements.lock
+helm dependency build
+No requirements found in ./charts.
+helm lint
+==> Linting .
+Lint OK
+
+1 chart(s) linted, no failures
+helm package .
+Successfully packaged chart and saved it to: /home/jenkins/go/src/github.com/jenkins-x/exposecontroller/charts/exposecontroller/exposecontroller-2.3.84.tgz
+curl --fail -u **** --data-binary "@exposecontroller-2.3.84.tgz" http://jenkins-x-chartmuseum:8080/api/charts
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  2057  100    14  100  2043     44   6496 --:--:-- --:--:-- --:--:--  6506
+{"saved":true}rm -rf exposecontroller*.tgz
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
