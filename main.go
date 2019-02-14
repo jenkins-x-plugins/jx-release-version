@@ -213,8 +213,7 @@ func getLatestTag(c config) (string, error) {
 	// turn the array into a new collection of versions that we can sort
 	var versions []*version.Version
 	for _, raw := range versionsRaw {
-		//if same-release argiment is set work only with versions which Major and Minor versions are the same if no tag found
-		//like we have only 7.2.1 and 7.1.0 tags but our pom is 7.1.0-SNAPSHOT output will be 7.1.1
+		//if same-release argument is set work only with versions which Major and Minor versions are the same
 		if c.samerelease == true {
 			same, _ := isMajorMinorTheSame(baseVersion, raw)
 			if same == true {
