@@ -42,7 +42,7 @@ func main() {
 	dir := flag.String("folder", ".", "the folder to look for files that contain a pom.xml or Makfile with the project version to bump")
 	owner := flag.String("gh-owner", "", "a github repository owner if not running from within a git project  e.g. fabric8io")
 	repo := flag.String("gh-repository", "", "a git repository if not running from within a git project  e.g. fabric8")
-	samerelease := flag.Bool("same-release", false, "get version with same mafor minor version as current release")
+	samerelease := flag.Bool("same-release", false, "get version with same major minor version as current release")
 
 	flag.Parse()
 
