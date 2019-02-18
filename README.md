@@ -23,6 +23,10 @@ Using a git tag to work out the next release version is better than traditional 
 
 - If your latest git tag is `1.2.3` and your Makefile or pom.xml is `2.0.0` then `jx-release-version` will return `2.0.0`
 
+- If you need to support old release for example 7.0.x and tags for new realese 7.1.x already exist `-same-release` flag  will help to obtain version from 7.0.x release. If in pom file version is 7.0.0-SNAPSHOT and there are two tags 7.1.0 and 7.0.2 are exist command `jx-release-version` will return 7.1.1 but if we run `jx-release-version -same-release` it will return 7.0.3
+
+- If you need to get a release version `1.1.0` for older release and your last tag is `1.2.3` please change your Makefile or pom.xml to `1.1.0-SNAPSHOT` and run ``jx-release-version -same-release`
+
 ## Example Makefile
 
 ```$xslt
@@ -65,6 +69,8 @@ Usage of jx-release-version:
     	the git repository owner if not running from within a git project  e.g. fabric8io
   -gh-repository string
     	the git repository if not running from within a git project  e.g. fabric8
+  -same-release 
+        get version with same Major and Minor version as current release added for support old releases: for example 7.0.x and tag for new realese 7.1.x already exist. With this `-same-release` argument next tag from 7.0.x will be returned          
 ```
 
 ### FAQ
