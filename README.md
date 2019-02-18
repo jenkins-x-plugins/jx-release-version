@@ -25,7 +25,7 @@ Using a git tag to work out the next release version is better than traditional 
 
 - If you need to support old release for example 7.0.x and tags for new realese 7.1.x already exist `-same-release` flag  will help to obtain version from 7.0.x release. If in pom file version is 7.0.0-SNAPSHOT and there are two tags 7.1.0 and 7.0.2 are exist command `jx-release-version` will return 7.1.1 but if we run `jx-release-version -same-release` it will return 7.0.3
 
-- If you need to get a release version `1.1.0` for older release and your last tag is `1.2.3` please change your Makefile or pom.xml to `1.1.0-SNAPSHOT` and run ``jx-release-version -same-release`
+- If you need to get a release version `1.1.0` for older release and your last tag is `1.2.3` please change your Makefile or pom.xml to `1.1.0-SNAPSHOT` and run `jx-release-version -same-release`
 
 ## Example Makefile
 
