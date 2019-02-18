@@ -70,7 +70,7 @@ Usage of jx-release-version:
   -gh-repository string
     	the git repository if not running from within a git project  e.g. fabric8
   -same-release 
-        get version with same Major and Minor version as current release added for support old releases: for example 7.0.x and tag for new realese 7.1.x already exist. With this `-same-release` argument next tag from 7.0.x will be returned          
+        get version with same Major and Minor version as current release, added for support old releases: for example 7.0.x and tag for new realese 7.1.x already exist. With this `-same-release` argument next tag from 7.0.x will be returned          
 ```
 
 ### FAQ
