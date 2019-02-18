@@ -214,9 +214,9 @@ func getLatestTag(c config) (string, error) {
 	var versions []*version.Version
 	for _, raw := range versionsRaw {
 		//if same-release argument is set work only with versions which Major and Minor versions are the same
-		if c.samerelease == true {
+		if c.samerelease {
 			same, _ := isMajorMinorTheSame(baseVersion, raw)
-			if same == true {
+			if same {
 				v, _ := version.NewVersion(raw)
 				if v != nil {
 					versions = append(versions, v)
@@ -228,9 +228,6 @@ func getLatestTag(c config) (string, error) {
 				versions = append(versions, v)
 			}
 		}
-	}
-	if c.debug == true {
-		fmt.Println("version collection size=", len(versions))
 	}
 
 	if len(versions) == 0 {
