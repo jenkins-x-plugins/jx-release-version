@@ -33,6 +33,7 @@ type config struct {
 	dir          string
 	ghOwner      string
 	ghRepository string
+	samerelease  bool
 }
 
 func main() {
@@ -41,6 +42,7 @@ func main() {
 	dir := flag.String("folder", ".", "the folder to look for files that contain a pom.xml or Makfile with the project version to bump")
 	owner := flag.String("gh-owner", "", "a github repository owner if not running from within a git project  e.g. fabric8io")
 	repo := flag.String("gh-repository", "", "a git repository if not running from within a git project  e.g. fabric8")
+	samerelease := flag.Bool("same-release", false, "for support old releases: for example 7.0.x and tag for new realese 7.1.x already exist, with `-same-release` argument next version from 7.0.x will be returned ")
 
 	flag.Parse()
 
@@ -49,6 +51,7 @@ func main() {
 		dir:          *dir,
 		ghOwner:      *owner,
 		ghRepository: *repo,
+		samerelease:  *samerelease,
 	}
 
 	if c.debug {
@@ -206,12 +209,24 @@ func getLatestTag(c config) (string, error) {
 
 	}
 
+	baseVersion, _ := getVersion(c)
 	// turn the array into a new collection of versions that we can sort
 	var versions []*version.Version
 	for _, raw := range versionsRaw {
-		v, _ := version.NewVersion(raw)
-		if v != nil {
-			versions = append(versions, v)
+		//if same-release argument is set work only with versions which Major and Minor versions are the same
+		if c.samerelease {
+			same, _ := isMajorMinorTheSame(baseVersion, raw)
+			if same {
+				v, _ := version.NewVersion(raw)
+				if v != nil {
+					versions = append(versions, v)
+				}
+			}
+		} else {
+			v, _ := version.NewVersion(raw)
+			if v != nil {
+				versions = append(versions, v)
+			}
 		}
 	}
 
@@ -279,6 +294,23 @@ func getNewVersionFromTag(c config) (string, error) {
 		patchVersion = basePatchVersion
 	}
 	return fmt.Sprintf("%d.%d.%d", majorVersion, minorVersion, patchVersion), nil
+}
+func isMajorMinorTheSame(v1 string, v2 string) (bool, error) {
+	sv1, err1 := semver.NewVersion(v1)
+	if err1 != nil {
+		return false, err1
+	}
+	sv2, err2 := semver.NewVersion(v2)
+	if err2 != nil {
+		return false, err2
+	}
+	if sv1.Major != sv2.Major {
+		return false, nil
+	}
+	if sv1.Minor != sv2.Minor {
+		return false, nil
+	}
+	return true, nil
 }
 
 // returns a string array containing the git owner and repo name for a given URL
