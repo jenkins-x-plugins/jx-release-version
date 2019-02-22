@@ -24,7 +24,7 @@ pipeline {
             steps {
                 dir ('/home/jenkins/go/src/github.com/jenkins-x/jx-release-version') {
                     git "https://github.com/jenkins-x/jx-release-version"
-                    
+                    sh "jx step git credentials"
                     sh "GITHUB_ACCESS_TOKEN=$GH_CREDS_PSW make release"
                 }
             }
