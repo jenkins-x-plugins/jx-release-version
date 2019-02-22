@@ -55,6 +55,7 @@ release: clean test cross
 	cp $(BUILD_DIR)/$(NAME)-* release
 	gh-release checksums sha256
 	gh-release create $(ORG)/$(NAME) $(VERSION) master v$(VERSION)
+	updatebot push-version --kind docker JX_RELEASE_VERSION $(VERSION)
 
 .PHONY: cross
 cross: darwin-build linux-build windows-build
