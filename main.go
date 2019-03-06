@@ -82,7 +82,7 @@ func main() {
 		}
 	}
 
-	gitHubClient := adapters.NewGitHubClient(c.ghOwner, c.ghRepository, c.debug)
+	gitHubClient := adapters.NewGitHubClient(c.debug)
 	v, err := getNewVersionFromTag(c, gitHubClient)
 	if err != nil {
 		fmt.Println("failed to get new version", err)

@@ -6,6 +6,7 @@ import (
 	"github.com/google/go-github/github"
 	"github.com/jenkins-x/jx-release-version/domain"
 	"golang.org/x/oauth2"
+	"net/http"
 	"os"
 )
 
@@ -25,30 +26,22 @@ func (g *GitHubClient) ListTags(ctx context.Context, owner string, repo string) 
 	return a, err
 }
 
-func NewGitHubClient(ghOwner string, ghRepository string, debug bool) domain.GitClient {
-	var githubClient domain.GitClient
+func NewGitHubClient(debug bool) domain.GitClient {
+	var oauth2Client *http.Client
 
-	if ghOwner != "" && ghRepository != "" {
-		token := os.Getenv("GITHUB_AUTH_TOKEN")
-		ctx := context.Background()
-		if token != "" {
-			ts := oauth2.StaticTokenSource(
-				&oauth2.Token{AccessToken: token},
-			)
-			tc := oauth2.NewClient(ctx, ts)
-
-			githubClient = &GitHubClient{
-				client: github.NewClient(tc),
-			}
-		} else {
-			if debug {
-				fmt.Println("no GITHUB_AUTH_TOKEN env var found so using unauthenticated request")
-			}
-			githubClient = &GitHubClient{
-				client: github.NewClient(nil),
-			}
+	token := os.Getenv("GITHUB_AUTH_TOKEN")
+	if token != "" {
+		ts := oauth2.StaticTokenSource(
+			&oauth2.Token{AccessToken: token},
+		)
+		oauth2Client = oauth2.NewClient(context.Background(), ts)
+	} else {
+		if debug {
+			fmt.Println("no GITHUB_AUTH_TOKEN env var found so using unauthenticated request")
 		}
 	}
 
-	return githubClient
+	return &GitHubClient{
+		client: github.NewClient(oauth2Client),
+	}
 }
