@@ -1,7 +1,12 @@
 package main
 
 import (
+	"context"
 	"testing"
+
+	"github.com/jenkins-x/jx-release-version/adapters"
+	"github.com/jenkins-x/jx-release-version/domain"
+	"github.com/jenkins-x/jx-release-version/mocks"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -32,15 +37,15 @@ func TestAutomakefile(t *testing.T) {
 
 func TestCMakefile(t *testing.T) {
 
-       c := config{
-               dir: "test-resources/cmake",
-       }
+	c := config{
+		dir: "test-resources/cmake",
+	}
 
-       v, err := getVersion(c)
+	v, err := getVersion(c)
 
-       assert.NoError(t, err)
+	assert.NoError(t, err)
 
-       assert.Equal(t, "1.2.0-SNAPSHOT", v, "error with getVersion for a CMakeLists.txt")
+	assert.Equal(t, "1.2.0-SNAPSHOT", v, "error with getVersion for a CMakeLists.txt")
 }
 
 func TestPomXML(t *testing.T) {
@@ -85,11 +90,15 @@ func TestGetGitTag(t *testing.T) {
 		ghOwner:      "jenkins-x",
 		ghRepository: "jx-release-version",
 	}
-	expectedVersion, err := getLatestTag(c)
+
+	gitHubClient := adapters.NewGitHubClient(c.ghOwner, c.ghRepository, c.debug)
+
+	expectedVersion, err := getLatestTag(c, gitHubClient)
 	assert.NoError(t, err)
 
 	c = config{}
-	v, err := getLatestTag(c)
+
+	v, err := getLatestTag(c, gitHubClient)
 
 	assert.NoError(t, err)
 
@@ -102,8 +111,73 @@ func TestGetNewVersionFromTagCurrentRepo(t *testing.T) {
 		dir:    "test-resources/make",
 	}
 
-	v, err := getNewVersionFromTag(c)
+	tags := createTags()
+
+	mockClient := &mocks.GitClient{}
+	mockClient.On("ListTags", context.Background(), c.ghOwner, c.ghRepository).Return(tags, nil)
+	v, err := getNewVersionFromTag(c, mockClient)
 
 	assert.NoError(t, err)
 	assert.Equal(t, "1.2.0", v, "error bumping a patch version")
+}
+
+func TestGetNewMinorVersionFromGitHubTag(t *testing.T) {
+
+	c := config{
+		ghOwner:      "rawlingsj",
+		ghRepository: "semver-release-version",
+		minor:        true,
+	}
+
+	tags := createTags()
+
+	mockClient := &mocks.GitClient{}
+	mockClient.On("ListTags", context.Background(), c.ghOwner, c.ghRepository).Return(tags, nil)
+
+	v, err := getNewVersionFromTag(c, mockClient)
+
+	assert.NoError(t, err)
+	assert.Equal(t, "1.1.0", v, "error bumping a minor version")
+}
+
+func TestGetNewPatchVersionFromGitHubTag(t *testing.T) {
+
+	c := config{
+		ghOwner:      "rawlingsj",
+		ghRepository: "semver-release-version",
+	}
+
+	tags := createTags()
+
+	mockClient := &mocks.GitClient{}
+	mockClient.On("ListTags", context.Background(), c.ghOwner, c.ghRepository).Return(tags, nil)
+
+	v, err := getNewVersionFromTag(c, mockClient)
+
+	assert.NoError(t, err)
+	assert.Equal(t, "1.0.18", v, "error bumping a patch version")
+}
+
+func createTags() []domain.Tag {
+	var tags []domain.Tag
+	tags = append(tags, domain.Tag{Name: "v1.0.0"})
+	tags = append(tags, domain.Tag{Name: "v1.0.1"})
+	tags = append(tags, domain.Tag{Name: "v1.0.10"})
+	tags = append(tags, domain.Tag{Name: "v1.0.11"})
+	tags = append(tags, domain.Tag{Name: "v1.0.12"})
+	tags = append(tags, domain.Tag{Name: "v1.0.13"})
+	tags = append(tags, domain.Tag{Name: "v1.0.14"})
+	tags = append(tags, domain.Tag{Name: "v1.0.15"})
+	tags = append(tags, domain.Tag{Name: "v1.0.16"})
+	tags = append(tags, domain.Tag{Name: "v1.0.17"})
+	tags = append(tags, domain.Tag{Name: "v1.0.2"})
+	tags = append(tags, domain.Tag{Name: "v1.0.3"})
+	tags = append(tags, domain.Tag{Name: "v1.0.4"})
+	tags = append(tags, domain.Tag{Name: "v1.0.5"})
+	tags = append(tags, domain.Tag{Name: "v1.0.6"})
+	tags = append(tags, domain.Tag{Name: "v1.0.7"})
+	tags = append(tags, domain.Tag{Name: "v1.0.8"})
+	tags = append(tags, domain.Tag{Name: "v1.0.9"})
+
+	return tags
 }
