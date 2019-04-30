@@ -9,7 +9,7 @@ If you need to bump the major or minor version simply increment the version in y
 
 This helps in continuous delivery if you want an automatic release when a change is merged to master.  Traditional approaches mean the version is stored in a file that is checked and updated after each release.  If you want automatic releases this means you will get another release triggered from the version update resulting in a cyclic release sitiation.  
 
-Using a git tag to work out the next release version is better than traditional approaches of storing it in a a VERSION file or updating a pom.xml.  If a major or minor version increase is required then still update the file and `jx-release-version` will use you new version.
+Using a git tag to work out the next release version is better than traditional approaches of storing it in a VERSION file or updating a pom.xml.  If a major or minor version increase is required then still update the file and `jx-release-version` will use you new version.
 
 Please note that `jx-release-version` is not called from the Tekton-style build pipelines, these use `jx step` instead.
 
