@@ -2,14 +2,16 @@
 
 Returns a new release version based on previous git tags that can be used in a new release.
 
-This is a simple binary that can be used in CD pipelines to read pom.xml or Makefile's and return an 'patch' incremented version.
+This is a simple binary that can be used in CD pipelines to read pom.xml or Makefile's and return a 'patch' incremented version.
 
 If you need to bump the major or minor version simply increment the version in your Makefile / pom.xml
 
 
 This helps in continuous delivery if you want an automatic release when a change is merged to master.  Traditional approaches mean the version is stored in a file that is checked and updated after each release.  If you want automatic releases this means you will get another release triggered from the version update resulting in a cyclic release sitiation.  
 
-Using a git tag to work out the next release version is better than traditional approaches of storing it in a a VERSION file or updating a pom.xml.  If a major or minor version increase is required then still update the file and `jx-release-version` will use you new version. 
+Using a git tag to work out the next release version is better than traditional approaches of storing it in a VERSION file or updating a pom.xml.  If a major or minor version increase is required then still update the file and `jx-release-version` will use you new version.
+
+Please note that `jx-release-version` is not called from the Tekton-style build pipelines, these use `jx step` instead.
 
 ## Prerequisits
 
@@ -23,7 +25,7 @@ Using a git tag to work out the next release version is better than traditional 
 
 - If your latest git tag is `1.2.3` and your Makefile or pom.xml is `2.0.0` then `jx-release-version` will return `2.0.0`
 
-- If you need to support old release for example 7.0.x and tags for new realese 7.1.x already exist `-same-release` flag  will help to obtain version from 7.0.x release. If in pom file version is 7.0.0-SNAPSHOT and there are two tags 7.1.0 and 7.0.2 are exist command `jx-release-version` will return 7.1.1 but if we run `jx-release-version -same-release` it will return 7.0.3
+- If you need to support an old release for example 7.0.x and tags for new realese 7.1.x already exist, the `-same-release` flag  will help to obtain version from 7.0.x release. If the pom file version is 7.0.0-SNAPSHOT and both the 7.1.0 and 7.0.2 tags exist the command `jx-release-version` will return 7.1.1 but if we run `jx-release-version -same-release` it will return 7.0.3
 
 - If you need to get a release version `1.1.0` for older release and your last tag is `1.2.3` please change your Makefile or pom.xml to `1.1.0-SNAPSHOT` and run `jx-release-version -same-release`
 
