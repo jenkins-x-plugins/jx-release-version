@@ -18,6 +18,19 @@ func TestMakefile(t *testing.T) {
 	assert.Equal(t, "1.2.0-SNAPSHOT", v, "error with getVersion for a Makefile")
 }
 
+func TestAutomakefile(t *testing.T) {
+
+	c := config{
+		dir: "test-resources/automake",
+	}
+
+	v, err := getVersion(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "1.2.0-SNAPSHOT", v, "error with getVersion for a configure.ac")
+}
+
 func TestPomXML(t *testing.T) {
 
 	c := config{

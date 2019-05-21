@@ -113,6 +113,28 @@ func getVersion(c config) (string, error) {
 		}
 	}
 
+	am, err := ioutil.ReadFile(c.dir + string(filepath.Separator) + "configure.ac")
+	if err == nil {
+		if c.debug {
+			fmt.Println("configure.ac")
+		}
+
+		scanner := bufio.NewScanner(strings.NewReader(string(am)))
+		for scanner.Scan() {
+			if strings.Contains(scanner.Text(), "AC_INIT") {
+				re := regexp.MustCompile("AC_INIT\\s*\\(([^\\s]+),\\s*([.\\d]+(-\\w+)?).*\\)")
+				matched := re.FindStringSubmatch(scanner.Text())
+				v := strings.TrimSpace(matched[2])
+				if v != "" {
+					if c.debug {
+						fmt.Println(fmt.Sprintf("existing configure.ac version %v", v))
+					}
+					return v, nil
+				}
+			}
+		}
+	}
+
 	p, err := ioutil.ReadFile(c.dir + string(filepath.Separator) + "pom.xml")
 	if err == nil {
 		if c.debug {

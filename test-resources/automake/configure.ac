@@ -1,0 +1,1 @@
+AC_INIT(jx-release-version, 1.2.0-SNAPSHOT, support@company.com)
