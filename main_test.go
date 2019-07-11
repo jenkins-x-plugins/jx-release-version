@@ -30,6 +30,18 @@ func TestPomXML(t *testing.T) {
 	assert.Equal(t, "1.0-SNAPSHOT", v, "error with getVersion for a pom.xml")
 }
 
+func TestPackageJSON(t *testing.T) {
+
+	c := config{
+		dir: "test-resources/package",
+	}
+	v, err := getVersion(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "1.2.3", v, "error with getVersion for a package.json")
+}
+
 func TestChart(t *testing.T) {
 
 	c := config{

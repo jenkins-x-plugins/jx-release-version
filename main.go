@@ -14,6 +14,7 @@ import (
 	"bufio"
 	"context"
 	"encoding/xml"
+	"encoding/json"
 	"flag"
 	"os/exec"
 	"path/filepath"
@@ -126,6 +127,21 @@ func getVersion(c config) (string, error) {
 			return project.Version, nil
 		}
 	}
+
+	pkg, err := ioutil.ReadFile(c.dir + string(filepath.Separator) + "package.json")
+    if err == nil {
+        if c.debug {
+            fmt.Println("found package.json")
+        }
+        var project Project
+        json.Unmarshal(pkg, &project)
+        if project.Version != "" {
+            if c.debug {
+                fmt.Println(fmt.Sprintf("existing version %v", project.Version))
+            }
+            return project.Version, nil
+        }
+    }
 
 	return "", errors.New("no recognised file to obtain current version from")
 }
