@@ -42,6 +42,42 @@ func TestPackageJSON(t *testing.T) {
 	assert.Equal(t, "1.2.3", v, "error with getVersion for a package.json")
 }
 
+func TestSetupPyStandard(t *testing.T) {
+
+	c := config{
+		dir: "test-resources/python/standard",
+	}
+	v, err := getVersion(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "4.5.6", v, "error with getVersion for a setup.py")
+}
+
+func TestSetupPyNested(t *testing.T) {
+
+	c := config{
+		dir: "test-resources/python/nested",
+	}
+	v, err := getVersion(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "4.5.6", v, "error with getVersion for a setup.py")
+}
+
+func TestSetupPyOneLine(t *testing.T) {
+
+	c := config{
+		dir: "test-resources/python/one_line",
+	}
+	v, err := getVersion(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "4.5.6", v, "error with getVersion for a setup.py")
+}
+
 func TestChart(t *testing.T) {
 
 	c := config{
