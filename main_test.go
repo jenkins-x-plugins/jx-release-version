@@ -32,15 +32,15 @@ func TestAutomakefile(t *testing.T) {
 
 func TestCMakefile(t *testing.T) {
 
-       c := config{
-               dir: "test-resources/cmake",
-       }
+	c := config{
+		dir: "test-resources/cmake",
+	}
 
-       v, err := getVersion(c)
+	v, err := getVersion(c)
 
-       assert.NoError(t, err)
+	assert.NoError(t, err)
 
-       assert.Equal(t, "1.2.0-SNAPSHOT", v, "error with getVersion for a CMakeLists.txt")
+	assert.Equal(t, "1.2.0-SNAPSHOT", v, "error with getVersion for a CMakeLists.txt")
 }
 
 func TestPomXML(t *testing.T) {
@@ -79,6 +79,42 @@ func TestChart(t *testing.T) {
 	assert.Equal(t, "0.0.1-SNAPSHOT", v, "error with getVersion for a Chart.yaml")
 }
 */
+
+func TestSetupPyStandard(t *testing.T) {
+
+	c := config{
+		dir: "test-resources/python/standard",
+	}
+	v, err := getVersion(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "4.5.6", v, "error with getVersion for a setup.py")
+}
+
+func TestSetupPyNested(t *testing.T) {
+
+	c := config{
+		dir: "test-resources/python/nested",
+	}
+	v, err := getVersion(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "4.5.6", v, "error with getVersion for a setup.py")
+}
+
+func TestSetupPyOneLine(t *testing.T) {
+
+	c := config{
+		dir: "test-resources/python/one_line",
+	}
+	v, err := getVersion(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "4.5.6", v, "error with getVersion for a setup.py")
+}
 
 func TestGetGitTag(t *testing.T) {
 	c := config{
