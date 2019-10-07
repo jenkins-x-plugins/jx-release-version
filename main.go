@@ -143,10 +143,13 @@ func getVersion(c config) (string, error) {
 		}
 	}
 
-	return "", errors.New("no recognised file to obtain current version from")
+	return "0.0.0", errors.New("no recognised file to obtain current version from")
 }
 
 func getLatestTag(c config) (string, error) {
+	// Get base version from file, will fallback to 0.0.0 if not found.
+	baseVersion, _ := getVersion(c)
+
 	// if repo isn't provided by flags fall back to using current repo if run from a git project
 	var versionsRaw []string
 	if c.ghOwner != "" && c.ghRepository != "" {
@@ -174,8 +177,8 @@ func getLatestTag(c config) (string, error) {
 			return "", err
 		}
 		if len(tags) == 0 {
-			// if no current flags exist then lets start at 0.0.0
-			return "0.0.0", errors.New("No existing tags found")
+			// if no current flags exist then lets start at base version
+			return baseVersion, errors.New("No existing tags found")
 		}
 
 		// build an array of all the tags
@@ -207,8 +210,8 @@ func getLatestTag(c config) (string, error) {
 		tags := strings.Split(str, "\n")
 
 		if len(tags) == 0 {
-			// if no current flags exist then lets start at 0.0.0
-			return "0.0.0", errors.New("No existing tags found")
+			// if no current flags exist then lets start at base version
+			return baseVersion, errors.New("No existing tags found")
 		}
 
 		// build an array of all the tags
@@ -225,7 +228,6 @@ func getLatestTag(c config) (string, error) {
 
 	}
 
-	baseVersion, _ := getVersion(c)
 	// turn the array into a new collection of versions that we can sort
 	var versions []*version.Version
 	for _, raw := range versionsRaw {
@@ -247,8 +249,8 @@ func getLatestTag(c config) (string, error) {
 	}
 
 	if len(versions) == 0 {
-		// if no current flags exist then lets start at 0.0.0
-		return "0.0.0", errors.New("No existing tags found")
+		// if no current flags exist then lets start at base version
+		return baseVersion, errors.New("No existing tags found")
 	}
 
 	// return the latest tag
@@ -260,7 +262,7 @@ func getLatestTag(c config) (string, error) {
 	sort.Sort(col)
 	latest := len(versions)
 	if versions[latest-1] == nil {
-		return "0.0.0", errors.New("No existing tags found")
+		return baseVersion, errors.New("No existing tags found")
 	}
 	return versions[latest-1].String(), nil
 }
