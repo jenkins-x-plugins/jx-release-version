@@ -9,7 +9,7 @@ import (
 
 	"github.com/coreos/go-semver/semver"
 	"github.com/google/go-github/github"
-	version "github.com/hashicorp/go-version"
+	"github.com/hashicorp/go-version"
 
 	"bufio"
 	"context"
@@ -44,20 +44,22 @@ type config struct {
 	ghOwner      string
 	ghRepository string
 	samerelease  bool
+	baseVersion  string
 }
 
 func main() {
 
 	debug := flag.Bool("debug", false, "prints debug into to console")
-	dir := flag.String("folder", ".", "the folder to look for files that contain a pom.xml or Makfile with the project version to bump")
+	dir := flag.String("folder", ".", "the folder to look for files that contain a pom.xml or Makefile with the project version to bump")
 	owner := flag.String("gh-owner", "", "a github repository owner if not running from within a git project  e.g. fabric8io")
 	repo := flag.String("gh-repository", "", "a git repository if not running from within a git project  e.g. fabric8")
-	samerelease := flag.Bool("same-release", false, "for support old releases: for example 7.0.x and tag for new realese 7.1.x already exist, with `-same-release` argument next version from 7.0.x will be returned ")
-	version := flag.Bool("version", false, "prints the version")
+	baseVersion := flag.String("base-version", "", "use this instead of Makefile, pom.xml, etc, e.g. -base-version=2.0.0-SNAPSHOT")
+	samerelease := flag.Bool("same-release", false, "for support old releases: for example 7.0.x and tag for new release 7.1.x already exist, with `-same-release` argument next version from 7.0.x will be returned ")
+	ver := flag.Bool("version", false, "prints the version")
 
 	flag.Parse()
 
-	if *version {
+	if *ver {
 		printVersion()
 		os.Exit(0)
 	}
@@ -68,6 +70,7 @@ func main() {
 		ghOwner:      *owner,
 		ghRepository: *repo,
 		samerelease:  *samerelease,
+		baseVersion:  *baseVersion,
 	}
 
 	if c.debug {
@@ -93,6 +96,9 @@ Build Date: %s
 }
 
 func getVersion(c config) (string, error) {
+	if c.baseVersion != "" {
+		return c.baseVersion, nil
+	}
 	chart, err := ioutil.ReadFile(filepath.Join(c.dir, "Chart.yaml"))
 	if err == nil {
 		if c.debug {
@@ -276,7 +282,7 @@ func getLatestTag(c config) (string, error) {
 	// turn the array into a new collection of versions that we can sort
 	var versions []*version.Version
 	for _, raw := range versionsRaw {
-		//if same-release argument is set work only with versions which Major and Minor versions are the same
+		// if same-release argument is set work only with versions which Major and Minor versions are the same
 		if c.samerelease {
 			same, _ := isMajorMinorTheSame(baseVersion, raw)
 			if same {
