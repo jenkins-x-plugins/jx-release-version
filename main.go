@@ -156,6 +156,28 @@ func getVersion(c config) (string, error) {
 		}
 	}
 
+	cm, err := ioutil.ReadFile(filepath.Join(c.dir, "CMakeLists.txt"))
+	if err == nil {
+		if c.debug {
+			fmt.Println("CMakeLists.txt")
+		}
+
+		scanner := bufio.NewScanner(strings.NewReader(string(cm)))
+		for scanner.Scan() {
+			if strings.Contains(scanner.Text(), " VERSION ") {
+				re := regexp.MustCompile("project\\s*(([^\\s]+)\\s+VERSION\\s+([.\\d]+(-\\w+)?).*)")
+				matched := re.FindStringSubmatch(scanner.Text())
+				v := strings.TrimSpace(matched[3])
+				if v != "" {
+					if c.debug {
+						fmt.Println(fmt.Sprintf("existing CMakeLists.txt version %v", v))
+					}
+					return v, nil
+				}
+			}
+		}
+	}
+
 	p, err := ioutil.ReadFile(filepath.Join(c.dir, "pom.xml"))
 	if err == nil {
 		if c.debug {

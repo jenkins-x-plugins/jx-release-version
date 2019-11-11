@@ -30,6 +30,19 @@ func TestAutomakefile(t *testing.T) {
 	assert.Equal(t, "1.2.0-SNAPSHOT", v, "error with getVersion for a configure.ac")
 }
 
+func TestCMakefile(t *testing.T) {
+
+       c := config{
+               dir: "test-resources/cmake",
+       }
+
+       v, err := getVersion(c)
+
+       assert.NoError(t, err)
+
+       assert.Equal(t, "1.2.0-SNAPSHOT", v, "error with getVersion for a CMakeLists.txt")
+}
+
 func TestPomXML(t *testing.T) {
 	c := config{
 		dir: "test-resources/java",
