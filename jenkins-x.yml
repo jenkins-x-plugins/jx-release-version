@@ -86,7 +86,7 @@ pipelineConfig:
           - name: GOOGLE_APPLICATION_CREDENTIALS
             value: /secrets/kaniko/kaniko-secret.json
           - name: APP_NAME
-            value: bucketrepo
+            value: jx-release-version
           options:
             volumes:
               - name: kaniko-secret
@@ -103,3 +103,5 @@ pipelineConfig:
           - name: make-and-tests
             image: gcr.io/jenkinsxio/builder-go
             command: make
+            args:
+            - test
