@@ -24,6 +24,15 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// Version is the build version
+var Version string
+
+// GitTag is the git tag of the build
+var GitTag string
+
+// BuildDate is the date when the build was created
+var BuildDate string
+
 type Project struct {
 	Version string `xml:"version"`
 }
@@ -44,8 +53,14 @@ func main() {
 	owner := flag.String("gh-owner", "", "a github repository owner if not running from within a git project  e.g. fabric8io")
 	repo := flag.String("gh-repository", "", "a git repository if not running from within a git project  e.g. fabric8")
 	samerelease := flag.Bool("same-release", false, "for support old releases: for example 7.0.x and tag for new realese 7.1.x already exist, with `-same-release` argument next version from 7.0.x will be returned ")
+	version := flag.Bool("version", false, "prints the version")
 
 	flag.Parse()
+
+	if *version {
+		printVersion()
+		os.Exit(0)
+	}
 
 	c := config{
 		debug:        *debug,
@@ -68,6 +83,13 @@ func main() {
 		os.Exit(-1)
 	}
 	fmt.Print(fmt.Sprintf("%s", v))
+}
+
+func printVersion() {
+	fmt.Printf(`Version: %s
+Git Tag: %s
+Build Date: %s
+`, Version, GitTag, BuildDate)
 }
 
 func getVersion(c config) (string, error) {

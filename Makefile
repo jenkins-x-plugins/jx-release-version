@@ -10,9 +10,7 @@ FORMATTED := $(shell $(GO) fmt $(PACKAGE_DIRS))
 GOOS ?= $(shell go env GOOS)
 GOARCH ?= $(shell go env GOARCH)
 BUILD_DIR ?= ./bin
-
-BUILDFLAGS := -ldflags \
-  " -s -w -extldflags '-static'"
+BUILDFLAGS := '-w -s'
 
 all: test build
 
@@ -20,7 +18,7 @@ check: fmt test
 
 .PHONY: build
 build:
-	CGO_ENABLED=0 GOARCH=amd64 go build $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME) $(ROOT_PACKAGE)
+	CGO_ENABLED=0 GOARCH=amd64 go build -ldflags $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME) $(ROOT_PACKAGE)
 
 fmt:
 	@FORMATTED=`$(GO) fmt $(PACKAGE_DIRS)`
