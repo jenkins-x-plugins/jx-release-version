@@ -22,4 +22,4 @@ builds:
 archive:
   files:
     - README.md
-    - LICENSE.txt
+    - LICENSE
