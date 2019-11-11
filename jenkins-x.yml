@@ -38,6 +38,11 @@ pipelineConfig:
               secretKeyRef:
                 name: knative-git-user-pass
                 key: password
+          - name: GITHUB_AUTH_TOKEN 
+            valueFrom:
+              secretKeyRef:
+                name: knative-git-user-pass
+                key: password
           - name: CHARTMUSEUM_PASS
             valueFrom:
               secretKeyRef:
@@ -87,6 +92,16 @@ pipelineConfig:
             value: /secrets/kaniko/kaniko-secret.json
           - name: APP_NAME
             value: jx-release-version
+          - name: GITHUB_TOKEN 
+            valueFrom:
+              secretKeyRef:
+                name: knative-git-user-pass
+                key: password
+          - name: GITHUB_AUTH_TOKEN 
+            valueFrom:
+              secretKeyRef:
+                name: knative-git-user-pass
+                key: password
           options:
             volumes:
               - name: kaniko-secret

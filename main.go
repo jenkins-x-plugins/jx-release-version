@@ -82,7 +82,7 @@ func main() {
 		fmt.Println("failed to get new version", err)
 		os.Exit(-1)
 	}
-	fmt.Print(fmt.Sprintf("%s", v))
+	fmt.Printf("%s", v)
 }
 
 func printVersion() {
@@ -93,7 +93,7 @@ Build Date: %s
 }
 
 func getVersion(c config) (string, error) {
-	chart, err := ioutil.ReadFile(c.dir + string(filepath.Separator) + "Chart.yaml")
+	chart, err := ioutil.ReadFile(filepath.Join(c.dir, "Chart.yaml"))
 	if err == nil {
 		if c.debug {
 			fmt.Println("Found Chart.yaml")
@@ -102,7 +102,6 @@ func getVersion(c config) (string, error) {
 		for scanner.Scan() {
 			if strings.Contains(scanner.Text(), "version") {
 				parts := strings.Split(scanner.Text(), ":")
-
 				v := strings.TrimSpace(parts[1])
 				if v != "" {
 					if c.debug {
@@ -114,7 +113,7 @@ func getVersion(c config) (string, error) {
 		}
 	}
 
-	m, err := ioutil.ReadFile(c.dir + string(filepath.Separator) + "Makefile")
+	m, err := ioutil.ReadFile(filepath.Join(c.dir, "Makefile"))
 	if err == nil {
 		if c.debug {
 			fmt.Println("Found Makefile")
@@ -135,7 +134,7 @@ func getVersion(c config) (string, error) {
 		}
 	}
 
-	am, err := ioutil.ReadFile(c.dir + string(filepath.Separator) + "configure.ac")
+	am, err := ioutil.ReadFile(filepath.Join(c.dir, "configure.ac"))
 	if err == nil {
 		if c.debug {
 			fmt.Println("configure.ac")
@@ -157,13 +156,13 @@ func getVersion(c config) (string, error) {
 		}
 	}
 
-	p, err := ioutil.ReadFile(c.dir + string(filepath.Separator) + "pom.xml")
+	p, err := ioutil.ReadFile(filepath.Join(c.dir, "pom.xml"))
 	if err == nil {
 		if c.debug {
 			fmt.Println("found pom.xml")
 		}
 		var project Project
-		xml.Unmarshal(p, &project)
+		_ = xml.Unmarshal(p, &project)
 		if project.Version != "" {
 			if c.debug {
 				fmt.Println(fmt.Sprintf("existing version %v", project.Version))
@@ -172,13 +171,13 @@ func getVersion(c config) (string, error) {
 		}
 	}
 
-	pkg, err := ioutil.ReadFile(c.dir + string(filepath.Separator) + "package.json")
+	pkg, err := ioutil.ReadFile(filepath.Join(c.dir, "package.json"))
 	if err == nil {
 		if c.debug {
 			fmt.Println("found package.json")
 		}
 		var project Project
-		json.Unmarshal(pkg, &project)
+		_ = json.Unmarshal(pkg, &project)
 		if project.Version != "" {
 			if c.debug {
 				fmt.Println(fmt.Sprintf("existing version %v", project.Version))
@@ -239,14 +238,16 @@ func getLatestTag(c config) (string, error) {
 			return "", fmt.Errorf("error running git: %v", err)
 		}
 		cmd := exec.Command("git", "fetch", "--tags", "-v")
-		for _, e := range os.Environ() {
-			cmd.Env = append(cmd.Env, e)
-		}
+		cmd.Env = append(cmd.Env, os.Environ()...)
+		cmd.Dir = c.dir
 		err = cmd.Run()
 		if err != nil {
 			return "", fmt.Errorf("error fetching tags: %v", err)
 		}
-		out, err := exec.Command("git", "tag").Output()
+
+		cmd = exec.Command("git", "tag")
+		cmd.Dir = c.dir
+		out, err := cmd.Output()
 		if err != nil {
 			return "", err
 		}
@@ -312,8 +313,6 @@ func getLatestTag(c config) (string, error) {
 }
 
 func getNewVersionFromTag(c config) (string, error) {
-
-	// get the latest github tag
 	tag, err := getLatestTag(c)
 	if err != nil && tag == "" {
 		return "", err
@@ -357,6 +356,7 @@ func getNewVersionFromTag(c config) (string, error) {
 	}
 	return fmt.Sprintf("%d.%d.%d", majorVersion, minorVersion, patchVersion), nil
 }
+
 func isMajorMinorTheSame(v1 string, v2 string) (bool, error) {
 	sv1, err1 := semver.NewVersion(v1)
 	if err1 != nil {
@@ -373,14 +373,4 @@ func isMajorMinorTheSame(v1 string, v2 string) (bool, error) {
 		return false, nil
 	}
 	return true, nil
-}
-
-// returns a string array containing the git owner and repo name for a given URL
-func getCurrentGitOwnerRepo(url string) []string {
-	var OwnerNameRegexp = regexp.MustCompile(`([^:]+)(/[^\/].+)?$`)
-
-	matched2 := OwnerNameRegexp.FindStringSubmatch(url)
-	s := strings.TrimSuffix(matched2[0], ".git")
-
-	return strings.Split(s, "/")
 }
