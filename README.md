@@ -62,17 +62,21 @@ Then in your release pipeline do something like this:
 ### CLI arguments
 
 ```sh
-Usage of jx-release-version:
+  -base-version string
+    	use this instead of Makefile, pom.xml, etc, e.g. -base-version=2.0.0-SNAPSHOT
   -debug
-    	prints debug into to console
+    prints debug into to console
   -folder string
-    	the folder to look for files that contain a pom.xml or Makfile with the project version to bump (default ".")
+    the folder to look for files that contain a pom.xml or Makefile with the project version to bump (default ".")
   -gh-owner string
-    	the git repository owner if not running from within a git project  e.g. fabric8io
+    a github repository owner if not running from within a git project  e.g. fabric8io
   -gh-repository string
-    	the git repository if not running from within a git project  e.g. fabric8
-  -same-release 
-        for support old releases: for example 7.0.x and tag for new realese 7.1.x already exist, with `-same-release` argument next version from 7.0.x will be returned ```
+    a git repository if not running from within a git project  e.g. fabric8
+  -same-release -same-release
+    for support old releases: for example 7.0.x and tag for new release 7.1.x already exist, with -same-release argument next version from 7.0.x will be returned
+  -version
+    prints the version
+```
 
 ### FAQ
 
