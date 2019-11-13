@@ -91,7 +91,7 @@ func TestGetGitTag(t *testing.T) {
 		ghRepository: "jx-release-version",
 	}
 
-	gitHubClient := adapters.NewGitHubClient(c.ghOwner, c.ghRepository, c.debug)
+	gitHubClient := adapters.NewGitHubClient(c.debug)
 
 	expectedVersion, err := getLatestTag(c, gitHubClient)
 	assert.NoError(t, err)
