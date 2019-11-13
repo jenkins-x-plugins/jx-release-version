@@ -7,8 +7,10 @@ import (
 	"os"
 	"strings"
 
+	"github.com/jenkins-x/jx-release-version/adapters"
+	"github.com/jenkins-x/jx-release-version/domain"
+
 	"github.com/coreos/go-semver/semver"
-	"github.com/google/go-github/github"
 	"github.com/hashicorp/go-version"
 
 	"bufio"
@@ -20,8 +22,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
-
-	"golang.org/x/oauth2"
 )
 
 // Version is the build version
@@ -45,6 +45,7 @@ type config struct {
 	ghRepository string
 	samerelease  bool
 	baseVersion  string
+	minor        bool
 }
 
 func main() {
@@ -56,7 +57,7 @@ func main() {
 	baseVersion := flag.String("base-version", "", "use this instead of Makefile, pom.xml, etc, e.g. -base-version=2.0.0-SNAPSHOT")
 	samerelease := flag.Bool("same-release", false, "for support old releases: for example 7.0.x and tag for new release 7.1.x already exist, with `-same-release` argument next version from 7.0.x will be returned ")
 	ver := flag.Bool("version", false, "prints the version")
-
+	minor := flag.Bool("minor", false, "increase minor version instead of patch")
 	flag.Parse()
 
 	if *ver {
@@ -71,6 +72,7 @@ func main() {
 		ghRepository: *repo,
 		samerelease:  *samerelease,
 		baseVersion:  *baseVersion,
+		minor:        *minor,
 	}
 
 	if c.debug {
@@ -80,7 +82,8 @@ func main() {
 		}
 	}
 
-	v, err := getNewVersionFromTag(c)
+	gitHubClient := adapters.NewGitHubClient(c.debug)
+	v, err := getNewVersionFromTag(c, gitHubClient)
 	if err != nil {
 		fmt.Println("failed to get new version", err)
 		os.Exit(-1)
@@ -217,32 +220,16 @@ func getVersion(c config) (string, error) {
 	return "0.0.0", errors.New("no recognised file to obtain current version from")
 }
 
-func getLatestTag(c config) (string, error) {
+func getLatestTag(c config, gitClient domain.GitClient) (string, error) {
 	// Get base version from file, will fallback to 0.0.0 if not found.
 	baseVersion, _ := getVersion(c)
 
 	// if repo isn't provided by flags fall back to using current repo if run from a git project
 	var versionsRaw []string
 	if c.ghOwner != "" && c.ghRepository != "" {
-		token := os.Getenv("GITHUB_AUTH_TOKEN")
 		ctx := context.Background()
-		var client *github.Client
-		if token != "" {
 
-			ts := oauth2.StaticTokenSource(
-				&oauth2.Token{AccessToken: token},
-			)
-			tc := oauth2.NewClient(ctx, ts)
-
-			client = github.NewClient(tc)
-		} else {
-			if c.debug {
-				fmt.Println("no GITHUB_AUTH_TOKEN env var found so using unauthenticated request")
-			}
-			client = github.NewClient(nil)
-		}
-
-		tags, _, err := client.Repositories.ListTags(ctx, c.ghOwner, c.ghRepository, nil)
+		tags, err := gitClient.ListTags(ctx, c.ghOwner, c.ghRepository)
 
 		if err != nil {
 			return "", err
@@ -256,9 +243,9 @@ func getLatestTag(c config) (string, error) {
 		versionsRaw = make([]string, len(tags))
 		for i, tag := range tags {
 			if c.debug {
-				fmt.Println(fmt.Sprintf("found remote tag %s", tag.GetName()))
+				fmt.Println(fmt.Sprintf("found remote tag %s", tag.Name))
 			}
-			versionsRaw[i] = tag.GetName()
+			versionsRaw[i] = tag.Name
 		}
 	} else {
 		_, err := exec.LookPath("git")
@@ -340,8 +327,10 @@ func getLatestTag(c config) (string, error) {
 	return versions[latest-1].String(), nil
 }
 
-func getNewVersionFromTag(c config) (string, error) {
-	tag, err := getLatestTag(c)
+func getNewVersionFromTag(c config, gitClient domain.GitClient) (string, error) {
+
+	// get the latest github tag
+	tag, err := getLatestTag(c, gitClient)
 	if err != nil && tag == "" {
 		return "", err
 	}
@@ -350,7 +339,11 @@ func getNewVersionFromTag(c config) (string, error) {
 		return "", err
 	}
 
-	sv.BumpPatch()
+	if c.minor {
+		sv.BumpMinor()
+	} else {
+		sv.BumpPatch()
+	}
 
 	majorVersion := sv.Major
 	minorVersion := sv.Minor
