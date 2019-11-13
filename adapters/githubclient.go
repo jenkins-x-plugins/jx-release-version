@@ -16,6 +16,9 @@ type GitHubClient struct {
 
 func (g *GitHubClient) ListTags(ctx context.Context, owner string, repo string) ([]domain.Tag, error) {
 	tags, _, err := g.client.Repositories.ListTags(ctx, owner, repo, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error getting tags: %v", err)
+	}
 
 	var a []domain.Tag
 
