@@ -187,6 +187,35 @@ func getVersion(c config) (string, error) {
 		}
 	}
 
+	s, err := ioutil.ReadFile(c.dir + string(filepath.Separator) + "setup.py")
+	if err == nil {
+		if c.debug {
+			fmt.Println("Found setup.py")
+		}
+
+		// Regex to find the call to `setup(..., version='1.2.3', ...)`
+		re := regexp.MustCompile("setup\\((.|\\n)*version\\s*=\\s*'(\\d|\\.)*'([^\\)]|\\n)*\\)")
+		setup_call_bytes := re.Find(s)
+
+		if len(setup_call_bytes) > 0 {
+
+			// Regex to find the argument `version='1.2.3'`
+			version_re := regexp.MustCompile("version\\s*=\\s*'(\\d*|\\.)*'")
+
+			version := string(version_re.Find(setup_call_bytes))
+
+			parts := strings.Split(strings.Replace(version, " ", "", -1), "=")
+			v := strings.TrimPrefix(strings.TrimSuffix(parts[1], "'"), "'")
+
+			if v != "" {
+				if c.debug {
+					fmt.Println(fmt.Sprintf("existing Makefile version %v", v))
+				}
+				return v, nil
+			}
+		}
+	}
+
 	p, err := ioutil.ReadFile(filepath.Join(c.dir, "pom.xml"))
 	if err == nil {
 		if c.debug {

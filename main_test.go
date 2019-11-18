@@ -85,6 +85,42 @@ func TestChart(t *testing.T) {
 }
 */
 
+func TestSetupPyStandard(t *testing.T) {
+
+	c := config{
+		dir: "test-resources/python/standard",
+	}
+	v, err := getVersion(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "4.5.6", v, "error with getVersion for a setup.py")
+}
+
+func TestSetupPyNested(t *testing.T) {
+
+	c := config{
+		dir: "test-resources/python/nested",
+	}
+	v, err := getVersion(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "4.5.6", v, "error with getVersion for a setup.py")
+}
+
+func TestSetupPyOneLine(t *testing.T) {
+
+	c := config{
+		dir: "test-resources/python/one_line",
+	}
+	v, err := getVersion(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "4.5.6", v, "error with getVersion for a setup.py")
+}
+
 func TestGetGitTag(t *testing.T) {
 	c := config{
 		ghOwner:      "jenkins-x",
