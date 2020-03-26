@@ -121,6 +121,28 @@ func TestSetupPyOneLine(t *testing.T) {
 	assert.Equal(t, "4.5.6", v, "error with getVersion for a setup.py")
 }
 
+func TestGradleJava(t *testing.T) {
+	c := config{
+		dir: "test-resources/gradle/java",
+	}
+	v, err := getVersion(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "1.2.3-SNAPSHOT", v, "error with getVersion for a build.gradle")
+}
+
+func TestGradleKotlin(t *testing.T) {
+	c := config{
+		dir: "test-resources/gradle/kotlin",
+	}
+	v, err := getVersion(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "1.2.3", v, "error with getVersion for a build.gradle.kts")
+}
+
 func TestGetGitTag(t *testing.T) {
 	c := config{
 		ghOwner:      "jenkins-x",

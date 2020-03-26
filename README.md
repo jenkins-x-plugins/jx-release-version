@@ -77,13 +77,3 @@ Then in your release pipeline do something like this:
   -version
     prints the version
 ```
-
-### FAQ
-
-__Why isn't a nodejs package.json supported?__
-
-We use nodejs but make use of the semantic-release plugin which works out the next release versions instead
-
-__Why only Makefiles and pom.xml supported?__
-
-Right now we tend to only use golang, java and nodejs projects so if there's a file type missing please raise an issue or PR.

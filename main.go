@@ -246,7 +246,50 @@ func getVersion(c config) (string, error) {
 		}
 	}
 
+	// Groovy syntax
+	gradle, err := ioutil.ReadFile(filepath.Join(c.dir, "build.gradle"))
+	if err == nil {
+		if c.debug {
+			fmt.Println("found build.gradle")
+		}
+		v := getGradleVersion(c, gradle)
+		if v != "" {
+			if c.debug {
+				fmt.Println(fmt.Sprintf("existing version %v", v))
+			}
+			return v, nil
+		}
+	}
+	// Kotlin syntax
+	gradle_kts, err := ioutil.ReadFile(filepath.Join(c.dir, "build.gradle.kts"))
+	if err == nil {
+		if c.debug {
+			fmt.Println("found build.gradle.kts")
+		}
+		v := getGradleVersion(c, gradle_kts)
+		if v != "" {
+			if c.debug {
+				fmt.Println(fmt.Sprintf("existing version %v", v))
+			}
+			return v, nil
+		}
+	}
+
 	return "0.0.0", errors.New("no recognised file to obtain current version from")
+}
+
+func getGradleVersion(c config, gradle []byte) string {
+	scanner := bufio.NewScanner(strings.NewReader(string(gradle)))
+	for scanner.Scan() {
+		if strings.Contains(scanner.Text(), "version") {
+			re := regexp.MustCompile("^version\\s*=\\s*['\"]([.\\d]+(-\\w+)?)['\"]")
+			matched := re.FindStringSubmatch(scanner.Text())
+			if len(matched) > 0 {
+				return strings.TrimSpace(matched[1])
+			}
+		}
+	}
+	return ""
 }
 
 func getLatestTag(c config, gitClient domain.GitClient) (string, error) {
