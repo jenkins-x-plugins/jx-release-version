@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/jenkins-x/jx-release-version/adapters"
-	"github.com/jenkins-x/jx-release-version/domain"
-	"github.com/jenkins-x/jx-release-version/mocks"
+	"github.com/jenkins-x-plugins/jx-release-version/adapters"
+	"github.com/jenkins-x-plugins/jx-release-version/domain"
+	"github.com/jenkins-x-plugins/jx-release-version/mocks"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -1,6 +1,6 @@
-module github.com/jenkins-x/jx-release-version
+module github.com/jenkins-x-plugins/jx-release-version
 
-go 1.12
+go 1.15
 
 require (
 	github.com/coreos/go-semver v0.2.0
@@ -8,6 +8,7 @@ require (
 	github.com/google/go-github v0.0.0-20171108000855-8c08f4fba5e0
 	github.com/google/go-querystring v0.0.0-20170111101155-53e6ce116135
 	github.com/hashicorp/go-version v0.0.0-20170914154128-fc61389e27c7
+	github.com/jenkins-x/jx-release-version v1.0.24
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/net v0.0.0-20170809000501-1c05540f6879
 	golang.org/x/oauth2 v0.0.0-20170412232759-a6bd8cefa181

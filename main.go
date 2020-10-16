@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/jenkins-x/jx-release-version/adapters"
-	"github.com/jenkins-x/jx-release-version/domain"
+	"github.com/jenkins-x-plugins/jx-release-version/adapters"
+	"github.com/jenkins-x-plugins/jx-release-version/domain"
 
 	"github.com/coreos/go-semver/semver"
 	"github.com/hashicorp/go-version"
