@@ -1,6 +1,6 @@
 NAME := jx-release-version
-ORG := jenkins-x
-ROOT_PACKAGE := main.go
+ORG := jenkins-x-plugins
+MAIN_SRC_FILE := main.go
 
 GO := GO15VENDOREXPERIMENT=1 go
 
@@ -10,7 +10,14 @@ FORMATTED := $(shell $(GO) fmt $(PACKAGE_DIRS))
 GOOS ?= $(shell go env GOOS)
 GOARCH ?= $(shell go env GOARCH)
 BUILD_DIR ?= ./bin
-BUILDFLAGS := '-w -s'
+
+REV := $(shell git rev-parse --short HEAD 2> /dev/null || echo 'unknown')
+BRANCH     := $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null  || echo 'unknown')
+BUILD_DATE := $(shell date +%Y%m%d-%H:%M:%S)
+ORG_REPO := $(ORG)/$(NAME)
+ROOT_PACKAGE := github.com/$(ORG_REPO)
+GO_VERSION := $(shell $(GO) version | sed -e 's/^[^0-9.]*\([0-9.]*\).*/\1/')
+CGO_ENABLED = 0
 
 all: test build
 
@@ -18,7 +25,11 @@ check: fmt test
 
 .PHONY: build
 build:
-	CGO_ENABLED=0 GOARCH=amd64 go build -ldflags $(BUILDFLAGS) -o $(BUILD_DIR)/$(NAME) $(ROOT_PACKAGE)
+	CGO_ENABLED=0 GOARCH=amd64 go build -o $(BUILD_DIR)/$(NAME) $(MAIN_SRC_FILE)
+
+linux: ## Build for Linux
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=linux GOARCH=amd64 go build -o build/linux/$(NAME) $(MAIN_SRC_FILE)
+	chmod +x build/linux/$(NAME)
 
 fmt:
 	@FORMATTED=`$(GO) fmt $(PACKAGE_DIRS)`
@@ -29,9 +40,12 @@ test:
 	go test -v $(GOPACKAGES)
 
 .PHONY: release
-release: clean test
-	goreleaser release
-	
+release: clean test linux
+
+.PHONY: goreleaser
+goreleaser:
+	step-go-releaser --organisation=$(ORG) --revision=$(REV) --branch=$(BRANCH) --build-date=$(BUILD_DATE) --go-version=$(GO_VERSION) --root-package=$(ROOT_PACKAGE) --version=$(VERSION)
+
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR)
