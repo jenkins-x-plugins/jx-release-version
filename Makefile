@@ -31,7 +31,11 @@ test:
 .PHONY: release
 release: clean test
 	goreleaser release
-	
+
+.PHONY: goreleaser
+release:
+	goreleaser release
+
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR)
