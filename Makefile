@@ -30,7 +30,6 @@ test:
 
 .PHONY: release
 release: clean test
-	goreleaser release
 
 .PHONY: goreleaser
 release:
