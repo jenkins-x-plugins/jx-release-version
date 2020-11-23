@@ -194,6 +194,28 @@ func TestGetNewPatchVersionFromGitHubTag(t *testing.T) {
 	assert.Equal(t, "1.0.18", v, "error bumping a patch version")
 }
 
+func TestGradleJava(t *testing.T) {
+	c := config{
+		dir: "test-resources/gradle/java",
+	}
+	v, err := getVersion(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "1.2.3-SNAPSHOT", v, "error with getVersion for a build.gradle")
+}
+
+func TestGradleKotlin(t *testing.T) {
+	c := config{
+		dir: "test-resources/gradle/kotlin",
+	}
+	v, err := getVersion(c)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, "1.2.3", v, "error with getVersion for a build.gradle.kts")
+}
+
 func createTags() []domain.Tag {
 	var tags []domain.Tag
 	tags = append(tags, domain.Tag{Name: "v1.0.0"})
