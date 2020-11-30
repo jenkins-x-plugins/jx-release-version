@@ -40,6 +40,7 @@ type Project struct {
 type config struct {
 	dryrun       bool
 	debug        bool
+	gitTag       bool
 	dir          string
 	ghOwner      string
 	ghRepository string
@@ -58,6 +59,7 @@ func main() {
 	samerelease := flag.Bool("same-release", false, "for support old releases: for example 7.0.x and tag for new release 7.1.x already exist, with `-same-release` argument next version from 7.0.x will be returned ")
 	ver := flag.Bool("version", false, "prints the version")
 	minor := flag.Bool("minor", false, "increase minor version instead of patch")
+	gitTag := flag.Bool("use-git-tag", false, "use only git tag to derive next release version")
 	flag.Parse()
 
 	if *ver {
@@ -67,6 +69,7 @@ func main() {
 
 	c := config{
 		debug:        *debug,
+		gitTag:       *gitTag,
 		dir:          *dir,
 		ghOwner:      *owner,
 		ghRepository: *repo,
@@ -294,7 +297,10 @@ func getGradleVersion(c config, gradle []byte) string {
 
 func getLatestTag(c config, gitClient domain.GitClient) (string, error) {
 	// Get base version from file, will fallback to 0.0.0 if not found.
-	baseVersion, _ := getVersion(c)
+	baseVersion := "0.0.0"
+	if !c.gitTag {
+		baseVersion, _ = getVersion(c)
+	}
 
 	// if repo isn't provided by flags fall back to using current repo if run from a git project
 	var versionsRaw []string
@@ -329,7 +335,7 @@ func getLatestTag(c config, gitClient domain.GitClient) (string, error) {
 		cmd.Dir = c.dir
 		err = cmd.Run()
 		if err != nil {
-			return "", fmt.Errorf("error fetching tags: %v", err)
+			return baseVersion, fmt.Errorf("error fetching tags: %v", err)
 		}
 
 		cmd = exec.Command("git", "tag")

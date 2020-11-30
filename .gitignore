@@ -3,3 +3,4 @@ bin
 bin/
 dist/
 build/
+.DS_Store
