@@ -1,0 +1,11 @@
+apiVersion: updatebot.jenkins-x.io/v1alpha1
+kind: UpdateConfig
+spec:
+  rules:
+    - urls:
+        - https://github.com/jenkins-x/jx3-pipeline-catalog
+      changes:
+        - regex:
+            pattern: "jenkinsxio/jx-release-version:(.*)"
+            files:
+              - "**/*.yaml"

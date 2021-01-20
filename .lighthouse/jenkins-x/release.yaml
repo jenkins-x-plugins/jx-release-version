@@ -83,13 +83,11 @@ spec:
             #!/bin/bash
             source .jx/variables.sh
             make goreleaser
-        - image: gcr.io/jenkinsxio/builder-go:2.1.142-761
+        - command:
+          - jx-updatebot
+          - pr
+          image: gcr.io/jenkinsxio/jx-updatebot:latest
           name: promote-release
-          resources: {}
-          script: |
-            #!/bin/bash
-            source .jx/variables.sh
-            ./promote.sh
   podTemplate: {}
   serviceAccountName: tekton-bot
   timeout: 240h0m0s
