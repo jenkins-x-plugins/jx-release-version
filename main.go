@@ -1,27 +1,30 @@
 package main
 
 import (
-	"errors"
-	"fmt"
-	"io/ioutil"
-	"os"
-	"strings"
-
-	"github.com/jenkins-x-plugins/jx-release-version/adapters"
-	"github.com/jenkins-x-plugins/jx-release-version/domain"
-
-	"github.com/coreos/go-semver/semver"
-	"github.com/hashicorp/go-version"
-
 	"bufio"
 	"context"
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"flag"
+	"fmt"
+	"io/ioutil"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strings"
+
+	"github.com/jenkins-x-plugins/jx-release-version/adapters"
+	"github.com/jenkins-x-plugins/jx-release-version/domain"
+	"github.com/jenkins-x-plugins/jx-release-version/semrel"
+
+	"github.com/jenkins-x/jx-helpers/v3/pkg/cmdrunner"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient/cli"
+
+	"github.com/Masterminds/semver"
+	"github.com/hashicorp/go-version"
 )
 
 // Version is the build version
@@ -38,15 +41,16 @@ type Project struct {
 }
 
 type config struct {
-	dryrun       bool
-	debug        bool
-	gitTag       bool
-	dir          string
-	ghOwner      string
-	ghRepository string
-	samerelease  bool
-	baseVersion  string
-	minor        bool
+	dryrun          bool
+	debug           bool
+	gitTag          bool
+	dir             string
+	ghOwner         string
+	ghRepository    string
+	samerelease     bool
+	baseVersion     string
+	minor           bool
+	semanticRelease bool
 }
 
 func main() {
@@ -60,6 +64,7 @@ func main() {
 	ver := flag.Bool("version", false, "prints the version")
 	minor := flag.Bool("minor", false, "increase minor version instead of patch")
 	gitTag := flag.Bool("use-git-tag", false, "use only git tag to derive next release version")
+	semanticRelease := flag.Bool("semantic-release", false, "use conventional commits to derive next release version")
 	flag.Parse()
 
 	if *ver {
@@ -68,17 +73,21 @@ func main() {
 	}
 
 	c := config{
-		debug:        *debug,
-		gitTag:       *gitTag,
-		dir:          *dir,
-		ghOwner:      *owner,
-		ghRepository: *repo,
-		samerelease:  *samerelease,
-		baseVersion:  *baseVersion,
-		minor:        *minor,
+		debug:           *debug,
+		gitTag:          *gitTag,
+		dir:             *dir,
+		ghOwner:         *owner,
+		ghRepository:    *repo,
+		samerelease:     *samerelease,
+		baseVersion:     *baseVersion,
+		minor:           *minor,
+		semanticRelease: *semanticRelease,
 	}
 
 	if c.debug {
+		if os.Getenv("JX_LOG_LEVEL") == "" {
+			os.Setenv("JX_LOG_LEVEL", "debug")
+		}
 		fmt.Println("available environment:")
 		for _, e := range os.Environ() {
 			fmt.Println(e)
@@ -406,26 +415,39 @@ func getLatestTag(c config, gitClient domain.GitClient) (string, error) {
 }
 
 func getNewVersionFromTag(c config, gitClient domain.GitClient) (string, error) {
+	var sv *semver.Version
 
-	// get the latest github tag
-	tag, err := getLatestTag(c, gitClient)
-	if err != nil && tag == "" {
-		return "", err
-	}
-	sv, err := semver.NewVersion(tag)
-	if err != nil {
-		return "", err
-	}
-
-	if c.minor {
-		sv.BumpMinor()
-	} else {
-		sv.BumpPatch()
+	if c.semanticRelease {
+		var err error
+		sv, err = getSemanticReleaseVersion(c)
+		if err != nil {
+			return "", err
+		}
 	}
 
-	majorVersion := sv.Major
-	minorVersion := sv.Minor
-	patchVersion := sv.Patch
+	if sv == nil {
+		// get the latest github tag
+		tag, err := getLatestTag(c, gitClient)
+		if err != nil && tag == "" {
+			return "", err
+		}
+		sv, err = semver.NewVersion(tag)
+		if err != nil {
+			return "", err
+		}
+
+		var newVersion semver.Version
+		if c.minor {
+			newVersion = sv.IncMinor()
+		} else {
+			newVersion = sv.IncPatch()
+		}
+		sv = &newVersion
+	}
+
+	majorVersion := sv.Major()
+	minorVersion := sv.Minor()
+	patchVersion := sv.Patch()
 
 	// check if major or minor version has been changed
 	baseVersion, err := getVersion(c)
@@ -442,9 +464,9 @@ func getNewVersionFromTag(c config, gitClient domain.GitClient) (string, error) 
 	if err != nil {
 		return "", err
 	}
-	baseMajorVersion := bsv.Major
-	baseMinorVersion := bsv.Minor
-	basePatchVersion := bsv.Patch
+	baseMajorVersion := bsv.Major()
+	baseMinorVersion := bsv.Minor()
+	basePatchVersion := bsv.Patch()
 
 	if baseMajorVersion > majorVersion ||
 		(baseMajorVersion == majorVersion &&
@@ -456,6 +478,15 @@ func getNewVersionFromTag(c config, gitClient domain.GitClient) (string, error) 
 	return fmt.Sprintf("%d.%d.%d", majorVersion, minorVersion, patchVersion), nil
 }
 
+func getSemanticReleaseVersion(c config) (*semver.Version, error) {
+	cmdRunner := cmdrunner.QuietCommandRunner
+	if c.debug {
+		cmdRunner = cmdrunner.DefaultCommandRunner
+	}
+	gitClient := cli.NewCLIClient("git", cmdRunner)
+	return semrel.GetNewVersion(c.dir, gitClient)
+}
+
 func isMajorMinorTheSame(v1 string, v2 string) (bool, error) {
 	sv1, err1 := semver.NewVersion(v1)
 	if err1 != nil {
@@ -465,10 +496,10 @@ func isMajorMinorTheSame(v1 string, v2 string) (bool, error) {
 	if err2 != nil {
 		return false, err2
 	}
-	if sv1.Major != sv2.Major {
+	if sv1.Major() != sv2.Major() {
 		return false, nil
 	}
-	if sv1.Minor != sv2.Minor {
+	if sv1.Minor() != sv2.Minor() {
 		return false, nil
 	}
 	return true, nil
