@@ -14,6 +14,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/jenkins-x-plugins/jx-release-version/adapters"
@@ -64,7 +65,7 @@ func main() {
 	ver := flag.Bool("version", false, "prints the version")
 	minor := flag.Bool("minor", false, "increase minor version instead of patch")
 	gitTag := flag.Bool("use-git-tag", false, "use only git tag to derive next release version")
-	semanticRelease := flag.Bool("semantic-release", false, "use conventional commits to derive next release version")
+	semanticRelease := flag.Bool("semantic-release", GetenvAsBoolWithDefault("USE_SEMANTIC_RELEASE", false), "use conventional commits to derive next release version. Default to the USE_SEMANTIC_RELEASE env var value.")
 	flag.Parse()
 
 	if *ver {
@@ -503,4 +504,18 @@ func isMajorMinorTheSame(v1 string, v2 string) (bool, error) {
 		return false, nil
 	}
 	return true, nil
+}
+
+func GetenvAsBoolWithDefault(key string, defaultValue bool) bool {
+	value, found := os.LookupEnv(key)
+	if !found {
+		return defaultValue
+	}
+
+	res, err := strconv.ParseBool(value)
+	if err != nil {
+		return defaultValue
+	}
+
+	return res
 }
