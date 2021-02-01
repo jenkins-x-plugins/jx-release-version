@@ -4,7 +4,8 @@
 
 By default it:
 - retrieves the previous version - which is the latest git tag matching the [semver](https://semver.org/) spec
-- and then use [conventional commits](https://www.conventionalcommits.org/) to calculate the next release version
+- use [conventional commits](https://www.conventionalcommits.org/) to calculate the next release version
+- print the next release version to the standard output using a specific format
 
 But it also supports other strategies to read the previous version and calculate the next version.
 
@@ -16,14 +17,16 @@ It accepts the following CLI flags:
 - `-dir`: the location on the filesystem of your project's top directory - default to the current working directory.
 - `-previous-version`: the [strategy to use to read the previous version](#reading-the-previous-version). Can also be set using the `PREVIOUS_VERSION` environment variable.
 - `-next-version`: the [strategy to use to calculate the next version](#calculating—the-next-version). Can also be set using the `NEXT_VERSION` environment variable.
+- `-output-format`: the [output format of the next release version](#output-format). Can also be set using the `OUTPUT_FORMAT` environment variable.
 - `-debug`: if enabled, will print debug logs to stdout in addition to the next version. It can also be enabled by setting the `JX_LOG_LEVEL` environment variable to `debug`.
 
 ### Features
 
 - standalone - no dependencies required. It uses an embedded [git implementation](https://github.com/go-git/go-git) to read the [Git](https://git-scm.com/) repository's information.
 - simple configuration through CLI flags or environment variables.
-- by default works even on an empty git repository
+- by default works even on an empty git repository.
 - multiple strategies to read the previous version and/or calculate the next version.
+- custom output format.
 
 ## Reading the previous version
 
@@ -137,3 +140,21 @@ The `manual` strategy can be used if you already know the next version, and just
 **Usage**:
 - `jx-release-version -next-version=manual:1.2.3`
 - `jx-release-version -next-version=1.2.3` - the `manual` prefix is optional
+
+## Output format
+
+The output format of the next release version can be defined using a [Go template](https://golang.org/pkg/text/template/):
+- the template has access to the [Version object](https://pkg.go.dev/github.com/Masterminds/semver/v3#pkg-index) - so you can use fields such as:
+  - [Major](https://pkg.go.dev/github.com/Masterminds/semver/v3#Version.Major)
+  - [Minor](https://pkg.go.dev/github.com/Masterminds/semver/v3#Version.Minor)
+  - [Patch](https://pkg.go.dev/github.com/Masterminds/semver/v3#Version.Patch)
+  - [Prerelease](https://pkg.go.dev/github.com/Masterminds/semver/v3#Version.Prerelease)
+  - [Metadata](https://pkg.go.dev/github.com/Masterminds/semver/v3#Version.Metadata)
+  - [String](https://pkg.go.dev/github.com/Masterminds/semver/v3#Version.String)
+  - [Original](https://pkg.go.dev/github.com/Masterminds/semver/v3#Version.Original)
+- the default format is: `{{.Major}}.{{.Minor}}.{{.Patch}}`
+- you can also use the [sprig functions](http://masterminds.github.io/sprig/)
+
+**Usage**:
+- `jx-release-version -output-format=v{{.Major}}.{{.Minor}}` - if you only want major/minor
+- `jx-release-version -output-format={{.String}}` - if you want the full version with prerelease / metadata information, if these are set in a file for example

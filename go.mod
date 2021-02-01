@@ -4,11 +4,12 @@ go 1.15
 
 require (
 	github.com/Masterminds/semver/v3 v3.1.1
+	github.com/Masterminds/sprig/v3 v3.2.0
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/frankban/quicktest v1.11.3 // indirect
 	github.com/go-git/go-git/v5 v5.2.0
 	github.com/golang/snappy v0.0.2 // indirect
-	github.com/imdario/mergo v0.3.11 // indirect
+	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/jenkins-x/jx-logging/v3 v3.0.3
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mholt/archiver v3.1.1+incompatible
