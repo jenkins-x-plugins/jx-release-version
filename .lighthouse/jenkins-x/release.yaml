@@ -21,9 +21,6 @@ spec:
           resources: {}
         - name: next-version
           resources: {}
-          script: |
-            #!/usr/bin/env bash
-            jx-release-version -semantic-release > VERSION
         - name: jx-variables
           resources: {}
         - name: release-binary
