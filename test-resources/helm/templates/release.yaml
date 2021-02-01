@@ -1,0 +1,40 @@
+{{- if .Capabilities.APIVersions.Has "jenkins.io/v1/Release" }}
+apiVersion: jenkins.io/v1
+kind: Release
+metadata:
+  creationTimestamp: "2021-02-01T13:42:19Z"
+  deletionTimestamp: null
+  name: '{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}'
+spec:
+  commits:
+  - author:
+      email: v.behar@free.fr
+      name: Vincent Behar
+    branch: master
+    committer:
+      email: v.behar@free.fr
+      name: Vincent Behar
+    message: |
+      chore: configure sonar copy-paste detection
+
+      let's ignore the test files from the copy-paste detector
+      needed for https://github.com/jenkins-x-plugins/jx-release-version/pull/59
+    sha: 2189a92fbe5bdf063e967110aab19c1b0ae7bcde
+  - author:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    branch: master
+    committer:
+      email: james.strachan@gmail.com
+      name: James Strachan
+    message: |
+      chore: upgrade pipelines
+    sha: 84ec217fea220d0bb01de858689a1419b675c67e
+  gitHttpUrl: https://github.com/jenkins-x-plugins/jx-release-version
+  gitOwner: jenkins-x-plugins
+  gitRepository: jx-release-version
+  name: '{{ .Chart.Name }}'
+  version: 1.0.49
+status: {}
+ 
+{{- end }}
