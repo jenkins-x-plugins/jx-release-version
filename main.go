@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"text/template"
 
+	"github.com/Masterminds/semver/v3"
+	"github.com/Masterminds/sprig/v3"
 	"github.com/jenkins-x-plugins/jx-release-version/v2/strategy"
 	"github.com/jenkins-x-plugins/jx-release-version/v2/strategy/auto"
 	"github.com/jenkins-x-plugins/jx-release-version/v2/strategy/fromfile"
@@ -29,6 +32,7 @@ var (
 		dir             string
 		previousVersion string
 		nextVersion     string
+		outputFormat    string
 	}
 )
 
@@ -37,6 +41,7 @@ func init() {
 	flag.StringVar(&options.dir, "dir", wd, "The directory that contains the git repository. Default to the current working directory.")
 	flag.StringVar(&options.previousVersion, "previous-version", getEnvWithDefault("PREVIOUS_VERSION", "auto"), "The strategy to detect the previous version: auto, from-tag, from-file or manual. Default to the PREVIOUS_VERSION env var.")
 	flag.StringVar(&options.nextVersion, "next-version", getEnvWithDefault("NEXT_VERSION", "auto"), "The strategy to calculate the next version: auto, semantic, from-file, increment or manual. Default to the NEXT_VERSION env var.")
+	flag.StringVar(&options.outputFormat, "output-format", getEnvWithDefault("OUTPUT_FORMAT", "{{.Major}}.{{.Minor}}.{{.Patch}}"), "The output format of the next version. Default to the OUTPUT_FORMAT env var.")
 	flag.BoolVar(&options.debug, "debug", os.Getenv("JX_LOG_LEVEL") == "debug", "Print debug logs. Enabled by default if the JX_LOG_LEVEL env var is set to 'debug'.")
 	flag.BoolVar(&options.printVersion, "version", false, "Just print the version and do nothing.")
 }
@@ -66,8 +71,11 @@ func main() {
 	}
 	log.Logger().Debugf("Next version: %s", nextVersion.String())
 
-	// ensure we don't keep pre-release or metadata information
-	fmt.Printf("%d.%d.%d", nextVersion.Major(), nextVersion.Minor(), nextVersion.Patch())
+	output, err := formatVersion(*nextVersion)
+	if err != nil {
+		log.Logger().Fatalf("Failed to format version %q with %q: %v", *nextVersion, options.outputFormat, err)
+	}
+	fmt.Print(output)
 }
 
 func versionReader() strategy.VersionReader {
@@ -157,6 +165,21 @@ func versionBumper() strategy.VersionBumper {
 
 	log.Logger().Debugf("Using %q version bumper (with %q)", strategyName, strategyArg)
 	return versionBumper
+}
+
+func formatVersion(version semver.Version) (string, error) {
+	outputTemplate, err := template.New("output").Funcs(sprig.TxtFuncMap()).Parse(options.outputFormat)
+	if err != nil {
+		return "", err
+	}
+
+	output := new(strings.Builder)
+	err = outputTemplate.Execute(output, version)
+	if err != nil {
+		return "", err
+	}
+
+	return output.String(), nil
 }
 
 func getEnvWithDefault(key string, defaultVal string) string {
