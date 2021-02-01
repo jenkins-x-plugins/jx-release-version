@@ -1,26 +1,26 @@
-module github.com/jenkins-x-plugins/jx-release-version
+module github.com/jenkins-x-plugins/jx-release-version/v2
 
 go 1.15
 
 require (
-	github.com/Azure/go-autorest/autorest v0.11.17 // indirect
-	github.com/Azure/go-autorest/autorest/adal v0.9.10 // indirect
-	github.com/Masterminds/semver v1.5.0
-	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/google/go-cmp v0.5.4 // indirect
-	github.com/google/go-github v0.0.0-20171108000855-8c08f4fba5e0
-	github.com/google/go-querystring v0.0.0-20170111101155-53e6ce116135 // indirect
-	github.com/google/uuid v1.1.5 // indirect
-	github.com/googleapis/gnostic v0.4.2 // indirect
-	github.com/hashicorp/go-version v1.2.1
-	github.com/hashicorp/golang-lru v0.5.4 // indirect
+	github.com/Masterminds/semver/v3 v3.1.1
+	github.com/dsnet/compress v0.0.1 // indirect
+	github.com/frankban/quicktest v1.11.3 // indirect
+	github.com/go-git/go-git/v5 v5.2.0
+	github.com/golang/snappy v0.0.2 // indirect
 	github.com/imdario/mergo v0.3.11 // indirect
-	github.com/jenkins-x/jx-helpers/v3 v3.0.66
-	github.com/jenkins-x/jx-kube-client/v3 v3.0.2 // indirect
 	github.com/jenkins-x/jx-logging/v3 v3.0.3
 	github.com/mattn/go-colorable v0.1.8 // indirect
+	github.com/mholt/archiver v3.1.1+incompatible
+	github.com/nwaples/rardecode v1.1.0 // indirect
+	github.com/pierrec/lz4 v2.6.0+incompatible // indirect
 	github.com/stretchr/testify v1.6.1
-	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
+	github.com/ulikunitz/xz v0.5.9 // indirect
+	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
+	github.com/zbindenren/cc v0.4.0
+	golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0 // indirect
+	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b // indirect
 	golang.org/x/text v0.3.5 // indirect
-	google.golang.org/appengine v1.6.7 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776
 )

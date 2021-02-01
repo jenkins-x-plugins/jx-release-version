@@ -1,89 +1,139 @@
 # Jenkins X Release Version
 
-Returns a new release version based on previous git tags that can be used in a new release.
+**This is a simple and standalone binary that can be used in CD pipelines to calculate the next release version**.
 
-This is a simple binary that can be used in CD pipelines to read pom.xml or Makefile's and return a 'patch' incremented version.
+By default it:
+- retrieves the previous version - which is the latest git tag matching the [semver](https://semver.org/) spec
+- and then use [conventional commits](https://www.conventionalcommits.org/) to calculate the next release version
 
-If you need to bump the major or minor version simply increment the version in your Makefile / pom.xml
+But it also supports other strategies to read the previous version and calculate the next version.
 
+## Usage
 
-This helps in continuous delivery if you want an automatic release when a change is merged to master.  Traditional approaches mean the version is stored in a file that is checked and updated after each release.  If you want automatic releases this means you will get another release triggered from the version update resulting in a cyclic release sitiation.  
+Just run `jx-release-version` in your project's top directory, and it should just print the next release version. It won't write anything to disk.
 
-Using a git tag to work out the next release version is better than traditional approaches of storing it in a VERSION file or updating a pom.xml.  If a major or minor version increase is required then still update the file and `jx-release-version` will use you new version.
+It accepts the following CLI flags:
+- `-dir`: the location on the filesystem of your project's top directory - default to the current working directory.
+- `-previous-version`: the [strategy to use to read the previous version](#reading-the-previous-version). Can also be set using the `PREVIOUS_VERSION` environment variable.
+- `-next-version`: the [strategy to use to calculate the next version](#calculating—the-next-version). Can also be set using the `NEXT_VERSION` environment variable.
+- `-debug`: if enabled, will print debug logs to stdout in addition to the next version. It can also be enabled by setting the `JX_LOG_LEVEL` environment variable to `debug`.
 
-Please note that `jx-release-version` is not called from the Tekton-style build pipelines, these use `jx step` instead.
+### Features
 
-## Prerequisits
+- standalone - no dependencies required. It uses an embedded [git implementation](https://github.com/go-git/go-git) to read the [Git](https://git-scm.com/) repository's information.
+- simple configuration through CLI flags or environment variables.
+- by default works even on an empty git repository
+- multiple strategies to read the previous version and/or calculate the next version.
 
-- `git` to be available on your `$PATH`
+## Reading the previous version
 
-## Examples
+There are different ways to read the previous version:
 
-- If your project is new or has no existing git tags then running `jx-release-version` will return a default version of `0.0.1`
+### Auto
 
-- If your latest git tag is `1.2.3` and you Makefile or pom.xml is `1.2.0-SNAPSHOT` then `jx-release-version` will return `1.2.4`
+The `auto` strategy is the default one. It tries to find the latest git tag, or if there there are no git tags, it just use `0.0.0` as the previous version.
 
-- If your latest git tag is `1.2.3` and your Makefile or pom.xml is `2.0.0` then `jx-release-version` will return `2.0.0`
+**Usage**:
+- `jx-release-version -previous-version=auto`
+- `jx-release-version` - the `auto` strategy is already the default one
 
-- If you need to support an old release for example 7.0.x and tags for new realese 7.1.x already exist, the `-same-release` flag  will help to obtain version from 7.0.x release. If the pom file version is 7.0.0-SNAPSHOT and both the 7.1.0 and 7.0.2 tags exist the command `jx-release-version` will return 7.1.1 but if we run `jx-release-version -same-release` it will return 7.0.3
+### From tag
 
-- If you need to get a release version `1.1.0` for older release and your last tag is `1.2.3` please change your Makefile or pom.xml to `1.1.0-SNAPSHOT` and run `jx-release-version -same-release`
+The `from-tag` strategy uses the latest git tag as the previous version. Note that it only uses tags which matches the [semver](https://semver.org/) spec - other tags are just ignored.
 
-## Example Makefile
+Optionnaly, it can filter tags based on a given pattern: if you use `from-tag:v1` it will use the latest tag matching the `v1` pattern. Note that it uses [Go's stdlib regexp](https://golang.org/pkg/regexp/) - you can see the [syntax](https://golang.org/pkg/regexp/syntax/).
+This feature can be used to maintain 2 major versions in parallel: for each, you just configure the right pattern, so that `jx-release-version` retrieves the right previous version, and bump it as it should.
 
-```$xslt
-VERSION := 2.0.0-SNAPSHOT
-```
+Note that if it can't find a tag, it will fail.
 
-## Example pom.xml
+**Usage**:
+- `jx-release-version -previous-version=from-tag`
+- `jx-release-version -previous-version=from-tag:v1`
 
-```xml
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+### From file
 
-    <groupId>io.example</groupId>
-    <artifactId>example</artifactId>
-    <version>1.0-0-SNAPSHOT</version>
-    <packaging>pom</packaging>
-</project>
-```
+The `from-file` strategy will read the previous version from a file. Supported formats are:
+- **Helm Charts**, using the `Chart.yaml` file
+- **Makefile**, using the `Makefile` file
+- **Automake**, using the `configure.ac` file
+- **CMake**, using the `CMakeLists.txt` file
+- **Python**, using the `setup.py` file
+- **Maven**, using the `pom.xml` file
+- **Javascript**, using the `package.json` file
+- **Gradle**, using the `build.gradle` or `build.gradle.kts` file
 
-Then in your release pipeline do something like this:
+**Usage**:
+- if you use `jx-release-version -previous-version=from-file` it will auto detect which file to use, trying the supported formats in the order in which they are listed.
+- if you specify a file, it will use it to find the previous version. For example:
+  - `jx-release-version -previous-version=from-file:pom.xml`
+  - `jx-release-version -previous-version=from-file:charts/my-chart/Chart.yaml`
+  - `jx-release-version -previous-version=from-file:Chart.yaml -dir=charts/my-chart`
 
-```sh
-    ➜ RELEASE_VERSION=$(jx-release-version)
-    ➜ echo "New release version ${RELEASE_VERSION}
-    ➜ mvn versions:set -DnewVersion=${RELEASE_VERSION}
-    ➜ git commit -a -m 'release ${RELEASE_VERSION}'
-    ➜ git tag -fa v${RELEASE_VERSION} -m 'Release version ${RELEASE_VERSION}'
-    ➜ git push origin v${RELEASE_VERSION}
-```
+### Manual
 
-### CLI arguments
+The `manual` strategy can be used if you already know the previous version, and just want `jx-release-version` to use it.
 
-```sh
-  -base-version string
-    	use this instead of Makefile, pom.xml, etc, e.g. -base-version=2.0.0-SNAPSHOT
-  -debug
-    prints debug into to console
-  -folder string
-    the folder to look for files that contain a pom.xml or Makefile with the project version to bump (default ".")
-  -gh-owner string
-    a github repository owner if not running from within a git project  e.g. fabric8io
-  -gh-repository string
-    a git repository if not running from within a git project  e.g. fabric8
-  -same-release -same-release
-    for support old releases: for example 7.0.x and tag for new release 7.1.x already exist, with -same-release argument next version from 7.0.x will be returned
-  -version
-    prints the version
-```
+**Usage**:
+- `jx-release-version -previous-version=manual:1.2.3`
+- `jx-release-version -previous-version=1.2.3` - the `manual` prefix is optional
 
-### FAQ
+## Calculating the next version
 
-__Why isn't a nodejs package.json supported?__
+There are different ways to calculate the next version:
 
-We use nodejs but make use of the semantic-release plugin which works out the next release versions instead
+### Auto
 
-__Why only Makefiles and pom.xml supported?__
+The `auto` strategy is the default one. It tries to use the `semantic` strategy, but if it can't find a tag for the previous version, it will fallback to incrementing the patch component.
 
-Right now we tend to only use golang, java and nodejs projects so if there's a file type missing please raise an issue or PR.
+**Usage**:
+- `jx-release-version -next-version=auto`
+- `jx-release-version` - the `auto` strategy is already the default one
+
+### Semantic release
+
+The `semantic` strategy finds all commits between the previous version's git tag and the current HEAD, and then uses [conventional commits](https://www.conventionalcommits.org/) to parse them. If it finds:
+- at least 1 commit with a `BREAKING CHANGE: ` footer, then it will bump the major component of the version
+- at least 1 commit with a `feat:` prefix, then it will bump the minor component of the version
+- otherwise it will bump the patch component of the version
+
+Note that if it can't find a tag for the previous version, it will fail.
+
+**Usage**:
+- `jx-release-version -next-version=semantic`
+
+### From file
+
+The `from-file` strategy will read the next version from a file. Supported formats are:
+- **Helm Charts**, using the `Chart.yaml` file
+- **Makefile**, using the `Makefile` file
+- **Automake**, using the `configure.ac` file
+- **CMake**, using the `CMakeLists.txt` file
+- **Python**, using the `setup.py` file
+- **Maven**, using the `pom.xml` file
+- **Javascript**, using the `package.json` file
+- **Gradle**, using the `build.gradle` or `build.gradle.kts` file
+
+**Usage**:
+- if you use `jx-release-version -next-version=from-file` it will auto detect which file to use, trying the supported formats in the order in which they are listed.
+- if you specify a file, it will use it to find the next version. For example:
+  - `jx-release-version -next-version=from-file:pom.xml`
+  - `jx-release-version -next-version=from-file:charts/my-chart/Chart.yaml`
+  - `jx-release-version -next-version=from-file:Chart.yaml -dir=charts/my-chart`
+
+### Increment
+
+The `increment` strategy can be used if you want to increment a specific component of the version.
+
+**Usage**:
+- `jx-release-version -next-version=increment:major`
+- `jx-release-version -next-version=increment:minor`
+- `jx-release-version -next-version=increment:patch`
+- `jx-release-version -next-version=increment` - by default it will increment the patch component
+
+### Manual
+
+The `manual` strategy can be used if you already know the next version, and just want `jx-release-version` to use it.
+
+**Usage**:
+- `jx-release-version -next-version=manual:1.2.3`
+- `jx-release-version -next-version=1.2.3` - the `manual` prefix is optional

@@ -1,0 +1,9 @@
+apiVersion: v2
+name: my-chart
+description: whatever
+version: 1.2.3
+appVersion: latest
+dependencies:
+- name: some-dep
+  version: 1.0.42
+  repository: stable
