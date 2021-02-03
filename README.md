@@ -25,8 +25,9 @@ It accepts the following CLI flags:
 - standalone - no dependencies required. It uses an embedded [git implementation](https://github.com/go-git/go-git) to read the [Git](https://git-scm.com/) repository's information.
 - simple configuration through CLI flags or environment variables.
 - by default works even on an empty git repository.
-- multiple strategies to read the previous version and/or calculate the next version.
-- custom output format.
+- multiple strategies to [read the previous version](#reading-the-previous-version) and/or [calculate the next version](#calculating—the-next-version).
+- [custom output format](#output-format).
+- [github action](#github-actions).
 
 ## Reading the previous version
 
@@ -158,3 +159,42 @@ The output format of the next release version can be defined using a [Go templat
 **Usage**:
 - `jx-release-version -output-format=v{{.Major}}.{{.Minor}}` - if you only want major/minor
 - `jx-release-version -output-format={{.String}}` - if you want the full version with prerelease / metadata information, if these are set in a file for example
+
+## Integrations
+
+### Tekton Pipelines
+
+If you want to use `jx-release-version` in your [Tekton](https://tekton.dev/) pipeline, you can add a step in your Task which writes the output of the `jx-release-version` command to a file, such as:
+
+```
+steps:
+- image: gcr.io/jenkinsxio/jx-release-version:2.2.0
+  name: next-version
+  script: |
+    #!/usr/bin/env sh
+    jx-release-version > VERSION
+```
+
+### GitHub Actions
+
+If you want to use `jx-release-version` in your [GitHub Workflow](https://github.com/features/actions), you can add the following to your workflow file:
+
+```
+jobs:
+  yourjob:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.DM_BOT_TOKEN }}
+      - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
+      - id: nextversion
+        name: next release version
+        uses: jenkins-x-plugins/jx-release-version@v2.2.0
+      - name: do something with the next version
+        run: echo next version is $VERSION
+        env:
+          VERSION: ${{ steps.nextversion.outputs.version }}
+```
