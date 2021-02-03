@@ -37,6 +37,13 @@ spec:
             if [ -d "/workspace/source/charts/$REPO_NAME" ]; then source .jx/variables.sh
             cd /workspace/source/charts/$REPO_NAME
             make release; else echo no charts; fi
+        - image: gcr.io/jenkinsxio/jx-boot:3.0.773
+          name: set-github-action-version
+          resources: {}
+          script: |
+            #!/usr/bin/env sh
+            source .jx/variables.sh
+            sed -i -e "s/jx-release-version:[0-9\.]*/jx-release-version:$VERSION/" action.yml
         - name: changelog
           resources: {}
         - name: upload-binaries

@@ -1,0 +1,27 @@
+# https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions
+name: 'jx-release-version'
+description: 'https://github.com/jenkins-x-plugins/jx-release-version'
+inputs:
+  previous-version:
+    description: 'The strategy to detect the previous version: auto, from-tag, from-file or manual'
+    required: false
+    default: 'auto'
+  next-version:
+    description: 'The strategy to calculate the next version: auto, semantic, from-file, increment or manual'
+    required: false
+    default: 'auto'
+  output-format:
+    description: 'The output format of the next version'
+    required: false
+    default: '{{.Major}}.{{.Minor}}.{{.Patch}}'
+outputs:
+  version:
+    description: 'The next release version'
+runs:
+  using: 'docker'
+  image: 'docker://gcr.io/jenkinsxio/jx-release-version:2.1.0'
+  entrypoint: 'github-actions-entrypoint.sh'
+  env:
+    PREVIOUS_VERSION: ${{ inputs.previous-version }}
+    NEXT_VERSION: ${{ inputs.next-version }}
+    OUTPUT_FORMAT: ${{ inputs.output-format }}
