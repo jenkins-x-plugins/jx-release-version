@@ -98,6 +98,14 @@ func TestReadVersion(t *testing.T) {
 			expected: semver.MustParse("1.2.7"),
 		},
 		{
+			name: "Gradle Properties",
+			strategy: Strategy{
+				Dir:      "testdata",
+				FilePath: "gradle.properties",
+			},
+			expected: semver.MustParse("1.2.7"),
+		},
+		{
 			name: "Gradle (kotlin)",
 			strategy: Strategy{
 				Dir:      "testdata",
