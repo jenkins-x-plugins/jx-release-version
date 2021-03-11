@@ -21,8 +21,9 @@ func (r GradleVersionReader) String() string {
 
 func (r GradleVersionReader) SupportedFiles() []string {
 	return []string{
-		"build.gradle",     // groovy syntax
-		"build.gradle.kts", // kotlin syntax
+		"build.gradle",      // groovy syntax
+		"gradle.properties", // gradle properties syntax
+		"build.gradle.kts",  // kotlin syntax
 	}
 }
 
