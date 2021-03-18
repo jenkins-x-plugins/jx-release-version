@@ -8,6 +8,7 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/go-git/go-git/v5/plumbing/storer"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 	"github.com/zbindenren/cc"
 )
@@ -117,8 +118,8 @@ func (s Strategy) parseCommitsSince(repo *git.Repository, firstCommit *object.Co
 
 	err = commitIterator.ForEach(func(commit *object.Commit) error {
 		if commit.Hash == firstCommit.Hash {
-			log.Logger().Debugf("Skipping first commit %s", commit.Hash)
-			return nil
+			log.Logger().Debugf("Skipping first commit %s and stopping iteration", commit.Hash)
+			return storer.ErrStop
 		}
 		log.Logger().Debugf("Parsing commit %s", commit.Hash)
 		c, err := cc.Parse(commit.Message)
