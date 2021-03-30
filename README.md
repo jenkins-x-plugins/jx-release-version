@@ -104,6 +104,8 @@ Note that if it can't find a tag for the previous version, it will fail.
 
 **Usage**:
 - `jx-release-version -next-version=semantic`
+- if you want to strip any prerelease information from the build before performing the version bump you can use:
+  - `jx-release-version -next-version=semantic:strip-prerelease`
 
 ### From file
 

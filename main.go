@@ -137,12 +137,14 @@ func versionBumper() strategy.VersionBumper {
 	case "auto", "":
 		versionBumper = auto.Strategy{
 			SemanticStrategy: semantic.Strategy{
-				Dir: options.dir,
+				Dir:             options.dir,
+				StripPrerelease: strings.Contains(strategyArg, "strip-prerelease"),
 			},
 		}
 	case "semantic":
 		versionBumper = semantic.Strategy{
-			Dir: options.dir,
+			Dir:             options.dir,
+			StripPrerelease: strings.Contains(strategyArg, "strip-prerelease"),
 		}
 	case "from-file":
 		versionBumper = fromfile.Strategy{
