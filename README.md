@@ -18,6 +18,7 @@ It accepts the following CLI flags:
 - `-previous-version`: the [strategy to use to read the previous version](#reading-the-previous-version). Can also be set using the `PREVIOUS_VERSION` environment variable.
 - `-next-version`: the [strategy to use to calculate the next version](#calculating—the-next-version). Can also be set using the `NEXT_VERSION` environment variable.
 - `-output-format`: the [output format of the next release version](#output-format). Can also be set using the `OUTPUT_FORMAT` environment variable.
+- `-strip-prerelease`: remove any prerelease information before calculating the next version. Can also be set using the `STRIP_PRERELEASE` environment variable.
 - `-debug`: if enabled, will print debug logs to stdout in addition to the next version. It can also be enabled by setting the `JX_LOG_LEVEL` environment variable to `debug`.
 
 ### Features
