@@ -33,6 +33,7 @@ var (
 		previousVersion string
 		nextVersion     string
 		outputFormat    string
+		stripPrerelease bool
 	}
 )
 
@@ -42,6 +43,7 @@ func init() {
 	flag.StringVar(&options.previousVersion, "previous-version", getEnvWithDefault("PREVIOUS_VERSION", "auto"), "The strategy to detect the previous version: auto, from-tag, from-file or manual. Default to the PREVIOUS_VERSION env var.")
 	flag.StringVar(&options.nextVersion, "next-version", getEnvWithDefault("NEXT_VERSION", "auto"), "The strategy to calculate the next version: auto, semantic, from-file, increment or manual. Default to the NEXT_VERSION env var.")
 	flag.StringVar(&options.outputFormat, "output-format", getEnvWithDefault("OUTPUT_FORMAT", "{{.Major}}.{{.Minor}}.{{.Patch}}"), "The output format of the next version. Default to the OUTPUT_FORMAT env var.")
+	flag.BoolVar(&options.stripPrerelease, "strip-prerelease", os.Getenv("STRIP_PRERELEASE") == "true", "Strip prerelease from the discovered version before bumping.")
 	flag.BoolVar(&options.debug, "debug", os.Getenv("JX_LOG_LEVEL") == "debug", "Print debug logs. Enabled by default if the JX_LOG_LEVEL env var is set to 'debug'.")
 	flag.BoolVar(&options.printVersion, "version", false, "Just print the version and do nothing.")
 }
@@ -137,12 +139,14 @@ func versionBumper() strategy.VersionBumper {
 	case "auto", "":
 		versionBumper = auto.Strategy{
 			SemanticStrategy: semantic.Strategy{
-				Dir: options.dir,
+				Dir:             options.dir,
+				StripPrerelease: options.stripPrerelease,
 			},
 		}
 	case "semantic":
 		versionBumper = semantic.Strategy{
-			Dir: options.dir,
+			Dir:             options.dir,
+			StripPrerelease: options.stripPrerelease,
 		}
 	case "from-file":
 		versionBumper = fromfile.Strategy{

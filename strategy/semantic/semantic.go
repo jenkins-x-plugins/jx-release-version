@@ -18,7 +18,8 @@ var (
 )
 
 type Strategy struct {
-	Dir string
+	Dir             string
+	StripPrerelease bool
 }
 
 func (s Strategy) BumpVersion(previous semver.Version) (*semver.Version, error) {
@@ -46,6 +47,13 @@ func (s Strategy) BumpVersion(previous semver.Version) (*semver.Version, error) 
 	summary, err := s.parseCommitsSince(repo, tagCommit)
 	if err != nil {
 		return nil, err
+	}
+
+	if s.StripPrerelease {
+		previous, err = previous.SetPrerelease("")
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	var version semver.Version
