@@ -9,13 +9,14 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/Masterminds/sprig/v3"
-	"github.com/jenkins-x-plugins/jx-release-version/v2/strategy"
-	"github.com/jenkins-x-plugins/jx-release-version/v2/strategy/auto"
-	"github.com/jenkins-x-plugins/jx-release-version/v2/strategy/fromfile"
-	"github.com/jenkins-x-plugins/jx-release-version/v2/strategy/fromtag"
-	"github.com/jenkins-x-plugins/jx-release-version/v2/strategy/increment"
-	"github.com/jenkins-x-plugins/jx-release-version/v2/strategy/manual"
-	"github.com/jenkins-x-plugins/jx-release-version/v2/strategy/semantic"
+	"github.com/jenkins-x-plugins/jx-release-version/v2/pkg/strategy"
+	"github.com/jenkins-x-plugins/jx-release-version/v2/pkg/strategy/auto"
+	"github.com/jenkins-x-plugins/jx-release-version/v2/pkg/strategy/fromfile"
+	"github.com/jenkins-x-plugins/jx-release-version/v2/pkg/strategy/fromtag"
+	"github.com/jenkins-x-plugins/jx-release-version/v2/pkg/strategy/increment"
+	"github.com/jenkins-x-plugins/jx-release-version/v2/pkg/strategy/manual"
+	"github.com/jenkins-x-plugins/jx-release-version/v2/pkg/strategy/semantic"
+	"github.com/jenkins-x-plugins/jx-release-version/v2/pkg/tag"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 )
 
@@ -33,6 +34,8 @@ var (
 		previousVersion string
 		nextVersion     string
 		outputFormat    string
+		tag             bool
+		pushTag         bool
 	}
 )
 
@@ -44,6 +47,8 @@ func init() {
 	flag.StringVar(&options.outputFormat, "output-format", getEnvWithDefault("OUTPUT_FORMAT", "{{.Major}}.{{.Minor}}.{{.Patch}}"), "The output format of the next version. Default to the OUTPUT_FORMAT env var.")
 	flag.BoolVar(&options.debug, "debug", os.Getenv("JX_LOG_LEVEL") == "debug", "Print debug logs. Enabled by default if the JX_LOG_LEVEL env var is set to 'debug'.")
 	flag.BoolVar(&options.printVersion, "version", false, "Just print the version and do nothing.")
+	flag.BoolVar(&options.tag, "tag", false, "Perform a git tag")
+	flag.BoolVar(&options.pushTag, "push_tag", true, "Use with tag flag, pushes a git tag to the remote branch")
 }
 
 func main() {
@@ -75,7 +80,20 @@ func main() {
 	if err != nil {
 		log.Logger().Fatalf("Failed to format version %q with %q: %v", *nextVersion, options.outputFormat, err)
 	}
+
 	fmt.Print(output)
+
+	if options.tag {
+		tagOptions := tag.Tag{
+			FormattedVersion: output,
+			Dir:              options.dir,
+			PushTag:          options.pushTag,
+		}
+		err = tagOptions.TagRemote()
+		if err != nil {
+			log.Logger().Fatalf("Failed to tag using version %s: %v", output, err)
+		}
+	}
 }
 
 func versionReader() strategy.VersionReader {

@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/jenkins-x-plugins/jx-release-version/v2/strategy/fromtag"
-	"github.com/jenkins-x-plugins/jx-release-version/v2/strategy/semantic"
+	"github.com/jenkins-x-plugins/jx-release-version/v2/pkg/strategy/fromtag"
+	"github.com/jenkins-x-plugins/jx-release-version/v2/pkg/strategy/semantic"
 	"github.com/mholt/archiver"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

@@ -19,6 +19,7 @@ require (
 	github.com/mitchellh/copystructure v1.1.1 // indirect
 	github.com/nwaples/rardecode v1.1.0 // indirect
 	github.com/pierrec/lz4 v2.6.0+incompatible // indirect
+	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.6.1
 	github.com/ulikunitz/xz v0.5.9 // indirect
 	github.com/xanzy/ssh-agent v0.3.0 // indirect
