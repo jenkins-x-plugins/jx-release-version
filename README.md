@@ -40,6 +40,7 @@ The `auto` strategy is the default one. It tries to find the latest git tag, or 
 **Usage**:
 - `jx-release-version -previous-version=auto`
 - `jx-release-version` - the `auto` strategy is already the default one
+- `jx-release-version --tag` - created and pushes a git tag, requires authentication, if in a pipeline set a `GIT_TOKEN` environment variable.
 
 ### From tag
 
