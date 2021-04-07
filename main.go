@@ -35,6 +35,7 @@ var (
 		nextVersion     string
 		outputFormat    string
 		tag             bool
+		tagPrefix       string
 		pushTag         bool
 	}
 )
@@ -48,7 +49,8 @@ func init() {
 	flag.BoolVar(&options.debug, "debug", os.Getenv("JX_LOG_LEVEL") == "debug", "Print debug logs. Enabled by default if the JX_LOG_LEVEL env var is set to 'debug'.")
 	flag.BoolVar(&options.printVersion, "version", false, "Just print the version and do nothing.")
 	flag.BoolVar(&options.tag, "tag", false, "Perform a git tag")
-	flag.BoolVar(&options.pushTag, "push_tag", true, "Use with tag flag, pushes a git tag to the remote branch")
+	flag.StringVar(&options.tagPrefix, "tag-prefix", getEnvWithDefault("TAG_PREFIX", "v"), "Prefix to use for the git tag")
+	flag.BoolVar(&options.pushTag, "push-tag", true, "Use with tag flag, pushes a git tag to the remote branch")
 }
 
 func main() {
@@ -85,7 +87,7 @@ func main() {
 
 	if options.tag {
 		tagOptions := tag.Tag{
-			FormattedVersion: output,
+			FormattedVersion: options.tagPrefix + output,
 			Dir:              options.dir,
 			PushTag:          options.pushTag,
 		}

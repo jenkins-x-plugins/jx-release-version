@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jenkins-x/jx-logging/v3/pkg/log"
-
 	"github.com/go-git/go-git/v5/config"
+	"github.com/jenkins-x/jx-logging/v3/pkg/log"
+	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/pkg/errors"
@@ -56,11 +56,23 @@ func (options Tag) TagRemote() error {
 }
 
 func pushTags(r *git.Repository) error {
+	token := os.Getenv("GIT_TOKEN")
 
 	po := &git.PushOptions{
 		RemoteName: "origin",
 		Progress:   os.Stdout,
 		RefSpecs:   []config.RefSpec{config.RefSpec("refs/tags/*:refs/tags/*")},
+	}
+
+	if token != "" {
+		user := os.Getenv("GIT_USER")
+		if user == "" {
+			user = "abc123" // yes, this can be anything except an empty string
+		}
+		po.Auth = &http.BasicAuth{
+			Username: user,
+			Password: token,
+		}
 	}
 	log.Logger().Debug("git push --tags")
 	err := r.Push(po)
