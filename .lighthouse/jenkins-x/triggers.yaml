@@ -11,6 +11,7 @@ spec:
   - name: release
     context: "release"
     source: "release.yaml"
+    ignore_changes: '^action\.yml$'
     branches:
     - ^main$
     - ^master$

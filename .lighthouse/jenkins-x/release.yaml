@@ -50,6 +50,20 @@ spec:
           resources: {}
         - name: promote-release
           resources: {}
+        - image: gcr.io/jenkinsxio/jx-changelog:0.0.36
+          name: promote-action
+          resources: {}
+          script: |
+            #!/usr/bin/env sh
+            source .jx/variables.sh
+
+            git clone https://github.com/jenkins-x-plugins/$REPO_NAME update-action
+            cd update-action
+            sed -i -e "s|gcr.io/jenkinsxio/$REPO_NAME:.*|gcr.io/jenkinsxio/$REPO_NAME:$VERSION|" action.yml
+
+            git add * || true
+            git commit -a -m "chore: upgrade image to $VERSION" --allow-empty
+            git push
   podTemplate: {}
   serviceAccountName: tekton-bot
   timeout: 240h0m0s
