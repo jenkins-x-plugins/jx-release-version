@@ -5,11 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/go-git/go-git/v5/plumbing/object"
-
-	"github.com/stretchr/testify/assert"
-
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTag(t *testing.T) {
