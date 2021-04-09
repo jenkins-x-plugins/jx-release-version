@@ -2,13 +2,13 @@ package semantic
 
 import (
 	"errors"
+	"github.com/go-git/go-git/v5/plumbing/storer"
 	"os"
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
-	"github.com/go-git/go-git/v5/plumbing/storer"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 	"github.com/zbindenren/cc"
 )
@@ -119,12 +119,14 @@ func (s Strategy) parseCommitsSince(repo *git.Repository, firstCommit *object.Co
 	log.Logger().Debugf("Iterating over all commits since %s", firstCommit.Committer.When)
 	commitIterator, err := repo.Log(&git.LogOptions{
 		Since: &firstCommit.Committer.When,
+		//Order: git.LogOrderCommitterTime,
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	err = commitIterator.ForEach(func(commit *object.Commit) error {
+		log.Logger().Debugf("Checking commit %s with message %s", commit.Hash, commit.Message)
 		if commit.Hash == firstCommit.Hash {
 			log.Logger().Debugf("Skipping first commit %s and stopping iteration", commit.Hash)
 			return storer.ErrStop
