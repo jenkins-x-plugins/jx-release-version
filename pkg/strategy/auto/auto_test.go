@@ -39,6 +39,15 @@ func TestReadVersion(t *testing.T) {
 			},
 			expected: semver.MustParse("v2.0.0"),
 		},
+		{
+			name: "repo with merge commit",
+			strategy: Strategy{
+				FromTagStrategy: fromtag.Strategy{
+					Dir: "testdata/repo-with-merge-commit",
+				},
+			},
+			expected: semver.MustParse("1.0.0"),
+		},
 	}
 
 	setupGitRepos(t)
@@ -88,6 +97,16 @@ func TestBumpVersion(t *testing.T) {
 			previous: *semver.MustParse("1.0.0"),
 			expected: semver.MustParse("2.0.0"),
 		},
+		{
+			name: "repo with merge commit",
+			strategy: Strategy{
+				SemanticStrategy: semantic.Strategy{
+					Dir: "testdata/repo-with-merge-commit",
+				},
+			},
+			previous: *semver.MustParse("1.0.0"),
+			expected: semver.MustParse("1.1.0"),
+		},
 	}
 
 	setupGitRepos(t)
@@ -95,7 +114,7 @@ func TestBumpVersion(t *testing.T) {
 	for i := range tests {
 		test := tests[i]
 		t.Run(test.name, func(t *testing.T) {
-			t.Parallel()
+			//t.Parallel()
 
 			actual, err := test.strategy.BumpVersion(test.previous)
 			if len(test.expectedErrorMsg) > 0 {
@@ -111,7 +130,7 @@ func TestBumpVersion(t *testing.T) {
 
 func setupGitRepos(t *testing.T) {
 	// the git repos are stored as a tar.gz archive to make it easy to commit
-	for _, repoName := range []string{"git-repo", "empty-git-repo"} {
+	for _, repoName := range []string{"git-repo", "empty-git-repo", "repo-with-merge-commit"} {
 		gitRepoPath := filepath.Join("testdata", repoName)
 		err := os.RemoveAll(gitRepoPath)
 		require.NoErrorf(t, err, "failed to delete %s", gitRepoPath)
