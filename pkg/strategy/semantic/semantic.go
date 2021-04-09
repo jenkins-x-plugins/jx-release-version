@@ -119,7 +119,7 @@ func (s Strategy) parseCommitsSince(repo *git.Repository, firstCommit *object.Co
 	log.Logger().Debugf("Iterating over all commits since %s", firstCommit.Committer.When)
 	commitIterator, err := repo.Log(&git.LogOptions{
 		Since: &firstCommit.Committer.When,
-		//Order: git.LogOrderCommitterTime,
+		Order: git.LogOrderCommitterTime,
 	})
 	if err != nil {
 		return nil, err
