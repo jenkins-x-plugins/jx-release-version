@@ -19,8 +19,8 @@ func (s Strategy) ReadVersion() (*semver.Version, error) {
 		return v, nil
 	}
 
-	if err == fromtag.ErrNoTags {
-		log.Logger().Debug("The git repository has no tags yet - returning fake version 0.0.0")
+	if err == fromtag.ErrNoTags || err == fromtag.ErrNoSemverTags {
+		log.Logger().Debugf("Using fake version 0.0.0 because %s", err)
 		return semver.MustParse("0.0.0"), nil
 	}
 

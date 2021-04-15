@@ -14,7 +14,8 @@ import (
 )
 
 var (
-	ErrNoTags = errors.New("the git repository has no tags")
+	ErrNoTags       = errors.New("the git repository has no tags")
+	ErrNoSemverTags = errors.New("the git repository has no semver tags")
 )
 
 type Strategy struct {
@@ -76,6 +77,9 @@ func (s Strategy) ReadVersion() (*semver.Version, error) {
 	}
 	if tags == 0 {
 		return nil, ErrNoTags
+	}
+	if len(versions) == 0 && len(s.TagPattern) == 0 {
+		return nil, ErrNoSemverTags
 	}
 	if len(versions) == 0 {
 		return nil, fmt.Errorf("no semver tags with pattern %q found", s.TagPattern)
