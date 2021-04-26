@@ -31,7 +31,7 @@ func (s Strategy) ReadVersion() (*semver.Version, error) {
 	if dir == "" {
 		dir, err = os.Getwd()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to get current working directory: %w", err)
 		}
 	}
 
@@ -39,18 +39,18 @@ func (s Strategy) ReadVersion() (*semver.Version, error) {
 	if len(s.TagPattern) > 0 {
 		tagRegexp, err = regexp.Compile(s.TagPattern)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to compile tag pattern %q: %w", s.TagPattern, err)
 		}
 	}
 
 	repo, err := git.PlainOpen(dir)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to open git repository at %q: %w", dir, err)
 	}
 
 	tagIterator, err := repo.Tags()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to list tags from git repository at %q: %w", dir, err)
 	}
 
 	var (
@@ -73,7 +73,7 @@ func (s Strategy) ReadVersion() (*semver.Version, error) {
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to iterator over tags from git repository at %q: %w", dir, err)
 	}
 	if tags == 0 {
 		return nil, ErrNoTags

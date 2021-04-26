@@ -1,6 +1,8 @@
 package auto
 
 import (
+	"fmt"
+
 	"github.com/Masterminds/semver/v3"
 	"github.com/jenkins-x-plugins/jx-release-version/v2/pkg/strategy/fromtag"
 	"github.com/jenkins-x-plugins/jx-release-version/v2/pkg/strategy/semantic"
@@ -24,7 +26,7 @@ func (s Strategy) ReadVersion() (*semver.Version, error) {
 		return semver.MustParse("0.0.0"), nil
 	}
 
-	return nil, err
+	return nil, fmt.Errorf("failed to read previous version from tags: %w", err)
 }
 
 func (s Strategy) BumpVersion(previous semver.Version) (*semver.Version, error) {
@@ -40,5 +42,5 @@ func (s Strategy) BumpVersion(previous semver.Version) (*semver.Version, error) 
 		return &next, nil
 	}
 
-	return nil, err
+	return nil, fmt.Errorf("failed to bump version %s using semantic strategy: %w", previous.String(), err)
 }

@@ -23,7 +23,7 @@ func (s Strategy) ReadVersion() (*semver.Version, error) {
 	if dir == "" {
 		dir, err = os.Getwd()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to get current working directory: %w", err)
 		}
 	}
 
