@@ -2,13 +2,14 @@ package semantic
 
 import (
 	"errors"
-	"github.com/go-git/go-git/v5/plumbing/storer"
+	"fmt"
 	"os"
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/go-git/go-git/v5/plumbing/storer"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 	"github.com/zbindenren/cc"
 )
@@ -30,13 +31,13 @@ func (s Strategy) BumpVersion(previous semver.Version) (*semver.Version, error) 
 	if dir == "" {
 		dir, err = os.Getwd()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to get current working directory: %w", err)
 		}
 	}
 
 	repo, err := git.PlainOpen(dir)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to open git repository at %q: %w", dir, err)
 	}
 
 	tagCommit, err := s.extractTagCommit(repo, previous.String())
@@ -77,29 +78,38 @@ func (s Strategy) extractTagCommit(repo *git.Repository, tagName string) (*objec
 
 	previousTagRef, err := repo.Tag(tagName)
 	if err == git.ErrTagNotFound {
-		previousTagRef, err = repo.Tag("v" + tagName)
+		// let's try to prepend a `v` prefix...
+		tagName = "v" + tagName
+		previousTagRef, err = repo.Tag(tagName)
 		if err == git.ErrTagNotFound {
 			return nil, ErrPreviousVersionTagNotFound
 		}
 	}
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get tag %q: %w", tagName, err)
 	}
 
 	previousTag, err := repo.TagObject(previousTagRef.Hash())
 	if errors.Is(err, plumbing.ErrObjectNotFound) {
 		// it's a lightweight tag, not an annotated tag
 		tagCommit, err = repo.CommitObject(previousTagRef.Hash())
+		if err != nil {
+			return nil, fmt.Errorf("failed to get the commit with hash %q (from tag %q): %w", previousTagRef.Hash().String(), tagName, err)
+		}
 	}
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get the annotated tag with hash %q (from tag name %q): %w", previousTagRef.Hash().String(), tagName, err)
 	}
 
 	if previousTag != nil {
 		tagCommit, err = previousTag.Commit()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to get the commit from the annotated tag %q with hash %q: %w", previousTag.Name, previousTag.Hash.String(), err)
 		}
+	}
+
+	if tagCommit == nil {
+		return nil, fmt.Errorf("could not find a commit for tag %q", tagName)
 	}
 
 	log.Logger().Debugf("Previous version tag commit is %s", tagCommit.Hash)
@@ -122,7 +132,7 @@ func (s Strategy) parseCommitsSince(repo *git.Repository, firstCommit *object.Co
 		Order: git.LogOrderCommitterTime,
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to list commits since %s (commit %q): %w", firstCommit.Committer.When, firstCommit.Hash.String(), err)
 	}
 
 	err = commitIterator.ForEach(func(commit *object.Commit) error {
@@ -144,7 +154,7 @@ func (s Strategy) parseCommitsSince(repo *git.Repository, firstCommit *object.Co
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to iterator over commits: %w", err)
 	}
 
 	log.Logger().Debugf("Summary of conventional commits since %s: %#v", firstCommit.Committer.When, summary)
