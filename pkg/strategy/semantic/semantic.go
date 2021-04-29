@@ -3,13 +3,13 @@ package semantic
 import (
 	"errors"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
-	"github.com/go-git/go-git/v5/plumbing/storer"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 	"github.com/zbindenren/cc"
 )
@@ -117,8 +117,9 @@ func (s Strategy) extractTagCommit(repo *git.Repository, tagName string) (*objec
 }
 
 type conventionalCommitsSummary struct {
-	types           map[string]bool
-	breakingChanges bool
+	conventionalCommitsCount int
+	types                    map[string]bool
+	breakingChanges          bool
 }
 
 func (s Strategy) parseCommitsSince(repo *git.Repository, firstCommit *object.Commit) (*conventionalCommitsSummary, error) {
@@ -134,27 +135,36 @@ func (s Strategy) parseCommitsSince(repo *git.Repository, firstCommit *object.Co
 	if err != nil {
 		return nil, fmt.Errorf("failed to list commits since %s (commit %q): %w", firstCommit.Committer.When, firstCommit.Hash.String(), err)
 	}
+	defer commitIterator.Close()
 
-	err = commitIterator.ForEach(func(commit *object.Commit) error {
+	for {
+		commit, err := commitIterator.Next()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Logger().WithError(err).Debug("Skipping unretrievable commit")
+			continue
+		}
+
 		log.Logger().Debugf("Checking commit %s with message %s", commit.Hash, commit.Message)
 		if commit.Hash == firstCommit.Hash {
-			log.Logger().Debugf("Skipping first commit %s and stopping iteration", commit.Hash)
-			return storer.ErrStop
+			log.Logger().Debugf("Found first commit %s and stopping iteration", commit.Hash)
+			break
 		}
+
 		log.Logger().Debugf("Parsing commit %s", commit.Hash)
 		c, err := cc.Parse(commit.Message)
 		if err != nil {
 			log.Logger().WithError(err).Debugf("Skipping non-conventional commit %s", commit.Hash)
-			return nil
+			continue
 		}
+
+		summary.conventionalCommitsCount++
 		summary.types[c.Header.Type] = true
 		if len(c.BreakingMessage()) > 0 {
 			summary.breakingChanges = true
 		}
-		return nil
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to iterator over commits: %w", err)
 	}
 
 	log.Logger().Debugf("Summary of conventional commits since %s: %#v", firstCommit.Committer.When, summary)
