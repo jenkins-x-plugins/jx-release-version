@@ -48,7 +48,7 @@ func init() {
 	flag.StringVar(&options.outputFormat, "output-format", getEnvWithDefault("OUTPUT_FORMAT", "{{.Major}}.{{.Minor}}.{{.Patch}}"), "The output format of the next version. Default to the OUTPUT_FORMAT env var.")
 	flag.BoolVar(&options.debug, "debug", os.Getenv("JX_LOG_LEVEL") == "debug", "Print debug logs. Enabled by default if the JX_LOG_LEVEL env var is set to 'debug'.")
 	flag.BoolVar(&options.printVersion, "version", false, "Just print the version and do nothing.")
-	flag.BoolVar(&options.tag, "tag", false, "Perform a git tag")
+	flag.BoolVar(&options.tag, "tag", os.Getenv("TAG") == "true", "Perform a git tag")
 	flag.StringVar(&options.tagPrefix, "tag-prefix", getEnvWithDefault("TAG_PREFIX", "v"), "Prefix to use for the git tag")
 	flag.BoolVar(&options.pushTag, "push-tag", true, "Use with tag flag, pushes a git tag to the remote branch")
 }

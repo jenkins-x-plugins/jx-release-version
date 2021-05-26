@@ -59,7 +59,7 @@ spec:
 
             git clone https://github.com/jenkins-x-plugins/$REPO_NAME update-action
             cd update-action
-            sed -i -e "s|gcr.io/jenkinsxio/$REPO_NAME:.*|gcr.io/jenkinsxio/$REPO_NAME:$VERSION'|" action.yml
+            sed -i -e "s|ghcr.io/jenkins-x/$REPO_NAME:.*|ghcr.io/jenkins-x/$REPO_NAME:$VERSION'|" action.yml
 
             git add * || true
             git commit -a -m "chore: upgrade image to $VERSION" --allow-empty
