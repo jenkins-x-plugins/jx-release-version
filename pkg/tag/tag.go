@@ -4,9 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 )
@@ -15,6 +17,8 @@ type Tag struct {
 	FormattedVersion string
 	Dir              string
 	PushTag          bool
+	GitName          string
+	GitEmail         string
 }
 
 func (options Tag) TagRemote() error {
@@ -42,6 +46,17 @@ func (options Tag) TagRemote() error {
 	tagOptions := &git.CreateTagOptions{
 		Message: fmt.Sprintf("Release version %s", options.FormattedVersion),
 	}
+
+	// override default git config tagger info
+	if options.GitName != "" && options.GitEmail != "" {
+		log.Logger().Debugf("overriding default git tagger config with name %s: email: %s", options.GitName, options.GitEmail)
+		tagOptions.Tagger = &object.Signature{
+			Name:  options.GitName,
+			Email: options.GitEmail,
+			When:  time.Now(),
+		}
+	}
+
 	log.Logger().Debugf("git tag -a %s -m %q", options.FormattedVersion, tagOptions.Message)
 	_, err = repo.CreateTag(options.FormattedVersion, h.Hash(), tagOptions)
 	if err != nil {
