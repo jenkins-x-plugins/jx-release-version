@@ -37,6 +37,8 @@ var (
 		tag             bool
 		tagPrefix       string
 		pushTag         bool
+		gitName         string
+		gitEmail        string
 	}
 )
 
@@ -51,6 +53,8 @@ func init() {
 	flag.BoolVar(&options.tag, "tag", os.Getenv("TAG") == "true", "Perform a git tag")
 	flag.StringVar(&options.tagPrefix, "tag-prefix", getEnvWithDefault("TAG_PREFIX", "v"), "Prefix to use for the git tag")
 	flag.BoolVar(&options.pushTag, "push-tag", true, "Use with tag flag, pushes a git tag to the remote branch")
+	flag.StringVar(&options.gitName, "git-user", getEnvWithDefault("GIT_NAME", ""), "Name is the personal name of the author and the committer of a commit, use to override Git config")
+	flag.StringVar(&options.gitEmail, "git-email", getEnvWithDefault("GIT_EMAIL", ""), "Email is the email of the author and the committer of a commit, use to override Git config")
 }
 
 func main() {
@@ -90,6 +94,8 @@ func main() {
 			FormattedVersion: options.tagPrefix + output,
 			Dir:              options.dir,
 			PushTag:          options.pushTag,
+			GitName:          options.gitName,
+			GitEmail:         options.gitEmail,
 		}
 		err = tagOptions.TagRemote()
 		if err != nil {

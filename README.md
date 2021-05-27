@@ -195,7 +195,34 @@ jobs:
 
       - id: nextversion
         name: next release version
-        uses: jenkins-x-plugins/jx-release-version@v2.4.5
+        uses: jenkins-x-plugins/jx-release-version@v2.4.7
+      - name: do something with the next version
+        run: echo next version is $VERSION
+        env:
+          VERSION: ${{ steps.nextversion.outputs.version }}
+```
+
+Or to tag the repository as well set the environment variables as below:
+
+```
+jobs:
+  yourjob:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.DM_BOT_TOKEN }}
+      - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
+      - id: nextversion
+        name: next release version
+        uses: jenkins-x-plugins/jx-release-version@v2.4.7
+        env:
+          TAG: "true"
+          GIT_TOKEN: ${{ secrets.GIT_BOT_TOKEN }}
+          GIT_EMAIL: jenkins-x@googlegroups.com
+          GIT_NAME: jenkins-x-bot
       - name: do something with the next version
         run: echo next version is $VERSION
         env:
