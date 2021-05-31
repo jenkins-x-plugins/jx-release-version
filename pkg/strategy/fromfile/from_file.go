@@ -1,6 +1,7 @@
 package fromfile
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -8,6 +9,10 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
+)
+
+var (
+	ErrFileHasNoVersion = errors.New("the file has no version")
 )
 
 type Strategy struct {
@@ -28,23 +33,38 @@ func (s Strategy) ReadVersion() (*semver.Version, error) {
 	}
 
 	var (
-		reader   FileVersionReader
-		filePath string
+		reader    FileVersionReader
+		filePaths []string
 	)
 	if len(s.FilePath) > 0 {
-		filePath = filepath.Join(dir, s.FilePath)
+		filePath := filepath.Join(dir, s.FilePath)
+		filePaths = append(filePaths, filePath)
 		reader, err = s.getReader()
 	} else {
-		reader, filePath, err = s.autoDetect(dir)
+		reader, filePaths, err = s.autoDetect(dir)
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	log.Logger().Debugf("Reading version from file %s using reader %s", filePath, reader)
-	version, err := reader.ReadFileVersion(filePath)
-	if err != nil {
-		return nil, err
+	var version string
+	for _, filePath := range filePaths {
+		log.Logger().Debugf("Reading version from file %s using reader %s", filePath, reader)
+		version, err = reader.ReadFileVersion(filePath)
+		if errors.Is(err, ErrFileHasNoVersion) {
+			log.Logger().Debugf("File %s has no version", filePath)
+			continue
+		}
+		if err != nil {
+			return nil, err
+		}
+		if version != "" {
+			break
+		}
+	}
+
+	if version == "" {
+		return nil, fmt.Errorf("could not find version from %s using reader %s", filePaths, reader)
 	}
 
 	log.Logger().Debugf("Found version %s", version)
@@ -55,18 +75,22 @@ func (s Strategy) BumpVersion(_ semver.Version) (*semver.Version, error) {
 	return s.ReadVersion()
 }
 
-func (s Strategy) autoDetect(dir string) (FileVersionReader, string, error) {
+func (s Strategy) autoDetect(dir string) (FileVersionReader, []string, error) {
 	for _, reader := range fileVersionReaders {
+		var filePaths []string
 		for _, fileName := range reader.SupportedFiles() {
 			filePath := filepath.Join(dir, fileName)
 			if _, err := os.Stat(filePath); err == nil {
-				log.Logger().Debugf("Using file %s to read version", filePath)
-				return reader, filePath, nil
+				log.Logger().Debugf("Adding file %s as a candidate to read version using %s reader", filePath, reader.String())
+				filePaths = append(filePaths, filePath)
 			}
+		}
+		if len(filePaths) > 0 {
+			return reader, filePaths, nil
 		}
 	}
 
-	return nil, "", fmt.Errorf("could not find a file to read version from, in directory %s", dir)
+	return nil, nil, fmt.Errorf("could not find a file to read version from, in directory %s", dir)
 }
 
 func (s Strategy) getReader() (FileVersionReader, error) {

@@ -26,6 +26,13 @@ func TestReadVersion(t *testing.T) {
 			expected: semver.MustParse("1.2.3"),
 		},
 		{
+			name: "auto detect gradle",
+			strategy: Strategy{
+				Dir: filepath.Join("testdata", "gradle"),
+			},
+			expected: semver.MustParse("1.2.7"),
+		},
+		{
 			name: "Helm Chart",
 			strategy: Strategy{
 				Dir:      "testdata",
@@ -144,17 +151,26 @@ func TestAutoDetect(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name             string
-		dir              string
-		expectedReader   FileVersionReader
-		expectedFilePath string
-		expectedErrorMsg string
+		name              string
+		dir               string
+		expectedReader    FileVersionReader
+		expectedFilePaths []string
+		expectedErrorMsg  string
 	}{
 		{
-			name:             "testdata",
-			dir:              "testdata",
-			expectedReader:   HelmChartVersionReader{},
-			expectedFilePath: "testdata/Chart.yaml",
+			name:              "testdata",
+			dir:               "testdata",
+			expectedReader:    HelmChartVersionReader{},
+			expectedFilePaths: []string{"testdata/Chart.yaml"},
+		},
+		{
+			name:           "multiple matches",
+			dir:            "testdata/gradle",
+			expectedReader: GradleVersionReader{},
+			expectedFilePaths: []string{
+				"testdata/gradle/build.gradle",
+				"testdata/gradle/gradle.properties",
+			},
 		},
 		{
 			name:             "no match",
@@ -173,15 +189,15 @@ func TestAutoDetect(t *testing.T) {
 				Dir: test.dir,
 			}
 
-			actualReader, actualFilePath, err := s.autoDetect(test.dir)
+			actualReader, actualFilePaths, err := s.autoDetect(test.dir)
 			if len(test.expectedErrorMsg) > 0 {
 				require.EqualError(t, err, test.expectedErrorMsg)
 				assert.Nil(t, actualReader)
-				assert.Empty(t, actualFilePath)
+				assert.Empty(t, actualFilePaths)
 			} else {
 				require.NoError(t, err)
 				assert.Equal(t, test.expectedReader, actualReader)
-				assert.Equal(t, test.expectedFilePath, actualFilePath)
+				assert.Equal(t, test.expectedFilePaths, actualFilePaths)
 			}
 		})
 	}

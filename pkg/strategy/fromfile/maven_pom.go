@@ -3,9 +3,10 @@ package fromfile
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 	"os"
 	"os/exec"
+
+	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 )
 
 type MavenPOMVersionReader struct {
@@ -64,7 +65,7 @@ func (r MavenPOMVersionReader) readDirectlyFromPom(filePath string) (string, err
 	}
 
 	if pom.Version == "" {
-		return "", fmt.Errorf("version not found in file %s", filePath)
+		return "", ErrFileHasNoVersion
 	}
 
 	return pom.Version, nil

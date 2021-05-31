@@ -1,7 +1,6 @@
 package fromfile
 
 import (
-	"fmt"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -34,7 +33,7 @@ func (r HelmChartVersionReader) ReadFileVersion(filePath string) (string, error)
 	}
 
 	if chart.Version == "" {
-		return "", fmt.Errorf("version not found in file %s", filePath)
+		return "", ErrFileHasNoVersion
 	}
 
 	return chart.Version, nil
