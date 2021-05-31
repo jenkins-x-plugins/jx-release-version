@@ -9,15 +9,22 @@ By default it:
 
 But it also supports other strategies to read the previous version and calculate the next version.
 
+Optionnaly, you can also create a tag - and push it to a remote git repository.
+
 ## Usage
 
 Just run `jx-release-version` in your project's top directory, and it should just print the next release version. It won't write anything to disk.
 
 It accepts the following CLI flags:
 - `-dir`: the location on the filesystem of your project's top directory - default to the current working directory.
-- `-previous-version`: the [strategy to use to read the previous version](#reading-the-previous-version). Can also be set using the `PREVIOUS_VERSION` environment variable.
-- `-next-version`: the [strategy to use to calculate the next version](#calculating—the-next-version). Can also be set using the `NEXT_VERSION` environment variable.
-- `-output-format`: the [output format of the next release version](#output-format). Can also be set using the `OUTPUT_FORMAT` environment variable.
+- `-previous-version`: the [strategy to use to read the previous version](#reading-the-previous-version). Can also be set using the `PREVIOUS_VERSION` environment variable. Default to `auto`.
+- `-next-version`: the [strategy to use to calculate the next version](#calculating—the-next-version). Can also be set using the `NEXT_VERSION` environment variable. Default to `auto`.
+- `-output-format`: the [output format of the next release version](#output-format). Can also be set using the `OUTPUT_FORMAT` environment variable. Default to `{{.Major}}.{{.Minor}}.{{.Patch}}`.
+- `-tag`: if enabled, [a new tag will be created](#tag). Can also be set using the `TAG` environment variable with the `"TRUE"` value.
+- `-tag-prefix`: the prefix for the new tag - prefixed before the output. Can also be set using the `TAG_PREFIX` environment variable. Default to `"v"`.
+- `-push-tag`: if enabled, the new tag will be pushed to the `origin` remote. Default to `true`.
+- `-git-user`: the name of the author/comitter used to create the git tag. Can also be set using the `GIT_NAME` environment variable. Default to the value set in the git config.
+- `-git-email`: the email of the author/comitter used to create the git tag. Can also be set using the `GIT_EMAIL` environment variable. Default to the value set in the git config.
 - `-debug`: if enabled, will print debug logs to stdout in addition to the next version. It can also be enabled by setting the `JX_LOG_LEVEL` environment variable to `debug`.
 
 ### Features
@@ -27,6 +34,7 @@ It accepts the following CLI flags:
 - by default works even on an empty git repository.
 - multiple strategies to [read the previous version](#reading-the-previous-version) and/or [calculate the next version](#calculating—the-next-version).
 - [custom output format](#output-format).
+- [create (and push) a git tag for the new version](#tag).
 - [github action](#github-actions).
 
 ## Reading the previous version
@@ -40,7 +48,6 @@ The `auto` strategy is the default one. It tries to find the latest git tag, or 
 **Usage**:
 - `jx-release-version -previous-version=auto`
 - `jx-release-version` - the `auto` strategy is already the default one
-- `jx-release-version --tag` - created and pushes a git tag, requires authentication, if in a pipeline set a `GIT_TOKEN` environment variable.
 
 ### From tag
 
@@ -65,10 +72,10 @@ The `from-file` strategy will read the previous version from a file. Supported f
 - **Python**, using the `setup.py` file
 - **Maven**, using the `pom.xml` file
 - **Javascript**, using the `package.json` file
-- **Gradle**, using the `build.gradle` or `build.gradle.kts` file
+- **Gradle**, using the `build.gradle`, `build.gradle.kts` or `gradle.properties` file
 
 **Usage**:
-- if you use `jx-release-version -previous-version=from-file` it will auto detect which file to use, trying the supported formats in the order in which they are listed.
+- if you use `jx-release-version -previous-version=from-file` it will auto detect which file to use, trying the supported formats in the order in which they are listed. If a "format" supports multiple files (such as Gradle), it will try to read the version from each file - in the order in which they are listed.
 - if you specify a file, it will use it to find the previous version. For example:
   - `jx-release-version -previous-version=from-file:pom.xml`
   - `jx-release-version -previous-version=from-file:charts/my-chart/Chart.yaml`
@@ -118,10 +125,10 @@ The `from-file` strategy will read the next version from a file. Supported forma
 - **Python**, using the `setup.py` file
 - **Maven**, using the `pom.xml` file
 - **Javascript**, using the `package.json` file
-- **Gradle**, using the `build.gradle` or `build.gradle.kts` file
+- **Gradle**, using the `build.gradle`, `build.gradle.kts` or `gradle.properties` file
 
 **Usage**:
-- if you use `jx-release-version -next-version=from-file` it will auto detect which file to use, trying the supported formats in the order in which they are listed.
+- if you use `jx-release-version -next-version=from-file` it will auto detect which file to use, trying the supported formats in the order in which they are listed. If a "format" supports multiple files (such as Gradle), it will try to read the version from each file - in the order in which they are listed.
 - if you specify a file, it will use it to find the next version. For example:
   - `jx-release-version -next-version=from-file:pom.xml`
   - `jx-release-version -next-version=from-file:charts/my-chart/Chart.yaml`
@@ -163,6 +170,20 @@ The output format of the next release version can be defined using a [Go templat
 - `jx-release-version -output-format=v{{.Major}}.{{.Minor}}` - if you only want major/minor
 - `jx-release-version -output-format={{.String}}` - if you want the full version with prerelease / metadata information, if these are set in a file for example
 
+## Tag
+
+Most of the time, you'll be using the `jx-release-version` tool as part of your CD pipelines, so you'll want to do something with the "next version", such as creating (and pushing) a git tag. This behaviour is disabled by default, but can easily be enabled by setting the `-tag` CLI flag - or alternatively setting the `TAG` environment variable to `"true"`.
+
+If the next version is `1.2.3` for example, by default a new tag named `v1.2.3` will be created. You can controle the prefix using the `-tag-prefix` CLI flag - or alternatively by setting the `TAG_PREFIX` environment variable.
+
+If you want to override the name/email of the author/comitter used to create the git tag, you can set the `-git-user` / `-git-email` CLI flags, or alternatively the `GIT_NAME` / `GIT_EMAIL` environment variables.
+
+### Pushing
+
+Creating a new (local) tag is great, but for it to be useful, you will also need to push it to a remote git repository. By default, when the new tag is created, it will also be pushed automatically to the `origin` remote.
+
+Note that this operation might requires authentication - which you can provide using the `GIT_TOKEN` environment variable.
+
 ## Integrations
 
 ### Tekton Pipelines
@@ -190,7 +211,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          token: ${{ secrets.DM_BOT_TOKEN }}
+          token: ${{ secrets.GIT_BOT_TOKEN }}
       - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
       - id: nextversion
@@ -212,7 +233,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          token: ${{ secrets.DM_BOT_TOKEN }}
+          token: ${{ secrets.GIT_BOT_TOKEN }}
       - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
       - id: nextversion
