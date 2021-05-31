@@ -2,7 +2,6 @@ package fromfile
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"regexp"
 	"strings"
@@ -47,5 +46,5 @@ func (r AutomakeVersionReader) ReadFileVersion(filePath string) (string, error) 
 		}
 	}
 
-	return "", fmt.Errorf("version not found in file %s", filePath)
+	return "", ErrFileHasNoVersion
 }

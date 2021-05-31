@@ -2,7 +2,6 @@ package fromfile
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"regexp"
 	"strings"
@@ -22,8 +21,8 @@ func (r GradleVersionReader) String() string {
 func (r GradleVersionReader) SupportedFiles() []string {
 	return []string{
 		"build.gradle",      // groovy syntax
-		"gradle.properties", // gradle properties syntax
 		"build.gradle.kts",  // kotlin syntax
+		"gradle.properties", // gradle properties syntax
 	}
 }
 
@@ -49,5 +48,5 @@ func (r GradleVersionReader) ReadFileVersion(filePath string) (string, error) {
 		}
 	}
 
-	return "", fmt.Errorf("version not found in file %s", filePath)
+	return "", ErrFileHasNoVersion
 }

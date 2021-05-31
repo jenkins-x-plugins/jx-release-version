@@ -2,7 +2,6 @@ package fromfile
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 )
 
@@ -33,7 +32,7 @@ func (r JsPackageVersionReader) ReadFileVersion(filePath string) (string, error)
 	}
 
 	if pkg.Version == "" {
-		return "", fmt.Errorf("version not found in file %s", filePath)
+		return "", ErrFileHasNoVersion
 	}
 
 	return pkg.Version, nil
