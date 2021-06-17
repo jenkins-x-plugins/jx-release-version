@@ -223,7 +223,10 @@ jobs:
           VERSION: ${{ steps.nextversion.outputs.version }}
 ```
 
-Or to tag the repository as well set the environment variables as below:
+Or to create a new tag and push it, you can:
+- use the [fregante/setup-git-user](https://github.com/fregante/setup-git-user) action to setup the git name/email to the [github-actions bot](https://github.com/apps/github-actions)
+  - if you want to use a specific user, you can set the `GIT_NAME` and `GIT_EMAIL` environment variables
+- set the `TAG` and `GIT_TOKEN` environment variables
 
 ```
 jobs:
@@ -235,17 +238,11 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GIT_BOT_TOKEN }}
       - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      - uses: fregante/setup-git-user@v1
 
-      - id: nextversion
-        name: next release version
+      - name: tag
         uses: jenkins-x-plugins/jx-release-version@v2.4.7
         env:
           TAG: "true"
           GIT_TOKEN: ${{ secrets.GIT_BOT_TOKEN }}
-          GIT_EMAIL: jenkins-x@googlegroups.com
-          GIT_NAME: jenkins-x-bot
-      - name: do something with the next version
-        run: echo next version is $VERSION
-        env:
-          VERSION: ${{ steps.nextversion.outputs.version }}
 ```
