@@ -17,6 +17,30 @@ inputs:
     description: 'The output format of the next version'
     required: false
     default: '{{.Major}}.{{.Minor}}.{{.Patch}}'
+  tag:
+    description: 'If enabled, a new tag will be created'
+    required: false
+    default: 'false'
+  tag-prefix:
+    description: 'The prefix for the new tag - prefixed before the output'
+    required: false
+    default: 'v'
+  push-tag:
+    description: 'If enabled, the new tag will be pushed to the `origin` remote'
+    required: false
+    default: 'true'
+  github-token:
+    description: 'The github token used to push the tag'
+    required: false
+    default: ''
+  git-user:
+    description: 'If you want to override the name of the author/committer of the tag'
+    required: false
+    default: ''
+  git-email:
+    description: 'If you want to override the email of the author/committer of the tag'
+    required: false
+    default: ''
 outputs:
   version:
     description: 'The next release version'
@@ -28,3 +52,9 @@ runs:
     PREVIOUS_VERSION: ${{ inputs.previous-version }}
     NEXT_VERSION: ${{ inputs.next-version }}
     OUTPUT_FORMAT: ${{ inputs.output-format }}
+    TAG: ${{ inputs.tag }}
+    TAG_PREFIX: ${{ inputs.tag }}
+    PUSH_TAG: ${{ inputs.push-tag }}
+    GIT_TOKEN: ${{ inputs.github-token }}
+    GIT_NAME: ${{ inputs.git-user }}
+    GIT_EMAIL: ${{ inputs.git-email }}

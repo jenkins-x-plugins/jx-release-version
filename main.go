@@ -52,7 +52,7 @@ func init() {
 	flag.BoolVar(&options.printVersion, "version", false, "Just print the version and do nothing.")
 	flag.BoolVar(&options.tag, "tag", os.Getenv("TAG") == "true", "Perform a git tag")
 	flag.StringVar(&options.tagPrefix, "tag-prefix", getEnvWithDefault("TAG_PREFIX", "v"), "Prefix to use for the git tag")
-	flag.BoolVar(&options.pushTag, "push-tag", true, "Use with tag flag, pushes a git tag to the remote branch")
+	flag.BoolVar(&options.pushTag, "push-tag", getEnvWithDefault("PUSH_TAG", "true") == "true", "Use with tag flag, pushes a git tag to the remote branch")
 	flag.StringVar(&options.gitName, "git-user", getEnvWithDefault("GIT_NAME", ""), "Name is the personal name of the author and the committer of a commit, use to override Git config")
 	flag.StringVar(&options.gitEmail, "git-email", getEnvWithDefault("GIT_EMAIL", ""), "Email is the email of the author and the committer of a commit, use to override Git config")
 }

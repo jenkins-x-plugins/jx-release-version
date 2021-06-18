@@ -22,9 +22,9 @@ It accepts the following CLI flags:
 - `-output-format`: the [output format of the next release version](#output-format). Can also be set using the `OUTPUT_FORMAT` environment variable. Default to `{{.Major}}.{{.Minor}}.{{.Patch}}`.
 - `-tag`: if enabled, [a new tag will be created](#tag). Can also be set using the `TAG` environment variable with the `"TRUE"` value.
 - `-tag-prefix`: the prefix for the new tag - prefixed before the output. Can also be set using the `TAG_PREFIX` environment variable. Default to `"v"`.
-- `-push-tag`: if enabled, the new tag will be pushed to the `origin` remote. Default to `true`.
-- `-git-user`: the name of the author/comitter used to create the git tag. Can also be set using the `GIT_NAME` environment variable. Default to the value set in the git config.
-- `-git-email`: the email of the author/comitter used to create the git tag. Can also be set using the `GIT_EMAIL` environment variable. Default to the value set in the git config.
+- `-push-tag`: if enabled, the new tag will be pushed to the `origin` remote. Can also be set using the `PUSH_TAG` environment variable. Default to `true`.
+- `-git-user`: the name of the author/committer used to create the git tag. Can also be set using the `GIT_NAME` environment variable. Default to the value set in the git config.
+- `-git-email`: the email of the author/committer used to create the git tag. Can also be set using the `GIT_EMAIL` environment variable. Default to the value set in the git config.
 - `-debug`: if enabled, will print debug logs to stdout in addition to the next version. It can also be enabled by setting the `JX_LOG_LEVEL` environment variable to `debug`.
 
 ### Features
@@ -176,7 +176,7 @@ Most of the time, you'll be using the `jx-release-version` tool as part of your 
 
 If the next version is `1.2.3` for example, by default a new tag named `v1.2.3` will be created. You can controle the prefix using the `-tag-prefix` CLI flag - or alternatively by setting the `TAG_PREFIX` environment variable.
 
-If you want to override the name/email of the author/comitter used to create the git tag, you can set the `-git-user` / `-git-email` CLI flags, or alternatively the `GIT_NAME` / `GIT_EMAIL` environment variables.
+If you want to override the name/email of the author/committer used to create the git tag, you can set the `-git-user` / `-git-email` CLI flags, or alternatively the `GIT_NAME` / `GIT_EMAIL` environment variables.
 
 ### Pushing
 
@@ -225,8 +225,8 @@ jobs:
 
 Or to create a new tag and push it, you can:
 - use the [fregante/setup-git-user](https://github.com/fregante/setup-git-user) action to setup the git name/email to the [github-actions bot](https://github.com/apps/github-actions)
-  - if you want to use a specific user, you can set the `GIT_NAME` and `GIT_EMAIL` environment variables
-- set the `TAG` and `GIT_TOKEN` environment variables
+  - if you want to use a specific user, you can set the `git-user` and `git-email` parameters
+- set the `tag` and `github-token` parameters
 
 ```
 jobs:
@@ -242,7 +242,7 @@ jobs:
 
       - name: tag
         uses: jenkins-x-plugins/jx-release-version@v2.4.7
-        env:
-          TAG: "true"
-          GIT_TOKEN: ${{ secrets.GIT_BOT_TOKEN }}
+        with:
+          tag: true
+          github-token: ${{ secrets.GIT_BOT_TOKEN }}
 ```
