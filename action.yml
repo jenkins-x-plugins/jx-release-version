@@ -53,7 +53,7 @@ runs:
     NEXT_VERSION: ${{ inputs.next-version }}
     OUTPUT_FORMAT: ${{ inputs.output-format }}
     TAG: ${{ inputs.tag }}
-    TAG_PREFIX: ${{ inputs.tag }}
+    TAG_PREFIX: ${{ inputs.tag-prefix }}
     PUSH_TAG: ${{ inputs.push-tag }}
     GIT_TOKEN: ${{ inputs.github-token }}
     GIT_NAME: ${{ inputs.git-user }}
