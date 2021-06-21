@@ -60,6 +60,8 @@ spec:
             git clone https://github.com/jenkins-x-plugins/$REPO_NAME update-action
             cd update-action
             sed -i -e "s|ghcr.io/jenkins-x/$REPO_NAME:.*|ghcr.io/jenkins-x/$REPO_NAME:$VERSION'|" action.yml
+            sed -i -e "s|ghcr.io/jenkins-x/$REPO_NAME:.*|ghcr.io/jenkins-x/$REPO_NAME:$VERSION|" README.md
+            sed -i -e "s|jenkins-x-plugins/$REPO_NAME@v.*|jenkins-x-plugins/$REPO_NAME@v$VERSION|g" README.md
 
             git add * || true
             git commit -a -m "chore: upgrade image to $VERSION" --allow-empty
