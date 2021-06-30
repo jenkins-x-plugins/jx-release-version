@@ -217,6 +217,7 @@ jobs:
       - id: nextversion
         name: next release version
         uses: jenkins-x-plugins/jx-release-version@v2.4.13
+
       - name: do something with the next version
         run: echo next version is $VERSION
         env:
@@ -241,8 +242,14 @@ jobs:
       - uses: fregante/setup-git-user@v1
 
       - name: tag
+        id: tag
         uses: jenkins-x-plugins/jx-release-version@v2.4.13
         with:
           tag: true
           github-token: ${{ secrets.GIT_BOT_TOKEN }}
+
+      - name: do something with the next version
+        run: echo next version is $VERSION
+        env:
+          VERSION: ${{ steps.tag.outputs.version }}
 ```
