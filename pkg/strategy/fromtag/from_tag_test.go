@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/Masterminds/semver/v3"
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
 	"github.com/mholt/archiver"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -25,6 +27,14 @@ func TestReadVersion(t *testing.T) {
 				Dir: "testdata/git-repo",
 			},
 			expected: semver.MustParse("v2.0.0"),
+		},
+		{
+			name: "fetch tags first",
+			strategy: Strategy{
+				Dir:       "testdata/git-repo",
+				FetchTags: true,
+			},
+			expected: semver.MustParse("v2.1.0"),
 		},
 		{
 			name: "v1 prefix",
@@ -58,6 +68,21 @@ func TestReadVersion(t *testing.T) {
 	require.NoErrorf(t, err, "failed to delete %s", gitRepoPath)
 	err = archiver.Unarchive(filepath.Join("testdata", "git-repo.tar.gz"), gitRepoPath)
 	require.NoErrorf(t, err, "failed to decompress git repository at %s", gitRepoPath)
+	// and it has an origin remote repo (with more tags)
+	gitRepoOriginPath := filepath.Join("testdata", "git-repo-origin")
+	err = os.RemoveAll(gitRepoOriginPath)
+	require.NoErrorf(t, err, "failed to delete %s", gitRepoOriginPath)
+	err = archiver.Unarchive(filepath.Join("testdata", "git-repo-origin.tar.gz"), gitRepoOriginPath)
+	require.NoErrorf(t, err, "failed to decompress git repository at %s", gitRepoOriginPath)
+	// link the 2 repos together
+	repo, err := git.PlainOpen(gitRepoPath)
+	require.NoErrorf(t, err, "failed to open git repo at %s", gitRepoPath)
+	_, err = repo.CreateRemote(&config.RemoteConfig{
+		Name:  "origin",
+		URLs:  []string{gitRepoOriginPath},
+		Fetch: []config.RefSpec{config.RefSpec("+refs/heads/*:refs/remotes/origin/*")},
+	})
+	require.NoError(t, err, "failed to create git remote")
 
 	for i := range tests {
 		test := tests[i]

@@ -37,6 +37,7 @@ var (
 		tag             bool
 		tagPrefix       string
 		pushTag         bool
+		fetchTags       bool
 		gitName         string
 		gitEmail        string
 	}
@@ -53,6 +54,7 @@ func init() {
 	flag.BoolVar(&options.tag, "tag", os.Getenv("TAG") == "true", "Perform a git tag")
 	flag.StringVar(&options.tagPrefix, "tag-prefix", getEnvWithDefault("TAG_PREFIX", "v"), "Prefix to use for the git tag")
 	flag.BoolVar(&options.pushTag, "push-tag", getEnvWithDefault("PUSH_TAG", "true") == "true", "Use with tag flag, pushes a git tag to the remote branch")
+	flag.BoolVar(&options.fetchTags, "fetch-tags", getEnvWithDefault("FETCH_TAGS", "") == "true", "Fetch tags from the remote origin before detecting the previous version")
 	flag.StringVar(&options.gitName, "git-user", getEnvWithDefault("GIT_NAME", ""), "Name is the personal name of the author and the committer of a commit, use to override Git config")
 	flag.StringVar(&options.gitEmail, "git-email", getEnvWithDefault("GIT_EMAIL", ""), "Email is the email of the author and the committer of a commit, use to override Git config")
 }
@@ -120,13 +122,15 @@ func versionReader() strategy.VersionReader {
 	case "auto", "":
 		versionReader = auto.Strategy{
 			FromTagStrategy: fromtag.Strategy{
-				Dir: options.dir,
+				Dir:       options.dir,
+				FetchTags: options.fetchTags,
 			},
 		}
 	case "from-tag":
 		versionReader = fromtag.Strategy{
 			Dir:        options.dir,
 			TagPattern: strategyArg,
+			FetchTags:  options.fetchTags,
 		}
 	case "from-file":
 		versionReader = fromfile.Strategy{

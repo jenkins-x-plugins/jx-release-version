@@ -23,6 +23,7 @@ It accepts the following CLI flags:
 - `-tag`: if enabled, [a new tag will be created](#tag). Can also be set using the `TAG` environment variable with the `"TRUE"` value.
 - `-tag-prefix`: the prefix for the new tag - prefixed before the output. Can also be set using the `TAG_PREFIX` environment variable. Default to `"v"`.
 - `-push-tag`: if enabled, the new tag will be pushed to the `origin` remote. Can also be set using the `PUSH_TAG` environment variable. Default to `true`.
+- `-fetch-tags`: if enabled, the tags will be fetched from the `origin` remote, before detecting the previous version. Can also be set using the `FETCH_TAGS` environment variable.
 - `-git-user`: the name of the author/committer used to create the git tag. Can also be set using the `GIT_NAME` environment variable. Default to the value set in the git config.
 - `-git-email`: the email of the author/committer used to create the git tag. Can also be set using the `GIT_EMAIL` environment variable. Default to the value set in the git config.
 - `-debug`: if enabled, will print debug logs to stdout in addition to the next version. It can also be enabled by setting the `JX_LOG_LEVEL` environment variable to `debug`.
@@ -55,6 +56,8 @@ The `from-tag` strategy uses the latest git tag as the previous version. Note th
 
 Optionnaly, it can filter tags based on a given pattern: if you use `from-tag:v1` it will use the latest tag matching the `v1` pattern. Note that it uses [Go's stdlib regexp](https://golang.org/pkg/regexp/) - you can see the [syntax](https://golang.org/pkg/regexp/syntax/).
 This feature can be used to maintain 2 major versions in parallel: for each, you just configure the right pattern, so that `jx-release-version` retrieves the right previous version, and bump it as it should.
+
+Optionnaly, it can fetch the tags from a remote repository named `origin`, if you set the `-fetch-tags` flag, or the `FETCH_TAGS` environment variable to `true`. It will fetch the tags before trying to find the previous version.
 
 Note that if it can't find a tag, it will fail.
 

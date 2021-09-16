@@ -9,6 +9,7 @@ import (
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 )
@@ -21,6 +22,7 @@ var (
 type Strategy struct {
 	Dir        string
 	TagPattern string
+	FetchTags  bool
 }
 
 func (s Strategy) ReadVersion() (*semver.Version, error) {
@@ -46,6 +48,18 @@ func (s Strategy) ReadVersion() (*semver.Version, error) {
 	repo, err := git.PlainOpen(dir)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open git repository at %q: %w", dir, err)
+	}
+
+	if s.FetchTags {
+		log.Logger().Debug("Fetching tags from origin")
+		err = repo.Fetch(&git.FetchOptions{
+			RemoteName: "origin",
+			Progress:   os.Stdout,
+			RefSpecs:   []config.RefSpec{config.RefSpec("refs/tags/*:refs/tags/*")},
+		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to fetch tags from origin at %q: %w", dir, err)
+		}
 	}
 
 	tagIterator, err := repo.Tags()
