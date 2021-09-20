@@ -29,15 +29,7 @@ spec:
           resources: {}
         - name: chart-docs
           resources: {}
-        - image: gcr.io/jenkinsxio/jx-boot:3.0.773
-          name: release-chart
-          resources: {}
-          script: |
-            #!/usr/bin/env sh
-            if [ -d "/workspace/source/charts/$REPO_NAME" ]; then source .jx/variables.sh
-            cd /workspace/source/charts/$REPO_NAME
-            make release; else echo no charts; fi
-        - image: gcr.io/jenkinsxio/jx-boot:3.0.773
+        - image: ghcr.io/jenkins-x/jx-boot:3.2.197
           name: set-github-action-version
           resources: {}
           script: |
@@ -50,7 +42,7 @@ spec:
           resources: {}
         - name: promote-release
           resources: {}
-        - image: gcr.io/jenkinsxio/jx-changelog:0.0.36
+        - image: ghcr.io/jenkins-x/jx-changelog:0.0.47
           name: promote-action
           resources: {}
           script: |
@@ -68,5 +60,5 @@ spec:
             git push
   podTemplate: {}
   serviceAccountName: tekton-bot
-  timeout: 240h0m0s
+  timeout: 1h0m0s
 status: {}
