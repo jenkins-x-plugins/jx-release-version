@@ -46,7 +46,7 @@ outputs:
     description: 'The next release version'
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/jenkins-x/jx-release-version:2.5.0'
+  image: 'docker://ghcr.io/jenkins-x/jx-release-version:2.5.1'
   entrypoint: 'github-actions-entrypoint.sh'
   env:
     PREVIOUS_VERSION: ${{ inputs.previous-version }}
