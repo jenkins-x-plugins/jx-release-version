@@ -33,6 +33,11 @@ func TestPythonVersionReader(t *testing.T) {
 			expected: "1.2.13",
 		},
 		{
+			name:     "double quotes",
+			filePath: "setup-double-quotes.py",
+			expected: "1.2.14",
+		},
+		{
 			name:             "file does not exists",
 			filePath:         "does-not-exists.yaml",
 			expectedErrorMsg: "open testdata/does-not-exists.yaml: no such file or directory",
