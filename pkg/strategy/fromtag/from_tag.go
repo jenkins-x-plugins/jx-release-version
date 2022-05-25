@@ -57,7 +57,7 @@ func (s Strategy) ReadVersion() (*semver.Version, error) {
 			Progress:   os.Stdout,
 			RefSpecs:   []config.RefSpec{config.RefSpec("refs/tags/*:refs/tags/*")},
 		})
-		if err != nil {
+		if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
 			return nil, fmt.Errorf("failed to fetch tags from origin at %q: %w", dir, err)
 		}
 	}
