@@ -6,3 +6,15 @@ build/
 .DS_Store
 coverage.out
 /strategy
+
+# syft
+bin/syft
+
+# image tar files
+image.tar
+
+# docker credential binaries
+docker-credential-*
+
+# sbom json created by syft
+sbom.json

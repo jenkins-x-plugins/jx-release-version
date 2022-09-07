@@ -25,8 +25,10 @@ spec:
           resources: {}
         - name: release-binary
           resources: {}
-        - name: build-and-push-image
-          resources: {}
+        - image: uses:jenkins-x/jx3-pipeline-catalog/tasks/build-scan-push/build-scan-push.yaml@versionStream
+          name: build-container
+        - image: uses:jenkins-x/jx3-pipeline-catalog/tasks/build-scan-push/build-scan-push.yaml@versionStream
+          name: push-container
         - name: chart-docs
           resources: {}
         - image: ghcr.io/jenkins-x/jx-boot:3.2.197
@@ -38,6 +40,17 @@ spec:
             sed -i -e "s/jx-release-version:[0-9\.]*/jx-release-version:$VERSION/" action.yml
         - name: changelog
           resources: {}
+        - image: uses:jenkins-x/jx3-pipeline-catalog/tasks/supply-chain-security/task.yaml@versionStream
+          name: download-syft
+        - image: uses:jenkins-x/jx3-pipeline-catalog/tasks/supply-chain-security/task.yaml@versionStream
+          name: build-and-push-sbom
+          resources: {}
+        - name: cleanup-image-tar
+          image: alpine:3.16
+          resources: {}
+          script: |
+            #!/bin/sh
+            rm -f /workspace/source/image.tar
         - name: upload-binaries
           resources: {}
         - name: promote-release
