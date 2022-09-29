@@ -1,8 +1,6 @@
 approvers:
-- rawlingsj
-- jstrachan
+- maintainers
 - vbehar
 reviewers:
-- rawlingsj
-- jstrachan
+- maintainers
 - vbehar
