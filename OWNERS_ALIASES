@@ -1,0 +1,3 @@
+foreignAliases:
+- name: jx-context
+  org: jenkins-x
