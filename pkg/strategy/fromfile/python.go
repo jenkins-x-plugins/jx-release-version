@@ -2,7 +2,7 @@ package fromfile
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -28,7 +28,7 @@ func (r PythonVersionReader) SupportedFiles() []string {
 }
 
 func (r PythonVersionReader) ReadFileVersion(filePath string) (string, error) {
-	content, err := ioutil.ReadFile(filePath)
+	content, err := os.ReadFile(filePath)
 	if err != nil {
 		return "", err
 	}

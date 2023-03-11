@@ -1,7 +1,7 @@
 package tag
 
 import (
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -22,7 +22,7 @@ func TestTag(t *testing.T) {
 	assert.NoError(t, err)
 
 	filename := filepath.Join(dir, "foo")
-	err = ioutil.WriteFile(filename, []byte("bar!"), 0644)
+	err = os.WriteFile(filename, []byte("bar!"), 0644)
 	assert.NoError(t, err)
 
 	co := &git.CommitOptions{
