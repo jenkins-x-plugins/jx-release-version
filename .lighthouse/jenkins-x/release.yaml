@@ -31,7 +31,7 @@ spec:
           name: push-container
         - name: chart-docs
           resources: {}
-        - image: ghcr.io/jenkins-x/jx-boot:3.10.83
+        - image: ghcr.io/jenkins-x/jx-boot:3.10.73
           name: set-github-action-version
           resources: {}
           script: |
@@ -55,7 +55,7 @@ spec:
           resources: {}
         - name: promote-release
           resources: {}
-        - image: ghcr.io/jenkins-x/jx-changelog:0.10.3
+        - image: ghcr.io/jenkins-x/jx-boot:3.10.73
           name: promote-action
           resources: {}
           script: |
