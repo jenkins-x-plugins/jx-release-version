@@ -18,6 +18,7 @@ Just run `jx-release-version` in your project's top directory, and it should jus
 It accepts the following CLI flags:
 - `-dir`: the location on the filesystem of your project's top directory - default to the current working directory.
 - `-previous-version`: the [strategy to use to read the previous version](#reading-the-previous-version). Can also be set using the `PREVIOUS_VERSION` environment variable. Default to `auto`.
+- `-commit-headlines`: the [commit headlines to use to generate the next semantic version](#pass-commit-headlines). Can also be set using the `COMMIT_HEADLINES` environment variable. Default to ``.
 - `-next-version`: the [strategy to use to calculate the next version](#calculating—the-next-version). Can also be set using the `NEXT_VERSION` environment variable. Default to `auto`.
 - `-output-format`: the [output format of the next release version](#output-format). Can also be set using the `OUTPUT_FORMAT` environment variable. Default to `{{.Major}}.{{.Minor}}.{{.Patch}}`.
 - `-tag`: if enabled, [a new tag will be created](#tag). Can also be set using the `TAG` environment variable with the `"TRUE"` value.
@@ -111,12 +112,17 @@ The `semantic` strategy finds all commits between the previous version's git tag
 - at least 1 commit with a `feat:` prefix, then it will bump the minor component of the version
 - otherwise it will bump the patch component of the version
 
-Note that if it can't find a tag for the previous version, it will fail.
+Note that if it can't find a tag for the previous version, it will fail, except if you use the `-commit-headlines` flags to generate semantic next version from a single/multiline string instead of repository commits/tags.
 
 **Usage**:
 - `jx-release-version -next-version=semantic`
 - if you want to strip any prerelease information from the build before performing the version bump you can use:
   - `jx-release-version -next-version=semantic:strip-prerelease`
+
+#### Pass commit headlines
+If you want to retrieve a semantic version without using tags or commits from a repository, you can manually set the previous version and the commit headlines to use:
+  - `jx-release-version -previous-version=1.2.3 -commit-headlines="feat: a feature"`
+
 
 ### From file
 

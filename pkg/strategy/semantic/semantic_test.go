@@ -36,6 +36,48 @@ func TestBumpVersion(t *testing.T) {
 			previous: *semver.MustParse("1.1.0"),
 			expected: semver.MustParse("2.0.0"),
 		},
+		{
+			name: "feat from commit headline",
+			strategy: Strategy{
+				CommitHeadlinesString: "feat: a feature",
+			},
+			previous: *semver.MustParse("2.0.0"),
+			expected: semver.MustParse("2.1.0"),
+		},
+		{
+			name: "feat from commit headlines",
+			strategy: Strategy{
+				CommitHeadlinesString: `chore: a chore
+feat: a feature`,
+			},
+			previous: *semver.MustParse("2.0.0"),
+			expected: semver.MustParse("2.1.0"),
+		},
+		{
+			name: "breaking change from commit headline",
+			strategy: Strategy{
+				CommitHeadlinesString: "feat!: a breaking feature",
+			},
+			previous: *semver.MustParse("1.1.0"),
+			expected: semver.MustParse("2.0.0"),
+		},
+		{
+			name: "breaking change from commit headlines",
+			strategy: Strategy{
+				CommitHeadlinesString: `chore: a chore
+feat!: a breaking feature`,
+			},
+			previous: *semver.MustParse("1.1.0"),
+			expected: semver.MustParse("2.0.0"),
+		},
+		{
+			name: "patch from unrecognized commit headline",
+			strategy: Strategy{
+				CommitHeadlinesString: "nothing",
+			},
+			previous: *semver.MustParse("1.1.0"),
+			expected: semver.MustParse("1.1.1"),
+		},
 	}
 
 	// the git repo is stored as a tar.gz archive to make it easy to commit

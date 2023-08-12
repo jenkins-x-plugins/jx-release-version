@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"regexp"
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/go-git/go-git/v5"
@@ -19,35 +20,45 @@ var (
 )
 
 type Strategy struct {
-	Dir             string
-	StripPrerelease bool
+	Dir                   string
+	StripPrerelease       bool
+	CommitHeadlinesString string
 }
 
 func (s Strategy) BumpVersion(previous semver.Version) (*semver.Version, error) {
 	var (
-		dir = s.Dir
-		err error
+		dir                   = s.Dir
+		err                   error
+		commitHeadlinesString = s.CommitHeadlinesString
+		summary               *conventionalCommitsSummary
 	)
-	if dir == "" {
-		dir, err = os.Getwd()
+	if commitHeadlinesString != "" {
+		summary, err = s.parseCommitHeadlines(commitHeadlinesString)
 		if err != nil {
-			return nil, fmt.Errorf("failed to get current working directory: %w", err)
+			return nil, err
 		}
-	}
+	} else {
+		if dir == "" {
+			dir, err = os.Getwd()
+			if err != nil {
+				return nil, fmt.Errorf("failed to get current working directory: %w", err)
+			}
+		}
 
-	repo, err := git.PlainOpen(dir)
-	if err != nil {
-		return nil, fmt.Errorf("failed to open git repository at %q: %w", dir, err)
-	}
+		repo, err := git.PlainOpen(dir)
+		if err != nil {
+			return nil, fmt.Errorf("failed to open git repository at %q: %w", dir, err)
+		}
 
-	tagCommit, err := s.extractTagCommit(repo, previous.String())
-	if err != nil {
-		return nil, err
-	}
+		tagCommit, err := s.extractTagCommit(repo, previous.String())
+		if err != nil {
+			return nil, err
+		}
 
-	summary, err := s.parseCommitsSince(repo, tagCommit)
-	if err != nil {
-		return nil, err
+		summary, err = s.parseCommitsSince(repo, tagCommit)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if s.StripPrerelease {
@@ -168,5 +179,33 @@ func (s Strategy) parseCommitsSince(repo *git.Repository, firstCommit *object.Co
 	}
 
 	log.Logger().Debugf("Summary of conventional commits since %s: %#v", firstCommit.Committer.When, summary)
+	return &summary, nil
+}
+
+func (s Strategy) parseCommitHeadlines(commitHeadlinesString string) (*conventionalCommitsSummary, error) {
+	summary := conventionalCommitsSummary{
+		types: map[string]bool{},
+	}
+
+	log.Logger().Debugf("Iterating over all commits headline passed as a string")
+
+	commitHeadlines := regexp.MustCompile("\r?\n").Split(commitHeadlinesString, -1)
+
+	for index, commitHeadline := range commitHeadlines {
+		log.Logger().Debugf("Parsing commit headline number %d with message %s", index, commitHeadline)
+		c, err := cc.Parse(commitHeadline)
+		if err != nil {
+			log.Logger().WithError(err).Debugf("Skipping non-conventional commit headline number %d", index)
+			continue
+		}
+
+		summary.conventionalCommitsCount++
+		summary.types[c.Header.Type] = true
+		if len(c.BreakingMessage()) > 0 {
+			summary.breakingChanges = true
+		}
+	}
+
+	log.Logger().Debugf("Summary of conventional commits: %#v", summary)
 	return &summary, nil
 }
