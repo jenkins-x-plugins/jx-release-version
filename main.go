@@ -32,6 +32,7 @@ var (
 		debug           bool
 		dir             string
 		previousVersion string
+		commitHeadlines string
 		nextVersion     string
 		outputFormat    string
 		tag             bool
@@ -47,6 +48,7 @@ func init() {
 	wd, _ := os.Getwd()
 	flag.StringVar(&options.dir, "dir", wd, "The directory that contains the git repository. Default to the current working directory.")
 	flag.StringVar(&options.previousVersion, "previous-version", getEnvWithDefault("PREVIOUS_VERSION", "auto"), "The strategy to detect the previous version: auto, from-tag, from-file or manual. Default to the PREVIOUS_VERSION env var.")
+	flag.StringVar(&options.commitHeadlines, "commit-headlines", getEnvWithDefault("COMMIT_HEADLINES", ""), "The commit headline(s) to use for semantic next version instead of the commit()s of a repository. Default to empty.")
 	flag.StringVar(&options.nextVersion, "next-version", getEnvWithDefault("NEXT_VERSION", "auto"), "The strategy to calculate the next version: auto, semantic, from-file, increment or manual. Default to the NEXT_VERSION env var.")
 	flag.StringVar(&options.outputFormat, "output-format", getEnvWithDefault("OUTPUT_FORMAT", "{{.Major}}.{{.Minor}}.{{.Patch}}"), "The output format of the next version. Default to the OUTPUT_FORMAT env var.")
 	flag.BoolVar(&options.debug, "debug", os.Getenv("JX_LOG_LEVEL") == "debug", "Print debug logs. Enabled by default if the JX_LOG_LEVEL env var is set to 'debug'.")
@@ -167,14 +169,16 @@ func versionBumper() strategy.VersionBumper {
 	case "auto", "":
 		versionBumper = auto.Strategy{
 			SemanticStrategy: semantic.Strategy{
-				Dir:             options.dir,
-				StripPrerelease: strings.Contains(strategyArg, "strip-prerelease"),
+				Dir:                   options.dir,
+				StripPrerelease:       strings.Contains(strategyArg, "strip-prerelease"),
+				CommitHeadlinesString: options.commitHeadlines,
 			},
 		}
 	case "semantic":
 		versionBumper = semantic.Strategy{
-			Dir:             options.dir,
-			StripPrerelease: strings.Contains(strategyArg, "strip-prerelease"),
+			Dir:                   options.dir,
+			StripPrerelease:       strings.Contains(strategyArg, "strip-prerelease"),
+			CommitHeadlinesString: options.commitHeadlines,
 		}
 	case "from-file":
 		versionBumper = fromfile.Strategy{
