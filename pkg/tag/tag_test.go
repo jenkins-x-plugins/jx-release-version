@@ -26,9 +26,9 @@ func TestTag(t *testing.T) {
 	assert.NoError(t, err)
 
 	co := &git.CommitOptions{
-		All:       true,
-		Author:    &object.Signature{Name: "test"},
-		Committer: &object.Signature{Name: "test"},
+		All:               true,
+		Author:            &object.Signature{Name: "test"},
+		Committer:         &object.Signature{Name: "test"},
 		AllowEmptyCommits: true,
 	}
 
