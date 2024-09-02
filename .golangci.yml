@@ -1,0 +1,9 @@
+# See https://golangci-lint.run/usage/configuration/#config-file
+
+run:
+  timeout: 10m
+
+# print all issues that are found
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

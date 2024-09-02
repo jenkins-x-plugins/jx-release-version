@@ -1,6 +1,6 @@
 module github.com/jenkins-x-plugins/jx-release-version/v2
 
-go 1.18
+go 1.22
 
 require (
 	github.com/Masterminds/semver/v3 v3.1.1
