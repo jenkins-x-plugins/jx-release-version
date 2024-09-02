@@ -29,6 +29,7 @@ func TestTag(t *testing.T) {
 		All:       true,
 		Author:    &object.Signature{Name: "test"},
 		Committer: &object.Signature{Name: "test"},
+		AllowEmptyCommits: true,
 	}
 
 	_, err = w.Commit("foo\n", co)
