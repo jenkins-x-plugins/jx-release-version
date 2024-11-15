@@ -54,7 +54,7 @@ func (s Strategy) ReadVersion() (*semver.Version, error) {
 		log.Logger().Debug("Fetching tags from origin")
 		err = repo.Fetch(&git.FetchOptions{
 			RemoteName: "origin",
-			Progress:   os.Stdout,
+			Progress:   os.Stderr,
 			RefSpecs:   []config.RefSpec{config.RefSpec("refs/tags/*:refs/tags/*")},
 		})
 		if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
