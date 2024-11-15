@@ -74,6 +74,7 @@ func pushTags(r *git.Repository) error {
 
 	po := &git.PushOptions{
 		RemoteName: "origin",
+		Progress:   os.Stderr,
 		RefSpecs:   []config.RefSpec{config.RefSpec("refs/tags/*:refs/tags/*")},
 	}
 
