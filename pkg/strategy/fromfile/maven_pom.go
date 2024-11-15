@@ -23,7 +23,7 @@ func (r MavenPOMVersionReader) SupportedFiles() []string {
 }
 
 func (r MavenPOMVersionReader) ReadFileVersion(filePath string) (string, error) {
-	log.Logger().Debugf("using path " + os.Getenv("PATH"))
+	log.Logger().Debugf("using path %s", os.Getenv("PATH"))
 	path, err := exec.LookPath("mvn")
 	if err != nil {
 		log.Logger().Debugf("Maven does not appear to be installed, reading directly from %s", filePath)
