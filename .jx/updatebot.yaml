@@ -4,6 +4,14 @@ spec:
   rules:
     - urls:
         - https://github.com/jenkins-x/jx3-pipeline-catalog
+        - https://github.com/jenkins-x/jx
+        - https://github.com/jenkins-x-plugins/jx-admin
+        - https://github.com/jenkins-x/terraform-aws-eks-jx
+        - https://github.com/jenkins-x/tekton-dashboard-helm-chart
+        - https://github.com/jenkins-x/jx-git-operator
+        - https://github.com/jenkins-x/cosign-image
+        - https://github.com/jenkins-x/trivydb
+        - https://github.com/jenkins-x/jx-cli
       changes:
         - regex:
             pattern: "jenkins-x/jx-release-version:(.*)"
