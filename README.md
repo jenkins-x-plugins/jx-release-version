@@ -9,7 +9,7 @@ By default it:
 
 But it also supports other strategies to read the previous version and calculate the next version.
 
-Optionnaly, you can also create a tag - and push it to a remote git repository.
+Optionally, you can also create a tag - and push it to a remote git repository.
 
 ## Usage
 
@@ -45,7 +45,7 @@ There are different ways to read the previous version:
 
 ### Auto
 
-The `auto` strategy is the default one. It tries to find the latest git tag, or if there there are no git tags, it just use `0.0.0` as the previous version.
+The `auto` strategy is the default one. It tries to find the latest git tag, or if there are no git tags, it just use `0.0.0` as the previous version.
 
 **Usage**:
 - `jx-release-version -previous-version=auto`
@@ -55,10 +55,10 @@ The `auto` strategy is the default one. It tries to find the latest git tag, or 
 
 The `from-tag` strategy uses the latest git tag as the previous version. Note that it only uses tags which matches the [semver](https://semver.org/) spec - other tags are just ignored.
 
-Optionnaly, it can filter tags based on a given pattern: if you use `from-tag:v1` it will use the latest tag matching the `v1` pattern. Note that it uses [Go's stdlib regexp](https://golang.org/pkg/regexp/) - you can see the [syntax](https://golang.org/pkg/regexp/syntax/).
+Optionally, it can filter tags based on a given pattern: if you use `from-tag:v1` it will use the latest tag matching the `v1` pattern. Note that it uses [Go's stdlib regexp](https://golang.org/pkg/regexp/) - you can see the [syntax](https://golang.org/pkg/regexp/syntax/).
 This feature can be used to maintain 2 major versions in parallel: for each, you just configure the right pattern, so that `jx-release-version` retrieves the right previous version, and bump it as it should.
 
-Optionnaly, it can fetch the tags from a remote repository named `origin`, if you set the `-fetch-tags` flag, or the `FETCH_TAGS` environment variable to `true`. It will fetch the tags before trying to find the previous version.
+Optionally, it can fetch the tags from a remote repository named `origin`, if you set the `-fetch-tags` flag, or the `FETCH_TAGS` environment variable to `true`. It will fetch the tags before trying to find the previous version.
 
 Note that if it can't find a tag, it will fail.
 
@@ -181,9 +181,9 @@ The output format of the next release version can be defined using a [Go templat
 
 ## Tag
 
-Most of the time, you'll be using the `jx-release-version` tool as part of your CD pipelines, so you'll want to do something with the "next version", such as creating (and pushing) a git tag. This behaviour is disabled by default, but can easily be enabled by setting the `-tag` CLI flag - or alternatively setting the `TAG` environment variable to `"true"`.
+Most of the time, you'll be using the `jx-release-version` tool as part of your CD pipelines, so you'll want to do something with the "next version", such as creating (and pushing) a git tag. This behavior is disabled by default, but can easily be enabled by setting the `-tag` CLI flag - or alternatively setting the `TAG` environment variable to `"true"`.
 
-If the next version is `1.2.3` for example, by default a new tag named `v1.2.3` will be created. You can controle the prefix using the `-tag-prefix` CLI flag - or alternatively by setting the `TAG_PREFIX` environment variable.
+If the next version is `1.2.3` for example, by default a new tag named `v1.2.3` will be created. You can control the prefix using the `-tag-prefix` CLI flag - or alternatively by setting the `TAG_PREFIX` environment variable.
 
 If you want to override the name/email of the author/committer used to create the git tag, you can set the `-git-user` / `-git-email` CLI flags, or alternatively the `GIT_NAME` / `GIT_EMAIL` environment variables.
 
