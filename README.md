@@ -201,7 +201,7 @@ If you want to use `jx-release-version` in your [Tekton](https://tekton.dev/) pi
 
 ```
 steps:
-- image: ghcr.io/jenkins-x/jx-release-version:2.7.8
+- image: ghcr.io/jenkins-x/jx-release-version:2.7.9
   name: next-version
   script: |
     #!/usr/bin/env sh
@@ -225,7 +225,7 @@ jobs:
 
       - id: nextversion
         name: next release version
-        uses: jenkins-x-plugins/jx-release-version@v2.7.8
+        uses: jenkins-x-plugins/jx-release-version@v2.7.9
 
       - name: do something with the next version
         run: echo next version is $VERSION
@@ -252,7 +252,7 @@ jobs:
 
       - name: tag
         id: tag
-        uses: jenkins-x-plugins/jx-release-version@v2.7.8
+        uses: jenkins-x-plugins/jx-release-version@v2.7.9
         with:
           tag: true
           github-token: ${{ secrets.GIT_BOT_TOKEN }}
