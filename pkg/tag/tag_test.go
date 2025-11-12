@@ -10,12 +10,25 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const GitUserName string = "test"
+const GitUserEmail string = "test@example.com"
+
 func TestTag(t *testing.T) {
 
 	// setup test
 	dir := t.TempDir()
 
 	r, err := git.PlainInit(dir, false)
+	assert.NoError(t, err)
+
+	// Configure git user
+	cfg, err := r.Config()
+	assert.NoError(t, err)
+
+	cfg.User.Name = GitUserName
+	cfg.User.Email = GitUserEmail
+
+	err = r.SetConfig(cfg)
 	assert.NoError(t, err)
 
 	w, err := r.Worktree()
@@ -27,8 +40,8 @@ func TestTag(t *testing.T) {
 
 	co := &git.CommitOptions{
 		All:               true,
-		Author:            &object.Signature{Name: "test"},
-		Committer:         &object.Signature{Name: "test"},
+		Author:            &object.Signature{Name: GitUserName, Email: GitUserEmail},
+		Committer:         &object.Signature{Name: GitUserName, Email: GitUserEmail},
 		AllowEmptyCommits: true,
 	}
 
