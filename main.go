@@ -172,6 +172,7 @@ func versionBumper() strategy.VersionBumper {
 				Dir:                   options.dir,
 				StripPrerelease:       strings.Contains(strategyArg, "strip-prerelease"),
 				CommitHeadlinesString: options.commitHeadlines,
+				TagPrefix:             options.tagPrefix,
 			},
 		}
 	case "semantic":
@@ -179,6 +180,7 @@ func versionBumper() strategy.VersionBumper {
 			Dir:                   options.dir,
 			StripPrerelease:       strings.Contains(strategyArg, "strip-prerelease"),
 			CommitHeadlinesString: options.commitHeadlines,
+			TagPrefix:             options.tagPrefix,
 		}
 	case "from-file":
 		versionBumper = fromfile.Strategy{

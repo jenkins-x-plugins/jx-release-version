@@ -11,6 +11,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const RepositoryDirPath string = "testdata/git-repo"
+
 func TestBumpVersion(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
@@ -23,7 +25,8 @@ func TestBumpVersion(t *testing.T) {
 		{
 			name: "feat commit",
 			strategy: Strategy{
-				Dir: "testdata/git-repo",
+				Dir:       RepositoryDirPath,
+				TagPrefix: "v",
 			},
 			previous: *semver.MustParse("2.0.0"),
 			expected: semver.MustParse("2.1.0"),
@@ -31,7 +34,8 @@ func TestBumpVersion(t *testing.T) {
 		{
 			name: "breaking change",
 			strategy: Strategy{
-				Dir: "testdata/git-repo",
+				Dir:       RepositoryDirPath,
+				TagPrefix: "v",
 			},
 			previous: *semver.MustParse("1.1.0"),
 			expected: semver.MustParse("2.0.0"),
@@ -40,6 +44,7 @@ func TestBumpVersion(t *testing.T) {
 			name: "feat from commit headline",
 			strategy: Strategy{
 				CommitHeadlinesString: "feat: a feature",
+				TagPrefix:             "v",
 			},
 			previous: *semver.MustParse("2.0.0"),
 			expected: semver.MustParse("2.1.0"),
@@ -48,6 +53,7 @@ func TestBumpVersion(t *testing.T) {
 			name: "feat from commit headlines",
 			strategy: Strategy{
 				CommitHeadlinesString: `chore: a chore
+				TagPrefix: "v",
 feat: a feature`,
 			},
 			previous: *semver.MustParse("2.0.0"),
@@ -57,6 +63,7 @@ feat: a feature`,
 			name: "breaking change from commit headline",
 			strategy: Strategy{
 				CommitHeadlinesString: "feat!: a breaking feature",
+				TagPrefix:             "v",
 			},
 			previous: *semver.MustParse("1.1.0"),
 			expected: semver.MustParse("2.0.0"),
@@ -66,6 +73,7 @@ feat: a feature`,
 			strategy: Strategy{
 				CommitHeadlinesString: `chore: a chore
 feat!: a breaking feature`,
+				TagPrefix: "v",
 			},
 			previous: *semver.MustParse("1.1.0"),
 			expected: semver.MustParse("2.0.0"),
@@ -74,9 +82,28 @@ feat!: a breaking feature`,
 			name: "patch from unrecognized commit headline",
 			strategy: Strategy{
 				CommitHeadlinesString: "nothing",
+				TagPrefix:             "v",
 			},
 			previous: *semver.MustParse("1.1.0"),
 			expected: semver.MustParse("1.1.1"),
+		},
+		{
+			name: "feat commit with prefix",
+			strategy: Strategy{
+				Dir:       RepositoryDirPath,
+				TagPrefix: "vprefix-",
+			},
+			previous: *semver.MustParse("2.0.0"),
+			expected: semver.MustParse("2.1.0"),
+		},
+		{
+			name: "breaking change with prefix",
+			strategy: Strategy{
+				Dir:       RepositoryDirPath,
+				TagPrefix: "vprefix-",
+			},
+			previous: *semver.MustParse("1.1.0"),
+			expected: semver.MustParse("2.0.0"),
 		},
 	}
 

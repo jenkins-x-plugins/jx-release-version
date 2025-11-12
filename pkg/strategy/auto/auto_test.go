@@ -81,7 +81,8 @@ func TestBumpVersion(t *testing.T) {
 			name: "empty git repo",
 			strategy: Strategy{
 				SemanticStrategy: semantic.Strategy{
-					Dir: "testdata/empty-git-repo",
+					Dir:       "testdata/empty-git-repo",
+					TagPrefix: "v",
 				},
 			},
 			previous: *semver.MustParse("1.0.0"),
@@ -91,7 +92,8 @@ func TestBumpVersion(t *testing.T) {
 			name: "non-empty git repo",
 			strategy: Strategy{
 				SemanticStrategy: semantic.Strategy{
-					Dir: "testdata/git-repo",
+					Dir:       "testdata/git-repo",
+					TagPrefix: "v",
 				},
 			},
 			previous: *semver.MustParse("1.0.0"),
@@ -101,7 +103,8 @@ func TestBumpVersion(t *testing.T) {
 			name: "repo with merge commit",
 			strategy: Strategy{
 				SemanticStrategy: semantic.Strategy{
-					Dir: "testdata/repo-with-merge-commit",
+					Dir:       "testdata/repo-with-merge-commit",
+					TagPrefix: "v",
 				},
 			},
 			previous: *semver.MustParse("1.0.0"),
