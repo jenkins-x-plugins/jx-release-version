@@ -23,6 +23,7 @@ type Strategy struct {
 	Dir                   string
 	StripPrerelease       bool
 	CommitHeadlinesString string
+	TagPrefix             string
 }
 
 func (s Strategy) BumpVersion(previous semver.Version) (*semver.Version, error) {
@@ -89,8 +90,8 @@ func (s Strategy) extractTagCommit(repo *git.Repository, tagName string) (*objec
 
 	previousTagRef, err := repo.Tag(tagName)
 	if err == git.ErrTagNotFound {
-		// let's try to prepend a `v` prefix...
-		tagName = "v" + tagName
+		// let's try to prepend the prefix...
+		tagName = s.TagPrefix + tagName
 		previousTagRef, err = repo.Tag(tagName)
 		if err == git.ErrTagNotFound {
 			return nil, ErrPreviousVersionTagNotFound
