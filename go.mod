@@ -7,7 +7,7 @@ toolchain go1.24.4
 require (
 	github.com/Masterminds/semver/v3 v3.4.0
 	github.com/Masterminds/sprig/v3 v3.3.0
-	github.com/go-git/go-git/v5 v5.17.1
+	github.com/go-git/go-git/v5 v5.18.0
 	github.com/jenkins-x/jx-logging/v3 v3.1.3
 	github.com/jm33-m0/arc/v2 v2.0.1
 	github.com/stretchr/testify v1.10.0
