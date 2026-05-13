@@ -18,6 +18,7 @@ Just run `jx-release-version` in your project's top directory, and it should jus
 It accepts the following CLI flags:
 - `-dir`: the location on the filesystem of your project's top directory - default to the current working directory.
 - `-previous-version`: the [strategy to use to read the previous version](#reading-the-previous-version). Can also be set using the `PREVIOUS_VERSION` environment variable. Default to `auto`.
+- `-print-previous-version`: if enabled, print the previous version detected by the `-previous-version` strategy instead of calculating and printing the next version.
 - `-commit-headlines`: the [commit headlines to use to generate the next semantic version](#pass-commit-headlines). Can also be set using the `COMMIT_HEADLINES` environment variable. Default to ``.
 - `-next-version`: the [strategy to use to calculate the next version](#calculating—the-next-version). Can also be set using the `NEXT_VERSION` environment variable. Default to `auto`.
 - `-output-format`: the [output format of the next release version](#output-format). Can also be set using the `OUTPUT_FORMAT` environment variable. Default to `{{.Major}}.{{.Minor}}.{{.Patch}}`.
@@ -92,6 +93,14 @@ The `manual` strategy can be used if you already know the previous version, and 
 **Usage**:
 - `jx-release-version -previous-version=manual:1.2.3`
 - `jx-release-version -previous-version=1.2.3` - the `manual` prefix is optional
+
+### Print the previous version
+
+If you only need the previous version, use `-print-previous-version`. It reads the previous version using the configured `-previous-version` strategy and prints it without calculating the next version or creating a tag.
+
+**Usage**:
+- `jx-release-version -print-previous-version`
+- `jx-release-version -previous-version=from-file:Chart.yaml -print-previous-version`
 
 ## Calculating the next version
 
@@ -232,6 +241,8 @@ jobs:
         env:
           VERSION: ${{ steps.nextversion.outputs.version }}
 ```
+
+The action also exposes the previous version detected by the `previous-version` strategy as `steps.<id>.outputs.previous-version`.
 
 Or to create a new tag and push it, you can:
 - use the [fregante/setup-git-user](https://github.com/fregante/setup-git-user) action to setup the git name/email to the [github-actions bot](https://github.com/apps/github-actions)
