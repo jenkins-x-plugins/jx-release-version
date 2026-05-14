@@ -28,19 +28,20 @@ var (
 
 	// CLI flag options
 	options struct {
-		printVersion    bool
-		debug           bool
-		dir             string
-		previousVersion string
-		commitHeadlines string
-		nextVersion     string
-		outputFormat    string
-		tag             bool
-		tagPrefix       string
-		pushTag         bool
-		fetchTags       bool
-		gitName         string
-		gitEmail        string
+		printVersion         bool
+		printPreviousVersion bool
+		debug                bool
+		dir                  string
+		previousVersion      string
+		commitHeadlines      string
+		nextVersion          string
+		outputFormat         string
+		tag                  bool
+		tagPrefix            string
+		pushTag              bool
+		fetchTags            bool
+		gitName              string
+		gitEmail             string
 	}
 )
 
@@ -53,6 +54,7 @@ func init() {
 	flag.StringVar(&options.outputFormat, "output-format", getEnvWithDefault("OUTPUT_FORMAT", "{{.Major}}.{{.Minor}}.{{.Patch}}"), "The output format of the next version. Default to the OUTPUT_FORMAT env var.")
 	flag.BoolVar(&options.debug, "debug", os.Getenv("JX_LOG_LEVEL") == "debug", "Print debug logs. Enabled by default if the JX_LOG_LEVEL env var is set to 'debug'.")
 	flag.BoolVar(&options.printVersion, "version", false, "Just print the version and do nothing.")
+	flag.BoolVar(&options.printPreviousVersion, "print-previous-version", false, "Instead of printing the next version, print the previous (current) version detected by the previous-version strategy.")
 	flag.BoolVar(&options.tag, "tag", os.Getenv("TAG") == "true", "Perform a git tag")
 	flag.StringVar(&options.tagPrefix, "tag-prefix", getEnvWithDefault("TAG_PREFIX", "v"), "Prefix to use for the git tag")
 	flag.BoolVar(&options.pushTag, "push-tag", getEnvWithDefault("PUSH_TAG", "true") == "true", "Use with tag flag, pushes a git tag to the remote branch")
@@ -79,6 +81,11 @@ func main() {
 		log.Logger().Fatalf("Failed to read previous version using %q: %v", options.previousVersion, err)
 	}
 	log.Logger().Debugf("Previous version: %s", previousVersion.String())
+
+	if options.printPreviousVersion {
+		fmt.Print(previousVersion.Original())
+		return
+	}
 
 	nextVersion, err := versionBumper().BumpVersion(*previousVersion)
 	if err != nil {

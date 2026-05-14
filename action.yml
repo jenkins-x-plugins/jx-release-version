@@ -2,7 +2,7 @@
 name: 'jx-release-version'
 description: 'https://github.com/jenkins-x-plugins/jx-release-version'
 branding:
-  icon: 'tag'  
+  icon: 'tag'
   color: 'blue'
 inputs:
   previous-version:
@@ -44,9 +44,11 @@ inputs:
 outputs:
   version:
     description: 'The next release version'
+  previous-version:
+    description: 'The previous release version detected by the previous-version strategy'
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/jenkins-x/jx-release-version:2.7.10'
+  image: 'docker://ghcr.io/jenkins-x/jx-release-version:2.8.5'
   entrypoint: 'github-actions-entrypoint.sh'
   env:
     PREVIOUS_VERSION: ${{ inputs.previous-version }}
