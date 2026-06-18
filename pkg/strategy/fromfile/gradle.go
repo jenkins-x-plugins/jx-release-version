@@ -27,11 +27,11 @@ func (r GradleVersionReader) SupportedFiles() []string {
 }
 
 func (r GradleVersionReader) ReadFileVersion(filePath string) (string, error) {
-	f, err := os.Open(filePath)
+	f, err := os.Open(filePath) // #nosec G304 -- user-provided version file path
 	if err != nil {
 		return "", err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {

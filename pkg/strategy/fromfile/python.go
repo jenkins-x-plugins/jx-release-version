@@ -11,7 +11,7 @@ var (
 	// pythonRegexp is used to find the call to `setup(..., version='1.2.3', ...)`
 	pythonSetupRegexp = regexp.MustCompile(`setup\((.|\n)*version\s*=\s*['"]{1}(\d|\.)*['"]{1}([^\)]|\n)*\)`)
 	// pythonVersionRegexp is used to find the argument `version='1.2.3'` or `version="1.2.3"`
-	pythonVersionRegexp = regexp.MustCompile(`version\s*=\s*['"]{1}(\d*|\.)*['"]{1}`)
+	pythonVersionRegexp = regexp.MustCompile(`version\s*=\s*['"](\d*|\.)*['"]`)
 )
 
 type PythonVersionReader struct {
@@ -28,7 +28,7 @@ func (r PythonVersionReader) SupportedFiles() []string {
 }
 
 func (r PythonVersionReader) ReadFileVersion(filePath string) (string, error) {
-	content, err := os.ReadFile(filePath)
+	content, err := os.ReadFile(filePath) // #nosec G304 -- user-provided version file path
 	if err != nil {
 		return "", err
 	}
@@ -40,7 +40,7 @@ func (r PythonVersionReader) ReadFileVersion(filePath string) (string, error) {
 
 	version := string(pythonVersionRegexp.Find(setupCall))
 
-	parts := strings.Split(strings.Replace(version, " ", "", -1), "=")
+	parts := strings.Split(strings.ReplaceAll(version, " ", ""), "=")
 	if len(parts) < 2 {
 		return "", fmt.Errorf("version value not found in file %s", filePath)
 	}

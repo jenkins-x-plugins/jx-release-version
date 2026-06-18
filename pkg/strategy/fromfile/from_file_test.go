@@ -136,7 +136,7 @@ func TestReadVersion(t *testing.T) {
 			t.Parallel()
 
 			actual, err := test.strategy.ReadVersion()
-			if len(test.expectedErrorMsg) > 0 {
+			if test.expectedErrorMsg != "" {
 				require.EqualError(t, err, test.expectedErrorMsg)
 				assert.Nil(t, actual)
 			} else {
@@ -190,7 +190,7 @@ func TestAutoDetect(t *testing.T) {
 			}
 
 			actualReader, actualFilePaths, err := s.autoDetect(test.dir)
-			if len(test.expectedErrorMsg) > 0 {
+			if test.expectedErrorMsg != "" {
 				require.EqualError(t, err, test.expectedErrorMsg)
 				assert.Nil(t, actualReader)
 				assert.Empty(t, actualFilePaths)

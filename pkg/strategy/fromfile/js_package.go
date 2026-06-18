@@ -19,11 +19,11 @@ func (r JsPackageVersionReader) SupportedFiles() []string {
 }
 
 func (r JsPackageVersionReader) ReadFileVersion(filePath string) (string, error) {
-	f, err := os.Open(filePath)
+	f, err := os.Open(filePath) // #nosec G304 -- user-provided version file path
 	if err != nil {
 		return "", err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	var pkg JsPackage
 	err = json.NewDecoder(f).Decode(&pkg)

@@ -20,11 +20,11 @@ func (r HelmChartVersionReader) SupportedFiles() []string {
 }
 
 func (r HelmChartVersionReader) ReadFileVersion(filePath string) (string, error) {
-	f, err := os.Open(filePath)
+	f, err := os.Open(filePath) // #nosec G304 -- user-provided version file path
 	if err != nil {
 		return "", err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	var chart HelmChart
 	err = yaml.NewDecoder(f).Decode(&chart)

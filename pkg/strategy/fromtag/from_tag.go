@@ -38,7 +38,7 @@ func (s Strategy) ReadVersion() (*semver.Version, error) {
 	}
 
 	var tagRegexp *regexp.Regexp
-	if len(s.TagPattern) > 0 {
+	if s.TagPattern != "" {
 		tagRegexp, err = regexp.Compile(s.TagPattern)
 		if err != nil {
 			return nil, fmt.Errorf("failed to compile tag pattern %q: %w", s.TagPattern, err)
@@ -92,7 +92,7 @@ func (s Strategy) ReadVersion() (*semver.Version, error) {
 	if tags == 0 {
 		return nil, ErrNoTags
 	}
-	if len(versions) == 0 && len(s.TagPattern) == 0 {
+	if len(versions) == 0 && s.TagPattern == "" {
 		return nil, ErrNoSemverTags
 	}
 	if len(versions) == 0 {

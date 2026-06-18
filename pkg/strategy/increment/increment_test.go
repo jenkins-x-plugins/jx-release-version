@@ -59,7 +59,7 @@ func TestBumpVersion(t *testing.T) {
 				ComponentToIncrement: test.componentToIncrement,
 			}
 			actual, err := s.BumpVersion(test.previous)
-			if len(test.expectedErrorMsg) > 0 {
+			if test.expectedErrorMsg != "" {
 				require.EqualError(t, err, test.expectedErrorMsg)
 				assert.Nil(t, actual)
 			} else {

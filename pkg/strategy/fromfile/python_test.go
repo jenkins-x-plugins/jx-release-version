@@ -56,7 +56,7 @@ func TestPythonVersionReader(t *testing.T) {
 			t.Parallel()
 
 			actual, err := reader.ReadFileVersion(filepath.Join("testdata", test.filePath))
-			if len(test.expectedErrorMsg) > 0 {
+			if test.expectedErrorMsg != "" {
 				require.EqualError(t, err, test.expectedErrorMsg)
 				assert.Empty(t, actual)
 			} else {

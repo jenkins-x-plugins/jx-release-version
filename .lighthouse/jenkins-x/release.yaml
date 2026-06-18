@@ -31,7 +31,7 @@ spec:
           name: push-container
         - name: chart-docs
           resources: {}
-        - image: ghcr.io/jenkins-x/jx-boot:3.10.73
+        - image: ghcr.io/jenkins-x/jx-boot:3.17.6
           name: set-github-action-version
           resources: {}
           script: |
@@ -46,7 +46,7 @@ spec:
           name: build-and-push-sbom
           resources: {}
         - name: cleanup-image-tar
-          image: alpine:3.16
+          image: alpine:3.24
           resources: {}
           script: |
             #!/bin/sh
@@ -55,7 +55,7 @@ spec:
           resources: {}
         - name: promote-release
           resources: {}
-        - image: ghcr.io/jenkins-x/jx-boot:3.10.73
+        - image: ghcr.io/jenkins-x/jx-boot:3.17.6
           name: promote-action
           resources: {}
           script: |

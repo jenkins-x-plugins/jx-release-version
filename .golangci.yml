@@ -1,9 +1,105 @@
-# See https://golangci-lint.run/usage/configuration/#config-file
+version: "2"
 
 run:
-  timeout: 10m
+  timeout: 30m
 
-# print all issues that are found
-issues:
-  max-issues-per-linter: 0
-  max-same-issues: 0
+linters:
+  default: none
+  enable:
+  - asciicheck
+  - bodyclose
+  - depguard
+  - errcheck
+  - gocritic
+  - goprintffuncname
+  - gosec
+  - govet
+  - ineffassign
+  - misspell
+  - nakedret
+  - revive
+  - rowserrcheck
+  - staticcheck
+  - unconvert
+  - unparam
+  - unused
+  exclusions:
+    rules:
+    # Don't require doc comments on every exported identifier or package.
+    - linters:
+      - revive
+      text: should have comment or be unexported
+    - linters:
+      - revive
+      text: should have a package comment
+  settings:
+    depguard:
+      rules:
+        Main:
+          list-mode: lax
+          deny:
+          - pkg: github.com/jenkins-x/jx/v2/pkg/log/
+            desc: "use jenkins-x/jx-logging instead"
+          - pkg: github.com/satori/go.uuid
+            desc: "use github.com/google/uuid instead"
+          - pkg: github.com/pborman/uuid
+            desc: "use github.com/google/uuid instead"
+    dupl:
+      threshold: 100
+    exhaustive:
+      default-signifies-exhaustive: false
+    funlen:
+      lines: 200
+      statements: 150
+    goconst:
+      min-len: 3
+      min-occurrences: 3
+    gocritic:
+      enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+      disabled-checks:
+      - dupImport
+      - ifElseChain
+      - octalLiteral
+      - whyNoLint
+      - wrapperFunc
+      - importShadow
+      - unnamedResult
+      - hugeParam
+    gocyclo:
+      min-complexity: 15
+    govet:
+      settings:
+        printf:
+          funcs:
+          - (github.com/jenkins-x/jx-logging/v3/pkg/log/Logger()).Debugf
+          - (github.com/jenkins-x/jx-logging/v3/pkg/log/Logger()).Infof
+          - (github.com/jenkins-x/jx-logging/v3/pkg/log/Logger()).Warnf
+          - (github.com/jenkins-x/jx-logging/v3/pkg/log/Logger()).Errorf
+          - (github.com/jenkins-x/jx-logging/v3/pkg/log/Logger()).Fatalf
+    lll:
+      line-length: 140
+    misspell: {}
+    mnd:
+      checks: [argument, case, condition, return]
+    nolintlint:
+      allow-unused: false # report any unused nolint directives
+      require-explanation: false # don't require an explanation for nolint directives
+      require-specific: false # don't require nolint directives to be specific about which linter is being skipped
+    revive:
+      confidence: 0
+
+formatters:
+  enable:
+  - gofmt
+  - goimports
+  settings:
+    gofmt:
+      simplify: true
+
+# golangci-lint configuration
+# https://golangci-lint.run/usage/configuration/
