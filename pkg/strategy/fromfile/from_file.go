@@ -36,7 +36,7 @@ func (s Strategy) ReadVersion() (*semver.Version, error) {
 		reader    FileVersionReader
 		filePaths []string
 	)
-	if len(s.FilePath) > 0 {
+	if s.FilePath != "" {
 		filePath := filepath.Join(dir, s.FilePath)
 		filePaths = append(filePaths, filePath)
 		reader, err = s.getReader()

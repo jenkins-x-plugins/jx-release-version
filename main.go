@@ -72,7 +72,9 @@ func main() {
 	}
 
 	if options.debug {
-		os.Setenv("JX_LOG_LEVEL", "debug")
+		if err := os.Setenv("JX_LOG_LEVEL", "debug"); err != nil {
+			log.Logger().Warnf("failed to set JX_LOG_LEVEL: %v", err)
+		}
 		log.Logger().Debugf("jx-release-version %s running in debug mode in %s", Version, options.dir)
 	}
 
@@ -227,7 +229,7 @@ func formatVersion(version semver.Version) (string, error) {
 	return output.String(), nil
 }
 
-func getEnvWithDefault(key string, defaultVal string) string {
+func getEnvWithDefault(key, defaultVal string) string {
 	if val, found := os.LookupEnv(key); found {
 		return val
 	}

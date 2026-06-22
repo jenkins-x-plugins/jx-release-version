@@ -32,7 +32,7 @@ func (r MavenPOMVersionReader) ReadFileVersion(filePath string) (string, error) 
 
 	log.Logger().Debugf("Maven is installed into path %s", path)
 
-	cmd := exec.Command("mvn",
+	cmd := exec.Command("mvn", // #nosec G204 -- maven invocation on user-provided pom path
 		"-f",
 		filePath,
 		"-B",            // batch mode
@@ -52,11 +52,11 @@ func (r MavenPOMVersionReader) ReadFileVersion(filePath string) (string, error) 
 }
 
 func (r MavenPOMVersionReader) readDirectlyFromPom(filePath string) (string, error) {
-	f, err := os.Open(filePath)
+	f, err := os.Open(filePath) // #nosec G304 -- user-provided version file path
 	if err != nil {
 		return "", err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	var pom MavenPOM
 	err = xml.NewDecoder(f).Decode(&pom)

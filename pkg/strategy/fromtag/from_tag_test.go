@@ -90,7 +90,7 @@ func TestReadVersion(t *testing.T) {
 			t.Parallel()
 
 			actual, err := test.strategy.ReadVersion()
-			if len(test.expectedErrorMsg) > 0 {
+			if test.expectedErrorMsg != "" {
 				require.EqualError(t, err, test.expectedErrorMsg)
 				assert.Nil(t, actual)
 			} else {

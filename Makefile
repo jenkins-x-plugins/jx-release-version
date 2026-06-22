@@ -46,6 +46,10 @@ fmt:
 test:
 	go test -v ./...
 
+.PHONY: lint
+lint:
+	golangci-lint run --timeout 15m
+
 .PHONY: release
 release: clean test linux
 
@@ -61,3 +65,5 @@ clean:
 .PHONY: docker
 docker: $(BUILD_DIR)/$(NAME)-linux
 	docker build -t "${ORG}/$(NAME):dev" .
+
+

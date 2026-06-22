@@ -35,7 +35,7 @@ func TestTag(t *testing.T) {
 	assert.NoError(t, err)
 
 	filename := filepath.Join(dir, "foo")
-	err = os.WriteFile(filename, []byte("bar!"), 0644)
+	err = os.WriteFile(filename, []byte("bar!"), 0600)
 	assert.NoError(t, err)
 
 	co := &git.CommitOptions{

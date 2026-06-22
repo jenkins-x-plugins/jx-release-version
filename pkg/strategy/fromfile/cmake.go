@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	cmakeRegexp = regexp.MustCompile(`project\s*(([^\s]+)\s+VERSION\s+([.\d]+(-\w+)?).*)`)
+	cmakeRegexp = regexp.MustCompile(`project\s*((\S+)\s+VERSION\s+([.\d]+(-\w+)?).*)`)
 )
 
 type CMakeVersionReader struct {
@@ -25,11 +25,11 @@ func (r CMakeVersionReader) SupportedFiles() []string {
 }
 
 func (r CMakeVersionReader) ReadFileVersion(filePath string) (string, error) {
-	f, err := os.Open(filePath)
+	f, err := os.Open(filePath) // #nosec G304 -- user-provided version file path
 	if err != nil {
 		return "", err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {

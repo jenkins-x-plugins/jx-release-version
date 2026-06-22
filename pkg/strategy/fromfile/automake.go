@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	configureRegexp = regexp.MustCompile(`AC_INIT\s*\(([^\s]+),\s*([.\d]+(-\w+)?).*\)`)
+	configureRegexp = regexp.MustCompile(`AC_INIT\s*\((\S+),\s*([.\d]+(-\w+)?).*\)`)
 )
 
 type AutomakeVersionReader struct {
@@ -25,11 +25,11 @@ func (r AutomakeVersionReader) SupportedFiles() []string {
 }
 
 func (r AutomakeVersionReader) ReadFileVersion(filePath string) (string, error) {
-	f, err := os.Open(filePath)
+	f, err := os.Open(filePath) // #nosec G304 -- user-provided version file path
 	if err != nil {
 		return "", err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {

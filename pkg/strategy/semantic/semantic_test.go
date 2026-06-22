@@ -1,12 +1,12 @@
 package semantic
 
 import (
-	archiver "github.com/jm33-m0/arc/v2"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/Masterminds/semver/v3"
+	archiver "github.com/jm33-m0/arc/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -120,7 +120,7 @@ feat!: a breaking feature`,
 			t.Parallel()
 
 			actual, err := test.strategy.BumpVersion(test.previous)
-			if len(test.expectedErrorMsg) > 0 {
+			if test.expectedErrorMsg != "" {
 				require.EqualError(t, err, test.expectedErrorMsg)
 				assert.Nil(t, actual)
 			} else {

@@ -34,10 +34,7 @@ func (s Strategy) BumpVersion(previous semver.Version) (*semver.Version, error) 
 		summary               *conventionalCommitsSummary
 	)
 	if commitHeadlinesString != "" {
-		summary, err = s.parseCommitHeadlines(commitHeadlinesString)
-		if err != nil {
-			return nil, err
-		}
+		summary = s.parseCommitHeadlines(commitHeadlinesString)
 	} else {
 		if dir == "" {
 			dir, err = os.Getwd()
@@ -174,7 +171,7 @@ func (s Strategy) parseCommitsSince(repo *git.Repository, firstCommit *object.Co
 
 		summary.conventionalCommitsCount++
 		summary.types[c.Header.Type] = true
-		if len(c.BreakingMessage()) > 0 {
+		if c.BreakingMessage() != "" {
 			summary.breakingChanges = true
 		}
 	}
@@ -183,7 +180,7 @@ func (s Strategy) parseCommitsSince(repo *git.Repository, firstCommit *object.Co
 	return &summary, nil
 }
 
-func (s Strategy) parseCommitHeadlines(commitHeadlinesString string) (*conventionalCommitsSummary, error) {
+func (s Strategy) parseCommitHeadlines(commitHeadlinesString string) *conventionalCommitsSummary {
 	summary := conventionalCommitsSummary{
 		types: map[string]bool{},
 	}
@@ -202,11 +199,11 @@ func (s Strategy) parseCommitHeadlines(commitHeadlinesString string) (*conventio
 
 		summary.conventionalCommitsCount++
 		summary.types[c.Header.Type] = true
-		if len(c.BreakingMessage()) > 0 {
+		if c.BreakingMessage() != "" {
 			summary.breakingChanges = true
 		}
 	}
 
 	log.Logger().Debugf("Summary of conventional commits: %#v", summary)
-	return &summary, nil
+	return &summary
 }
